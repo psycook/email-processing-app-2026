@@ -1,0 +1,78 @@
+{
+  "version": "1.0",
+  "appId": "a9b487ae-7eee-4f6f-ba71-ed18e50c021c",
+  "appDisplayName": "Gravity Bank Email Automation Studio",
+  "region": "prod",
+  "appType": "CodeApp",
+  "environmentId": "b17908ad-6b6b-eefb-98bc-79cc7e20ab08",
+  "description": "Gravity Bank's customer email evaluation, operations and human review studio.",
+  "buildPath": "./dist",
+  "buildEntryPoint": "index.html",
+  "localAppUrl": "http://localhost:3000",
+  "logoPath": "public\\gravity-bank-icon.png",
+  "connectionReferences": {
+    "e4898a05-d6f4-415e-9f09-c1815456d6c3": {
+      "id": "/providers/Microsoft.PowerApps/apis/shared_office365",
+      "displayName": "Office 365 Outlook",
+      "dataSources": [
+        "office365"
+      ],
+      "dataSets": {}
+    },
+    "3ab22b67-3d22-4d9a-b8bf-c02dd6249df4": {
+      "id": "/providers/Microsoft.PowerApps/apis/shared_agentnode",
+      "displayName": "Agents",
+      "dataSources": [
+        "agentnode"
+      ],
+      "dataSets": {}
+    }
+  },
+  "databaseReferences": {
+    "default.cds": {
+      "dataSources": {
+        "contacts": {
+          "entitySetName": "contacts",
+          "logicalName": "contact",
+          "isHidden": false
+        },
+        "products": {
+          "entitySetName": "products",
+          "logicalName": "product",
+          "isHidden": false
+        },
+        "financialaccounts": {
+          "entitySetName": "rfd_financialaccounts",
+          "logicalName": "rfd_financialaccount",
+          "isHidden": false
+        },
+        "cases": {
+          "entitySetName": "incidents",
+          "logicalName": "incident",
+          "isHidden": false
+        },
+        "tasks": {
+          "entitySetName": "tasks",
+          "logicalName": "task",
+          "isHidden": false
+        },
+        "notes": {
+          "entitySetName": "annotations",
+          "logicalName": "annotation",
+          "isHidden": false
+        },
+        "emailmessages": {
+          "entitySetName": "emails",
+          "logicalName": "email",
+          "isHidden": false
+        },
+        "processes": {
+          "entitySetName": "workflows",
+          "logicalName": "workflow",
+          "isHidden": false
+        }
+      },
+      "environmentVariableName": ""
+    }
+  }
+}

@@ -1,0 +1,381 @@
+/* ============================================================================
+   Gravity Bank · Email Process Automation Studio
+   Design tokens, reset and base element styling.
+   All colours are exposed as --cp-* custom properties so themes override cleanly.
+   Dark is the default (dark-first); [data-theme="light"] overrides below.
+   ========================================================================== */
+
+:root,
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* Brand anchors */
+  --cp-brand-graphite: #11151c;
+  --cp-brand-lime: #d7ff3f;
+  --cp-brand-lavender: #b8a9ff;
+  --cp-brand-warm: #f6f7f2;
+
+  /* Canvas & surfaces */
+  --cp-bg: #0b0e13;
+  --cp-canvas-glow: radial-gradient(1200px 680px at 82% -10%, rgba(184, 169, 255, 0.08), transparent 60%),
+    radial-gradient(1000px 560px at -5% 110%, rgba(215, 255, 63, 0.05), transparent 55%);
+  --cp-surface: #11151c;
+  --cp-surface-raised: #161b24;
+  --cp-surface-sunken: #0d1118;
+  --cp-surface-hover: #1b2230;
+  --cp-overlay: rgba(6, 8, 12, 0.66);
+
+  /* Borders */
+  --cp-border: rgba(246, 247, 242, 0.1);
+  --cp-border-soft: rgba(246, 247, 242, 0.06);
+  --cp-border-strong: rgba(246, 247, 242, 0.18);
+
+  /* Text */
+  --cp-text: #eef1f6;
+  --cp-text-muted: #aab3c1;
+  --cp-text-subtle: #7f8a9a;
+  --cp-text-faint: #5c6675;
+
+  /* Accent — lime (brand) */
+  --cp-accent: #d7ff3f;
+  --cp-accent-strong: #e4ff6b;
+  --cp-accent-soft: rgba(215, 255, 63, 0.14);
+  --cp-accent-border: rgba(215, 255, 63, 0.4);
+  --cp-accent-text: #cdf24a;
+  --cp-on-accent: #11151c;
+
+  /* Lavender */
+  --cp-lavender: #b8a9ff;
+  --cp-lavender-soft: rgba(184, 169, 255, 0.16);
+  --cp-lavender-border: rgba(184, 169, 255, 0.38);
+  --cp-lavender-text: #c7bbff;
+
+  /* Semantic */
+  --cp-success: #86e36b;
+  --cp-success-soft: rgba(134, 227, 107, 0.15);
+  --cp-success-text: #9fed86;
+  --cp-warning: #f3c24b;
+  --cp-warning-soft: rgba(243, 194, 75, 0.15);
+  --cp-warning-text: #f6cf6e;
+  --cp-danger: #ff7a7a;
+  --cp-danger-soft: rgba(255, 122, 122, 0.15);
+  --cp-danger-text: #ff9b9b;
+  --cp-info: #9fb7ff;
+  --cp-info-soft: rgba(159, 183, 255, 0.15);
+  --cp-info-text: #b3c6ff;
+  --cp-neutral-soft: rgba(246, 247, 242, 0.08);
+
+  /* Focus ring */
+  --cp-ring: rgba(184, 169, 255, 0.65);
+
+  /* Shadows */
+  --cp-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 1px rgba(0, 0, 0, 0.22);
+  --cp-shadow-2: 0 18px 48px rgba(0, 0, 0, 0.5);
+  --cp-shadow-pop: 0 12px 34px rgba(0, 0, 0, 0.45);
+
+  /* Geometry */
+  --cp-radius-card: 16px;
+  --cp-radius-control: 10px;
+  --cp-radius-sm: 8px;
+  --cp-radius-pill: 999px;
+
+  /* Layout */
+  --cp-sidebar: 250px;
+  --cp-topbar: 64px;
+  --cp-maxw: 1480px;
+
+  /* Typography */
+  --cp-font: 'Segoe UI Variable Display', 'Segoe UI Variable', 'Segoe UI', 'Aptos', system-ui, -apple-system,
+    BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+  --cp-mono: 'Cascadia Code', 'Cascadia Mono', ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono',
+    monospace;
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+
+  --cp-bg: #eef0ea;
+  --cp-canvas-glow: radial-gradient(1200px 680px at 85% -12%, rgba(184, 169, 255, 0.16), transparent 60%),
+    radial-gradient(1000px 560px at -5% 112%, rgba(96, 128, 0, 0.08), transparent 55%);
+  --cp-surface: #ffffff;
+  --cp-surface-raised: #ffffff;
+  --cp-surface-sunken: #f4f6ef;
+  --cp-surface-hover: #f2f4ec;
+  --cp-overlay: rgba(28, 32, 24, 0.4);
+
+  --cp-border: rgba(17, 21, 28, 0.12);
+  --cp-border-soft: rgba(17, 21, 28, 0.07);
+  --cp-border-strong: rgba(17, 21, 28, 0.22);
+
+  --cp-text: #171c22;
+  --cp-text-muted: #4f5a66;
+  --cp-text-subtle: #6b7682;
+  --cp-text-faint: #939ca7;
+
+  /* In light, lime is a highlight fill behind graphite text; accent text uses a dark lime-green */
+  --cp-accent: #c7ef28;
+  --cp-accent-strong: #b6e016;
+  --cp-accent-soft: rgba(126, 168, 0, 0.16);
+  --cp-accent-border: rgba(102, 138, 0, 0.42);
+  --cp-accent-text: #4b6a00;
+  --cp-on-accent: #11151c;
+
+  --cp-lavender: #6d5bd0;
+  --cp-lavender-soft: rgba(109, 91, 208, 0.14);
+  --cp-lavender-border: rgba(109, 91, 208, 0.36);
+  --cp-lavender-text: #5a46c4;
+
+  --cp-success: #3f9a2f;
+  --cp-success-soft: rgba(63, 154, 47, 0.14);
+  --cp-success-text: #2f7c22;
+  --cp-warning: #b8811a;
+  --cp-warning-soft: rgba(184, 129, 26, 0.16);
+  --cp-warning-text: #936312;
+  --cp-danger: #d64545;
+  --cp-danger-soft: rgba(214, 69, 69, 0.13);
+  --cp-danger-text: #bb3030;
+  --cp-info: #3f63c4;
+  --cp-info-soft: rgba(63, 99, 196, 0.13);
+  --cp-info-text: #314fb0;
+  --cp-neutral-soft: rgba(17, 21, 28, 0.06);
+
+  --cp-ring: rgba(109, 91, 208, 0.55);
+
+  --cp-shadow-1: 0 1px 2px rgba(26, 30, 22, 0.08), 0 1px 1px rgba(26, 30, 22, 0.05);
+  --cp-shadow-2: 0 20px 48px rgba(32, 38, 26, 0.16);
+  --cp-shadow-pop: 0 14px 34px rgba(32, 38, 26, 0.16);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--cp-font);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--cp-text);
+  background-color: var(--cp-bg);
+  background-image: var(--cp-canvas-glow);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+dl,
+dd,
+figure {
+  margin: 0;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: var(--cp-accent-text);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+::selection {
+  background: var(--cp-accent-soft);
+  color: var(--cp-text);
+}
+
+:focus-visible {
+  outline: 2px solid var(--cp-ring);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--cp-border-strong) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--cp-border-strong);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--cp-text-faint);
+  background-clip: content-box;
+}
+
+/* Shared helpers */
+.mono {
+  font-family: var(--cp-mono);
+  font-size: 0.86em;
+  letter-spacing: 0.01em;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.muted-note {
+  color: var(--cp-text-subtle);
+  font-size: 12.5px;
+  margin-top: 8px;
+}
+
+.inline-code {
+  font-family: var(--cp-mono);
+  font-size: 0.86em;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: var(--cp-neutral-soft);
+  border: 1px solid var(--cp-border-soft);
+}
+
+.t-success {
+  color: var(--cp-success-text);
+}
+
+.t-warning {
+  color: var(--cp-warning-text);
+}
+
+.t-danger {
+  color: var(--cp-danger-text);
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--cp-accent-text);
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.link-btn:hover {
+  text-decoration: underline;
+}
+
+.skip-link {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 200;
+  padding: 10px 16px;
+  border-radius: var(--cp-radius-control);
+  background: var(--cp-accent);
+  color: var(--cp-on-accent);
+  font-weight: 600;
+  transform: translateY(-160%);
+  transition: transform 0.18s ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+  text-decoration: none;
+}
+
+@keyframes cp-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes cp-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes cp-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes cp-sheen {
+  from {
+    background-position: -140% 0;
+  }
+  to {
+    background-position: 240% 0;
+  }
+}
+
+.spin {
+  animation: cp-spin 0.9s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

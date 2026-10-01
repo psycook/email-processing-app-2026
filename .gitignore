@@ -1,0 +1,81 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules/
+dist/
+dist-ssr/
+coverage/
+.vite/
+*.tsbuildinfo
+*.local
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+!.env.template
+.envrc
+.npmrc
+.azure/
+.pac/
+.auth/
+.credentials/
+.msal*
+msal_token_cache*
+token_cache*
+*.pem
+*.key
+*.pfx
+*.p12
+
+# The app imports generated metadata from .power/schemas; keep it in Git.
+# Other Power Apps working files may contain local connection/auth state.
+.power/*
+!.power/schemas/
+
+# Python helper environments and caches
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local data exports, migration plans and browser artifacts
+/docs/financial-account-name-changes*.json
+/exports/
+/backups/
+/artifacts/
+/screenshots/
+/playwright-report/
+/test-results/
+gravity-evaluation-report*.json
+gravity-campaign-*.json
+gravity-snapshot-*.json
+*.eml
+*.msg
+
+# Agent-local state, not source or handoff documentation
+.scout/
+.copilot/session-state/
+.claude/settings.local.json
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

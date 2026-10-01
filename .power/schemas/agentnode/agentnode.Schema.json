@@ -1,0 +1,1244 @@
+{
+  "name": "shared_agentnode",
+  "id": "/providers/Microsoft.PowerApps/apis/shared_agentnode",
+  "type": "Microsoft.PowerApps/apis",
+  "properties": {
+    "displayName": "Agents",
+    "iconUri": "https://static.powerapps.com/resource/ppcr/releases/v1.0.1826/1.0.1826.4868/agentnode/icon.png",
+    "iconBrandColor": "#0066FF",
+    "apiEnvironment": "Shared",
+    "isCustomApi": false,
+    "blobUrisAreProxied": false,
+    "connectionParameters": {
+      "token": {
+        "type": "oauthSetting",
+        "oAuthSettings": {
+          "identityProvider": "aadcertificate",
+          "clientId": "4ad0a186-70fd-4cdd-8119-4c5accae98e9",
+          "clientAssertionType": "GlobalFederatedIdentityCredential",
+          "scopes": [
+            "CopilotStudio.AgentNodes.Invoke"
+          ],
+          "redirectMode": "GlobalPerConnector",
+          "redirectUrl": "https://global.consent.azure-apim.net/redirect/agentnode",
+          "properties": {
+            "IsFirstParty": "True",
+            "AzureActiveDirectoryResourceId": "https://api.powerplatform.com/",
+            "IsOnbehalfofLoginSupported": true,
+            "FederatedIdentityCredentials": {
+              "Issuer": "https://login.microsoftonline.com/{tenantId}/v2.0",
+              "Subject": "/eid1/c/pub/t/{tenantId}/a/k972yLpWjkypg7DpMYfrNA/4ad0a186-70fd-4cdd-8119-4c5accae98e9",
+              "Audience": "api://AzureADTokenExchange"
+            }
+          },
+          "customParameters": {
+            "ResourceUri": {
+              "value": "https://api.powerplatform.com/"
+            },
+            "loginUri": {
+              "value": "https://login.windows.net"
+            },
+            "LoginUriAAD": {
+              "value": "https://login.windows.net"
+            }
+          }
+        }
+      },
+      "token:TenantId": {
+        "type": "string",
+        "metadata": {
+          "sourceType": "AzureActiveDirectoryTenant"
+        },
+        "uiDefinition": {
+          "displayName": "Tenant",
+          "description": "The tenant ID of for the Microsoft Entra ID application",
+          "constraints": {
+            "required": "false",
+            "hidden": "true"
+          }
+        }
+      }
+    },
+    "swagger": {
+      "swagger": "2.0",
+      "info": {
+        "version": "1.1",
+        "title": "Agents",
+        "description": "Run an agent as part of a Workflow",
+        "x-ms-api-annotation": {
+          "status": "Preview"
+        },
+        "contact": {
+          "name": "Microsoft",
+          "url": "https://support.microsoft.com"
+        }
+      },
+      "x-ms-connector-metadata": [
+        {
+          "propertyName": "Website",
+          "propertyValue": "https://support.microsoft.com"
+        },
+        {
+          "propertyName": "Privacy policy",
+          "propertyValue": "https://www.microsoft.com/en-us/privacy/privacystatement"
+        },
+        {
+          "propertyName": "Categories",
+          "propertyValue": "AI"
+        }
+      ],
+      "tags": [
+        {
+          "name": "InvokeAgent",
+          "description": "Run Agent related operations"
+        },
+        {
+          "name": "Invoke Agent",
+          "description": "Run agent related operations"
+        },
+        {
+          "name": "RunAgent",
+          "description": "Run Agent related operations"
+        },
+        {
+          "name": "Run Agent",
+          "description": "Run agent related operations"
+        }
+      ],
+      "schemes": [
+        "https"
+      ],
+      "host": "b17908ad6b6beefb98bc79cc7e20ab.08.environment.api.powerplatform.com",
+      "paths": {
+        "/{connectionId}/powerautomate/agentnodes/conversations": {
+          "post": {
+            "tags": [
+              "InvokeAgent",
+              "Invoke Agent",
+              "RunAgent",
+              "Run Agent"
+            ],
+            "responses": {
+              "201": {
+                "description": "Accepted",
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "string",
+                      "x-ms-summary": "Agent Response"
+                    },
+                    "structuredOutput": {
+                      "type": "object",
+                      "x-ms-summary": "Output properties",
+                      "description": "Structured output extracted from the agent response.",
+                      "x-ms-dynamic-schema": {
+                        "operationId": "GetOutputSchema",
+                        "parameters": {
+                          "outputSchema": {
+                            "parameter": "outputSchema"
+                          }
+                        },
+                        "value-path": "outputSchema"
+                      },
+                      "x-ms-dynamic-properties": {
+                        "operationId": "GetOutputSchema",
+                        "parameters": {
+                          "body/outputSchema": {
+                            "parameterReference": "body/outputSchema"
+                          }
+                        },
+                        "itemValuePath": "outputSchema"
+                      }
+                    },
+                    "files": {
+                      "$ref": "#/definitions/AgentGeneratedFiles"
+                    }
+                  }
+                }
+              },
+              "default": {
+                "description": "Failed"
+              }
+            },
+            "operationId": "InvokeAgent",
+            "x-ms-retry-policy": {
+              "type": "none"
+            },
+            "summary": "Run an agent",
+            "description": "Runs the specified agent with the provided prompt and waits for the agent to complete before continuing.",
+            "x-ms-visibility": "important",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "name": "body",
+                "in": "body",
+                "required": true,
+                "x-ms-visibility": "important",
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "agentId": {
+                      "type": "string",
+                      "x-ms-visibility": "important",
+                      "description": "Select an agent",
+                      "x-ms-summary": "Agent",
+                      "x-ms-dynamic-values": {
+                        "operationId": "ListAgents",
+                        "parameters": {},
+                        "value-collection": "agents",
+                        "value-path": "agentId",
+                        "value-title": "agentName"
+                      }
+                    },
+                    "prompt": {
+                      "type": "string",
+                      "x-ms-visibility": "important",
+                      "description": "This message will be sent to the agent to start its run",
+                      "x-ms-summary": "Message"
+                    },
+                    "isHitlEscalationEnabled": {
+                      "type": "boolean",
+                      "x-ms-visibility": "important",
+                      "description": "When the agent isn't sure how to proceed, a request for input will be emailed to the connection owner.",
+                      "default": true,
+                      "x-ms-summary": "Request human assistance when unsure"
+                    },
+                    "hitlUsers": {
+                      "x-ms-visibility": "internal",
+                      "type": "string",
+                      "format": "email",
+                      "x-ms-dynamic-values": {
+                        "builtInOperation": "AadGraph.GetUsers",
+                        "value-path": "mail",
+                        "value-title": "displayName"
+                      },
+                      "description": "Human actors involved in the conversation",
+                      "x-ms-summary": "Human actors involved in the conversation"
+                    },
+                    "escalationKeyword": {
+                      "type": "string",
+                      "x-ms-visibility": "internal",
+                      "description": "A keyword that triggers human-in-the-loop escalation when encountered during the agent's run.",
+                      "x-ms-summary": "Escalation Keyword"
+                    },
+                    "outputSchema": {
+                      "type": "object",
+                      "x-ms-summary": "Output Properties Schema",
+                      "x-ms-visibility": "important",
+                      "description": "Specify a schema to structure the response and use output properties as dynamic content in the workflow. By default, the agent response is plain text."
+                    }
+                  },
+                  "required": [
+                    "prompt",
+                    "agentId"
+                  ]
+                },
+                "x-ms-summary": "Execute Agent body",
+                "description": "Execute Agent body"
+              }
+            ],
+            "x-ms-api-annotation": {
+              "status": "Preview",
+              "family": "InvokeAgent",
+              "revision": 1
+            },
+            "externalDocs": {
+              "url": "https://docs.microsoft.com/connectors/agentnode/#run-an-agent"
+            }
+          }
+        },
+        "/{connectionId}/powerautomate/agentnodes/conversations/{conversationId}": {
+          "get": {
+            "tags": [
+              "GetConversationStatus"
+            ],
+            "summary": "Gets conversation status",
+            "description": "Gets the conversation status.",
+            "operationId": "GetConversationStatus",
+            "consumes": [],
+            "produces": [
+              "application/json",
+              "text/json"
+            ],
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "name": "conversationId",
+                "in": "path",
+                "x-ms-summary": "Run id",
+                "description": "The run id.",
+                "type": "string",
+                "required": true
+              },
+              {
+                "name": "x-ms-action-tracking-id",
+                "in": "header",
+                "x-ms-summary": "Action Tracking Id",
+                "description": "The triggering workflow action tracking id for correlation.",
+                "type": "string",
+                "required": false,
+                "x-ms-visibility": "internal"
+              },
+              {
+                "name": "x-ms-workflow-run-id",
+                "in": "header",
+                "x-ms-summary": "Workflow Run Id",
+                "description": "The triggering workflow run id for correlation.",
+                "type": "string",
+                "required": false,
+                "x-ms-visibility": "internal"
+              },
+              {
+                "name": "x-ms-workflow-name",
+                "in": "header",
+                "x-ms-summary": "Workflow Name",
+                "description": "The triggering workflow name for correlation.",
+                "type": "string",
+                "required": false,
+                "x-ms-visibility": "internal"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "OK"
+              },
+              "202": {
+                "description": "Accepted"
+              },
+              "default": {
+                "description": "Operation Failed."
+              }
+            },
+            "deprecated": false,
+            "x-ms-visibility": "internal",
+            "x-ms-api-annotation": {
+              "status": "Preview",
+              "family": "GetConversationStatus",
+              "revision": 1
+            },
+            "externalDocs": {
+              "url": "https://docs.microsoft.com/connectors/agentnode/#gets-conversation-status"
+            }
+          },
+          "delete": {
+            "tags": [
+              "CancelConversation"
+            ],
+            "summary": "Cancel conversation",
+            "description": "Cancels a conversation.",
+            "operationId": "CancelConversation",
+            "consumes": [],
+            "produces": [
+              "application/json",
+              "text/json"
+            ],
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "name": "conversationId",
+                "in": "path",
+                "x-ms-summary": "Conversation id",
+                "description": "The conversation id.",
+                "type": "string",
+                "required": true
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "OK"
+              },
+              "default": {
+                "description": "Operation Failed."
+              }
+            },
+            "deprecated": false,
+            "x-ms-visibility": "internal",
+            "x-ms-api-annotation": {
+              "status": "Preview",
+              "family": "CancelConversation",
+              "revision": 1
+            },
+            "externalDocs": {
+              "url": "https://docs.microsoft.com/connectors/agentnode/#cancel-conversation"
+            }
+          }
+        },
+        "/{connectionId}/powerautomate/agentnodes/agents": {
+          "get": {
+            "responses": {
+              "200": {
+                "description": "Action performed successfully",
+                "schema": {
+                  "$ref": "#/definitions/ListAgentsResponse"
+                }
+              }
+            },
+            "operationId": "ListAgents",
+            "x-ms-visibility": "internal",
+            "summary": "List agents",
+            "description": "List agents",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              }
+            ],
+            "externalDocs": {
+              "url": "https://docs.microsoft.com/connectors/agentnode/#list-agents"
+            }
+          }
+        },
+        "/{connectionId}/powerautomate/agentnodes/conversations/{conversationId}/hitl/{rfiId}": {
+          "post": {
+            "tags": [
+              "SubmitHitlResponse"
+            ],
+            "summary": "Submit HITL response",
+            "description": "Submits a human-in-the-loop response for a conversation that is waiting for user input.",
+            "operationId": "SubmitHitlResponse",
+            "x-ms-retry-policy": {
+              "type": "none"
+            },
+            "consumes": [
+              "application/json"
+            ],
+            "produces": [
+              "application/json"
+            ],
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "name": "conversationId",
+                "in": "path",
+                "x-ms-summary": "Conversation ID",
+                "description": "The conversation identifier.",
+                "type": "string",
+                "required": true
+              },
+              {
+                "name": "rfiId",
+                "in": "path",
+                "x-ms-summary": "RFI ID",
+                "description": "The RFI (Request for Information) identifier.",
+                "type": "string",
+                "required": true
+              },
+              {
+                "name": "body",
+                "in": "body",
+                "required": true,
+                "x-ms-summary": "HITL Response",
+                "description": "The human-in-the-loop response payload.",
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "responseContent": {
+                      "type": "string",
+                      "description": "The customer's response content.",
+                      "x-ms-summary": "Response Content"
+                    }
+                  },
+                  "required": [
+                    "responseContent"
+                  ]
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Response successfully submitted"
+              },
+              "400": {
+                "description": "Bad Request - Customer response content is missing or HITL ID does not match"
+              },
+              "409": {
+                "description": "Conflict"
+              },
+              "default": {
+                "description": "Operation Failed."
+              }
+            },
+            "deprecated": false,
+            "x-ms-visibility": "internal",
+            "x-ms-api-annotation": {
+              "status": "Preview",
+              "family": "SubmitHitlResponse",
+              "revision": 1
+            },
+            "externalDocs": {
+              "url": "https://docs.microsoft.com/connectors/agentnode/#submit-hitl-response"
+            }
+          }
+        },
+        "/{connectionId}/powerautomate/agentnodes/inline/conversations": {},
+        "/{connectionId}/powerautomate/agentnodes/inline/conversations/{conversationId}": {},
+        "/{connectionId}/powerautomate/agentnodes/outputSchema": {
+          "post": {
+            "operationId": "GetOutputSchema",
+            "summary": "Get output schema",
+            "description": "Returns the output schema for dynamic schema resolution at design time.",
+            "x-ms-visibility": "internal",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "name": "body",
+                "in": "body",
+                "required": true,
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "outputSchema": {
+                      "type": "object",
+                      "description": "The output schema definition"
+                    }
+                  }
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "OK",
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "outputSchema": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            },
+            "x-ms-api-annotation": {
+              "status": "Preview",
+              "family": "GetOutputSchema",
+              "revision": 1
+            },
+            "externalDocs": {
+              "url": "https://docs.microsoft.com/connectors/agentnode/#get-output-schema"
+            }
+          }
+        },
+        "/{connectionId}/copilotflows/agentnodes/invokeDefinition": {
+          "post": {
+            "tags": [
+              "InvokeAgent",
+              "Invoke Agent",
+              "Run Inline Agent"
+            ],
+            "responses": {
+              "200": {
+                "description": "Agent executed successfully",
+                "schema": {
+                  "$ref": "#/definitions/AgentNodeResult"
+                }
+              },
+              "default": {
+                "description": "Failed"
+              }
+            },
+            "operationId": "InvokeDefinition",
+            "x-ms-retry-policy": {
+              "type": "none"
+            },
+            "summary": "Run an inline agent definition",
+            "description": "Invoke an agent using an inline definition.",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "name": "body",
+                "in": "body",
+                "required": true,
+                "x-ms-visibility": "important",
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "botDefinition": {
+                      "type": "string",
+                      "description": "Agent definition as a JSON string.",
+                      "x-ms-summary": "Agent Definition (Legacy)"
+                    },
+                    "definition": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "description": "Agent definition.",
+                      "x-ms-summary": "Agent Definition"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "User message to send to the agent",
+                      "x-ms-summary": "Message"
+                    },
+                    "files": {
+                      "type": "array",
+                      "x-ms-summary": "File attachments",
+                      "description": "List of named file attachments for the agent to consume.",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "content"
+                        ],
+                        "properties": {
+                          "name": {
+                            "type": "string",
+                            "x-ms-summary": "File name",
+                            "description": "Name of the file"
+                          },
+                          "content": {
+                            "type": "string",
+                            "format": "byte",
+                            "x-ms-summary": "File content",
+                            "description": "The binary file content."
+                          },
+                          "contentType": {
+                            "type": "string",
+                            "x-ms-summary": "File content type",
+                            "description": "The mime type of the file content."
+                          }
+                        }
+                      }
+                    },
+                    "locale": {
+                      "type": "string",
+                      "description": "BCP-47 locale (e.g., en-US)",
+                      "x-ms-summary": "Locale",
+                      "default": "en-US",
+                      "x-ms-visibility": "advanced"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ]
+                },
+                "x-ms-summary": "Invoke Definition body",
+                "description": "Invoke Definition body"
+              }
+            ],
+            "x-ms-api-annotation": {
+              "status": "Preview",
+              "family": "InvokeDefinition",
+              "revision": 1
+            },
+            "externalDocs": {
+              "url": "https://docs.microsoft.com/connectors/agentnode/#run-an-inline-agent-definition"
+            }
+          }
+        },
+        "/{connectionId}/copilotflows/agentnodes/conversations/{conversationId}": {
+          "get": {
+            "tags": [
+              "GetAgentConversation"
+            ],
+            "summary": "Gets agent conversation status",
+            "description": "Gets the agent conversation status.",
+            "operationId": "GetAgentConversation",
+            "consumes": [],
+            "produces": [
+              "application/json",
+              "text/json"
+            ],
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "name": "conversationId",
+                "in": "path",
+                "x-ms-summary": "Conversation id",
+                "description": "The conversation id.",
+                "type": "string",
+                "required": true
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "OK",
+                "schema": {
+                  "$ref": "#/definitions/AgentNodeResult"
+                }
+              },
+              "202": {
+                "description": "Accepted"
+              },
+              "default": {
+                "description": "Operation Failed."
+              }
+            },
+            "deprecated": false,
+            "x-ms-visibility": "internal",
+            "externalDocs": {
+              "url": "https://docs.microsoft.com/connectors/agentnode/#gets-agent-conversation-status"
+            }
+          }
+        },
+        "/{connectionId}/powerautomate/agentnodes/inline/models": {},
+        "/{connectionId}/copilotflows/agentnodes/published/conversations": {
+          "post": {
+            "tags": [
+              "InvokeAgent",
+              "Invoke Agent",
+              "RunAgent",
+              "Run Agent"
+            ],
+            "responses": {
+              "201": {
+                "description": "Accepted",
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "string",
+                      "x-ms-summary": "Agent Response"
+                    },
+                    "structuredOutput": {
+                      "type": "object",
+                      "x-ms-summary": "Output properties",
+                      "description": "Structured output extracted from the agent response.",
+                      "x-ms-dynamic-schema": {
+                        "operationId": "GetOutputSchema_V2",
+                        "parameters": {
+                          "outputSchema": {
+                            "parameter": "outputSchema"
+                          }
+                        },
+                        "value-path": "outputSchema"
+                      },
+                      "x-ms-dynamic-properties": {
+                        "operationId": "GetOutputSchema_V2",
+                        "parameters": {
+                          "body/outputSchema": {
+                            "parameterReference": "body/outputSchema"
+                          }
+                        },
+                        "itemValuePath": "outputSchema"
+                      }
+                    },
+                    "files": {
+                      "$ref": "#/definitions/AgentGeneratedFiles"
+                    }
+                  }
+                }
+              },
+              "default": {
+                "description": "Failed"
+              }
+            },
+            "operationId": "InvokeAgent_V2",
+            "x-ms-retry-policy": {
+              "type": "none"
+            },
+            "summary": "Run an agent (V2)",
+            "description": "Runs the specified agent with the provided prompt and waits for the agent to complete before continuing.",
+            "x-ms-visibility": "internal",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "name": "body",
+                "in": "body",
+                "required": true,
+                "x-ms-visibility": "important",
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "agentId": {
+                      "type": "string",
+                      "x-ms-visibility": "important",
+                      "description": "Select an agent",
+                      "x-ms-summary": "Agent",
+                      "x-ms-dynamic-values": {
+                        "operationId": "ListAgents",
+                        "parameters": {},
+                        "value-collection": "agents",
+                        "value-path": "agentId",
+                        "value-title": "agentName"
+                      }
+                    },
+                    "prompt": {
+                      "type": "string",
+                      "x-ms-visibility": "important",
+                      "description": "This message will be sent to the agent to start its run",
+                      "x-ms-summary": "Message"
+                    },
+                    "outputSchema": {
+                      "type": "object",
+                      "x-ms-summary": "Output Properties Schema",
+                      "x-ms-visibility": "important",
+                      "description": "Specify a schema to structure the response and use output properties as dynamic content in the workflow. By default, the agent response is plain text."
+                    }
+                  },
+                  "required": [
+                    "prompt",
+                    "agentId"
+                  ]
+                },
+                "x-ms-summary": "Execute Agent body",
+                "description": "Execute Agent body"
+              }
+            ],
+            "deprecated": false,
+            "x-ms-api-annotation": {
+              "status": "Preview",
+              "family": "InvokeAgentV2",
+              "revision": 1
+            },
+            "externalDocs": {
+              "url": "https://docs.microsoft.com/connectors/agentnode/#run-an-agent-(v2)"
+            }
+          }
+        },
+        "/{connectionId}/copilotflows/agentnodes/published/conversations/{conversationId}": {
+          "get": {
+            "tags": [
+              "GetConversationStatus"
+            ],
+            "summary": "Gets conversation status (V2)",
+            "description": "Gets the conversation status.",
+            "operationId": "GetConversationStatus_V2",
+            "consumes": [],
+            "produces": [
+              "application/json",
+              "text/json"
+            ],
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "name": "conversationId",
+                "in": "path",
+                "x-ms-summary": "Run id",
+                "description": "The run id.",
+                "type": "string",
+                "required": true
+              },
+              {
+                "name": "x-ms-action-tracking-id",
+                "in": "header",
+                "x-ms-summary": "Action Tracking Id",
+                "description": "The triggering workflow action tracking id for correlation.",
+                "type": "string",
+                "required": false,
+                "x-ms-visibility": "internal"
+              },
+              {
+                "name": "x-ms-workflow-run-id",
+                "in": "header",
+                "x-ms-summary": "Workflow Run Id",
+                "description": "The triggering workflow run id for correlation.",
+                "type": "string",
+                "required": false,
+                "x-ms-visibility": "internal"
+              },
+              {
+                "name": "x-ms-workflow-name",
+                "in": "header",
+                "x-ms-summary": "Workflow Name",
+                "description": "The triggering workflow name for correlation.",
+                "type": "string",
+                "required": false,
+                "x-ms-visibility": "internal"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "OK"
+              },
+              "202": {
+                "description": "Accepted"
+              },
+              "default": {
+                "description": "Operation Failed."
+              }
+            },
+            "deprecated": false,
+            "x-ms-visibility": "internal",
+            "x-ms-api-annotation": {
+              "status": "Preview",
+              "family": "GetConversationStatus",
+              "revision": 2
+            },
+            "externalDocs": {
+              "url": "https://docs.microsoft.com/connectors/agentnode/#gets-conversation-status-(v2)"
+            }
+          },
+          "delete": {
+            "tags": [
+              "CancelConversation"
+            ],
+            "summary": "Cancel conversation (V2)",
+            "description": "Cancels a conversation.",
+            "operationId": "CancelConversation_V2",
+            "consumes": [],
+            "produces": [
+              "application/json",
+              "text/json"
+            ],
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "name": "conversationId",
+                "in": "path",
+                "x-ms-summary": "Conversation id",
+                "description": "The conversation id.",
+                "type": "string",
+                "required": true
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "OK"
+              },
+              "default": {
+                "description": "Operation Failed."
+              }
+            },
+            "deprecated": false,
+            "x-ms-visibility": "internal",
+            "x-ms-api-annotation": {
+              "status": "Preview",
+              "family": "CancelConversation",
+              "revision": 2
+            },
+            "externalDocs": {
+              "url": "https://docs.microsoft.com/connectors/agentnode/#cancel-conversation-(v2)"
+            }
+          }
+        },
+        "/{connectionId}/copilotflows/agentnodes/published/conversations/{conversationId}/hitl/{rfiId}": {
+          "post": {
+            "tags": [
+              "SubmitHitlResponse"
+            ],
+            "summary": "Submit HITL response (V2)",
+            "description": "Submits a human-in-the-loop response for a conversation that is waiting for user input.",
+            "operationId": "SubmitHitlResponse_V2",
+            "x-ms-retry-policy": {
+              "type": "none"
+            },
+            "consumes": [
+              "application/json"
+            ],
+            "produces": [
+              "application/json"
+            ],
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "name": "conversationId",
+                "in": "path",
+                "x-ms-summary": "Conversation ID",
+                "description": "The conversation identifier.",
+                "type": "string",
+                "required": true
+              },
+              {
+                "name": "rfiId",
+                "in": "path",
+                "x-ms-summary": "RFI ID",
+                "description": "The RFI (Request for Information) identifier.",
+                "type": "string",
+                "required": true
+              },
+              {
+                "name": "body",
+                "in": "body",
+                "required": true,
+                "x-ms-summary": "HITL Response",
+                "description": "The human-in-the-loop response payload.",
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "responseContent": {
+                      "type": "string",
+                      "description": "The customer's response content.",
+                      "x-ms-summary": "Response Content"
+                    }
+                  },
+                  "required": [
+                    "responseContent"
+                  ]
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Response successfully submitted"
+              },
+              "400": {
+                "description": "Bad Request - Customer response content is missing or HITL ID does not match"
+              },
+              "409": {
+                "description": "Conflict"
+              },
+              "default": {
+                "description": "Operation Failed."
+              }
+            },
+            "deprecated": false,
+            "x-ms-visibility": "internal",
+            "x-ms-api-annotation": {
+              "status": "Preview",
+              "family": "SubmitHitlResponse",
+              "revision": 2
+            },
+            "externalDocs": {
+              "url": "https://docs.microsoft.com/connectors/agentnode/#submit-hitl-response-(v2)"
+            }
+          }
+        },
+        "/{connectionId}/copilotflows/agentnodes/published/outputSchema": {
+          "post": {
+            "operationId": "GetOutputSchema_V2",
+            "summary": "Get output schema (V2)",
+            "description": "Returns the output schema for dynamic schema resolution at design time.",
+            "x-ms-visibility": "internal",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "name": "body",
+                "in": "body",
+                "required": true,
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "outputSchema": {
+                      "type": "object",
+                      "description": "The output schema definition"
+                    }
+                  }
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "OK",
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "outputSchema": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            },
+            "deprecated": false,
+            "x-ms-api-annotation": {
+              "status": "Preview",
+              "family": "GetOutputSchema",
+              "revision": 2
+            },
+            "externalDocs": {
+              "url": "https://docs.microsoft.com/connectors/agentnode/#get-output-schema-(v2)"
+            }
+          }
+        }
+      },
+      "definitions": {
+        "AgentGeneratedFile": {
+          "type": "object",
+          "x-ms-content-hint": "FILE",
+          "required": [
+            "name",
+            "contentBytes"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "x-ms-summary": "File name",
+              "description": "Name of the generated file."
+            },
+            "contentType": {
+              "type": "string",
+              "x-ms-summary": "File content type",
+              "description": "MIME type of the generated file."
+            },
+            "contentBytes": {
+              "type": "string",
+              "format": "byte",
+              "x-ms-summary": "File content",
+              "description": "Binary content of the generated file."
+            }
+          }
+        },
+        "AgentGeneratedFiles": {
+          "type": "array",
+          "x-ms-summary": "Generated files",
+          "description": "Ordered files generated by the agent during this run.",
+          "items": {
+            "$ref": "#/definitions/AgentGeneratedFile"
+          }
+        },
+        "AgentNodeResult": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "Text returned by the agent."
+            },
+            "structuredOutput": {
+              "type": "object",
+              "additionalProperties": true,
+              "description": "Structured output returned by the agent."
+            },
+            "activities": {
+              "type": "array",
+              "description": "Raw activities returned by the agent runtime.",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            },
+            "files": {
+              "$ref": "#/definitions/AgentGeneratedFiles"
+            }
+          }
+        },
+        "ListAgentsResponse": {
+          "type": "object",
+          "properties": {
+            "entities": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "moreRecords": {
+              "type": "boolean",
+              "example": false
+            }
+          }
+        },
+        "ListInlineAgentModelsResponse": {
+          "type": "object",
+          "properties": {
+            "models": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "modelId": {
+                    "type": "string"
+                  },
+                  "modelName": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "x-ms-capabilities": {
+        "testConnection": {
+          "operationId": "TestConnection",
+          "parameters": {}
+        }
+      },
+      "externalDocs": {
+        "url": "https://docs.microsoft.com/connectors/agentnode"
+      },
+      "basePath": "/connectors/runtime/invoke/scalegroups/usa002/shards/01/apis/agentnode/connections/"
+    },
+    "runtimeUrls": [
+      "https://b17908ad6b6beefb98bc79cc7e20ab.08.environment.api.powerplatform.com/connectors/runtime/invoke/scalegroups/usa002/shards/01/apis/agentnode/connections/"
+    ],
+    "primaryRuntimeUrl": "https://b17908ad6b6beefb98bc79cc7e20ab.08.environment.api.powerplatform.com/connectors/runtime/invoke/scalegroups/usa002/shards/01/apis/agentnode/connections/",
+    "doNotUseApiHubNetRuntimeUrl": "https://b17908ad-6b6b-eefb-98bc-79cc7e20ab08.01.common.usa002.azure-apihub.net/apim/agentnode",
+    "metadata": {
+      "source": "marketplace",
+      "brandColor": "#0066FF",
+      "allowSharing": false,
+      "hideKey": "AgentNodeHideKey",
+      "useNewApimVersion": "true",
+      "version": {
+        "previous": "releases/v1.0.1825\\1.0.1825.4855",
+        "current": "releases/v1.0.1826\\1.0.1826.4868"
+      }
+    },
+    "capabilities": [
+      "actions"
+    ],
+    "interfaces": {},
+    "description": "Run an agent as part of a Workflow",
+    "createdTime": "2026-02-11T18:14:25.4613076Z",
+    "changedTime": "2026-08-31T17:15:30.843754Z",
+    "releaseTag": "Preview",
+    "tier": "Standard",
+    "publisher": "Microsoft",
+    "rateLimit": 0,
+    "apiVersion": "None"
+  }
+}

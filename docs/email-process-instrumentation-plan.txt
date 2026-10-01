@@ -1,0 +1,357 @@
+GRAVITY BANK EMAIL PROCESS INSTRUMENTATION
+Proposed design - not implemented
+Prepared 1 October 2026
+
+DECISION IN BRIEF
+
+Start with Dataverse as the business-process ledger: two standard tables, one
+small server-side writer API, and thin adapters in workflows, agent/tool
+wrappers and the Studio. Add Application Insights later if deeper technical
+diagnostics justify it. Do not require Azure infrastructure for the first demo.
+
+Use a full GUID TraceId as the common correlation key. InternetMessageId is a
+secondary, mailbox-scoped ingestion identity, not the only process identifier.
+This lets us correlate composition, AI generation and dispatch before Exchange
+has assigned a message ID, then join receipt and processing to the same trace.
+
+The Studio remains a client of the ledger. It does not derive completed stages
+from agent prose, an open case, mailbox samples or the absence of an error.
+
+1. SCOPE AND BOUNDARIES
+
+Target: smc-diamond-service / RetailFinanceDemo solution, existing rfd publisher.
+Confirm the solution, publisher, environment and roles before implementation.
+Incoming communication: help@diax47618638.onmicrosoft.com only.
+demo.customer supplies customer sender aliases; it is not a monitored Inbox.
+
+Instrument actual execution boundaries, not an assumed six-step sequence:
+Mailbox -> Identify -> Classify -> Route -> Act -> Human review.
+Identification may happen inside an agent/tool call, stages may be skipped,
+actions may run in parallel and human review may happen much later.
+
+Nothing in this proposal provisions tables, changes flows/agents, enables
+telemetry exports, changes permissions or sends emails. The current pipeline
+formatting fix was published separately as v0.1.3; instrumentation remains
+a proposal and has not been implemented.
+
+2. CORRELATION: THREE DISTINCT IDENTITIES
+
+TraceId: full GUID for one incoming message's processing, including any Studio
+pre-send work for that message. Use the existing full draft GUID where possible.
+BatchId: a separate full GUID grouping a bulk evaluation run; not a message ID.
+SpanId: full GUID for a particular operation, with optional ParentSpanId.
+
+For Studio-generated tests:
+- Register the trace before dispatch, with expected sender/target references.
+- Use a non-sensitive subject marker such as [GB-STUDIO:<full TraceId>].
+- Preserve that marker separately from the editable subject and include the
+  final marked subject in the exact send preview. The current eight-character
+  draft suffix is not the canonical trace key.
+- SendEmailV2 acknowledgement means accepted/submitted, not received/delivered.
+  It returns no message ID. Record dispatch status, then attach InternetMessageId
+  when the Help trigger receives the message.
+- Resolve a registered marker only in the expected environment/mailbox and
+  sender context. A marker is correlation metadata, never customer identity or
+  authority to perform a financial action.
+- A trace already bound to a different transport message must not be overwritten
+  merely because another email carries its marker. Flag the reused marker and
+  create/link a separate message trace as appropriate.
+
+For external mail:
+- The first receipt obtains or creates a TraceId from its ingestion identity.
+- Duplicate trigger deliveries retain that TraceId; execution attempts remain
+  separately visible.
+- Replies/forwards have their own message identities. Link ParentTraceId through
+  known In-Reply-To/References when available, and group related traces by case.
+  Do not collapse a conversation into a single intake record.
+
+Keep Outlook/Graph message.id as a locator, not the primary join key: default
+Graph IDs can change when a message moves. conversationId groups a conversation,
+not individual messages or business operations.
+
+3. SAFE INGESTION KEY
+
+Have the server-side writer compute:
+
+  SHA-256(length-prefixed UTF-8 encoding of:
+    "v1", Dataverse organisation ID, "help-inbox", InternetMessageId)
+
+Represent the result as 64 lowercase hexadecimal characters.
+
+Use the exact received InternetMessageId with only surrounding whitespace
+trimmed; preserve case and brackets. Keep raw IDs in restricted Dataverse
+metadata, never silently truncate them. The logical mailbox key is fixed in
+server configuration, not accepted from an arbitrary caller.
+
+Put a unique alternate key on IngestKey. Raw message IDs contain characters
+that are troublesome for key-addressed Dataverse GET/PATCH; hex also avoids
+depending on case-insensitive string comparisons for case-preserved IDs.
+Wait for the alternate-key index to become Active before accepting traffic.
+
+If InternetMessageId is absent, explicitly mark weak correlation and retain
+the available source locator and execution reference for reconciliation. Do
+not hash an empty ID or claim the fallback is stable across moves/replays.
+
+Hashing belongs in the shared server writer. Do not invent a Power Automate
+sha256() expression or duplicate canonicalisation in three implementations.
+
+4. MINIMUM DATA MODEL
+
+Process table (proposed rfd_emailprocess):
+  Primary row GUID = canonical TraceId.
+  IngestKey, raw InternetMessageId, logical source mailbox.
+  BatchId, ParentTraceId, isTest, expected category/outcome codes.
+  ReceivedUtc, latest observed event time, instrumented/coverage version.
+  Current business state, observed stage milestones, validated category.
+  Optional customer/case references and measured/estimated cost summaries.
+
+This is a compact, synchronously maintained projection for the Studio, not
+the authoritative history. Do not use delayed Dataverse rollup columns for
+the near-real-time counters.
+
+Event table (proposed rfd_emailprocessevent):
+  Primary row GUID = stable EventId; Process lookup.
+  SpanId, optional ParentSpanId, execution/run reference, attempt number.
+  Producer kind, logical stage, event type and actual outcome.
+  OccurredUtc, server CreatedOn/recorded time, measured operation duration.
+  Sanitized error code/category and allowlisted operation/model references.
+  Optional case/customer references and provider-reported usage/cost provenance.
+
+Events are append-only. Each event may reference a case: one message can create
+several cases and several messages can belong to one case. A single "case
+lookup on every message" is not sufficient to describe all those relationships.
+
+Indexes: unique Process IngestKey; Event Process + time; batch, received time,
+current business state and case reference where the real queries require them.
+Avoid extra dimension tables, event buses and an Azure warehouse initially.
+
+5. ONE WRITE CONTRACT, ONE SERVER IMPLEMENTATION
+
+Proposed global Dataverse Custom API Action:
+  rfd_RecordEmailProcessEvent(envelope) -> TraceId, EventId, applied/already-recorded.
+
+A small synchronous plug-in:
+- Authenticates/authorises the caller and validates a versioned allowlist.
+- Resolves/registers the canonical trace and computes the ingestion hash.
+- Appends a new event or acknowledges an identical existing EventId.
+- Rejects reuse of an EventId with different content.
+- Updates the Process projection using concurrency and transition guards.
+- Stamps server-recorded time and authenticated caller identity.
+
+The transaction covers these telemetry writes only. It cannot make an Outlook
+send or an existing banking action atomic with logging.
+
+Use unique keys, safe upsert/retrieve operations and optimistic concurrency.
+Do not catch a Dataverse transaction fault inside the plug-in and keep using
+the aborted transaction; the producer retries the complete writer request.
+
+Cloud flows call the standard Microsoft Dataverse connector's Perform an
+unbound action (Premium). Agent tools can use a thin solution flow wrapper
+around that same action. The Studio uses a generated Dataverse API service:
+Microsoft documents this for SDK 1.1.1+, and the installed SDK is 1.5.0.
+Make the API discoverable while restricting its execution through roles.
+
+No direct browser HTTP endpoint, embedded credential or second Azure backend
+is needed. A child logging flow alone is not directly callable by the Code App:
+child flows use a manual trigger, whereas Code App flow integration requires a
+solution-aware Power Apps-triggered instant flow. The shared API avoids that
+adapter split and centralises hashing, idempotency and projection rules.
+
+6. EVENT ENVELOPE
+
+Example structure; identifiers/times below are placeholders, not live data:
+
+  {
+    "schemaVersion": 1,
+    "traceId": "<full GUID, optional on first external receipt>",
+    "eventId": "<stable GUID allocated before the logging request>",
+    "spanId": "<operation GUID>",
+    "parentSpanId": "<parent operation GUID or null>",
+    "executionId": "<workflow run / agent invocation / app session reference>",
+    "producer": "workflow",
+    "stage": "classify",
+    "eventType": "completed",
+    "attempt": 1,
+    "occurredAtUtc": "<captured UTC timestamp>",
+    "durationMs": 1380,
+    "outcome": "succeeded",
+    "caseId": null,
+    "errorCode": null
+  }
+
+Stages include draft_generation/dispatch plus the six business stages.
+Kinds include started, completed, failed, skipped and explicit handoff/review
+events. Optional predicted categories are validated against the real flow's
+output schema; expected test categories remain distinct.
+
+Capture EventId, SpanId and occurrence time once, outside connector retry
+expressions. Retries of the same telemetry write reuse those values; genuine
+business retries get a new span/attempt. Store provider usage only when reported.
+Unknown token counts or costs are null, not fabricated zeros.
+
+7. WHERE THE CALLS GO
+
+Workflows:
+- At the Help trigger, resolve the TraceId and record mailbox.received.
+- Carry TraceId through variables and explicit child-flow/action inputs.
+- Wrap Classify_Email and each real switch-branch operation with start and
+  completed/failed events; use Scopes and Run after for error paths.
+- Include real workflow definition/run references and capture the operation
+  timestamps around the work, not around logging latency.
+
+Agents:
+- The parent host records invocation start/end/error and validates structured
+  outputs before recording outcomes.
+- Instrument actual customer-lookup, routing, case-write and servicing tool
+  wrappers; bind trusted correlation context into required wrapper inputs.
+- Never rely on the LLM remembering to call a logging tool or producing IDs.
+- Keep the generation-only agent tool-free: instrument its Studio host wrapper.
+- If inner tool boundaries cannot yet be observed, record the outer agent span
+  honestly. Do not manufacture identify/classify timings from one opaque call.
+- Do not assume inline agentnode definitions inherit saved-agent Insights
+  settings or native connected-agent correlation.
+
+Apps and human review:
+- A telemetry.ts adapter calls the generated writer service around AI
+  generation, confirmed dispatch and actual review updates.
+- Reconcile dispatch with Help receipt; keep accepted/unknown/received separate.
+- Log review opened/started/saved and the actual case action. Saving a note or
+  setting On Hold does not mean the case is resolved.
+- Resolve applicable trace/case links rather than picking the first message
+  on a case. Model-driven or agent-originated changes need their own wrapper
+  or a carefully scoped Dataverse event hook if they bypass the Studio.
+- Page-open time is not employee handling time. Measure active review only
+  with an explicit session definition; otherwise keep handling time estimated.
+
+8. RELIABILITY WITHOUT CHANGING BUSINESS BEHAVIOUR
+
+Use bounded retries/backoff for idempotent telemetry writes. Ignore duplicate
+events only after confirming the same persisted payload; retain distinct run
+attempts. Prevent late start events from regressing completed projections and
+represent parallel/partial work explicitly.
+
+Default demo diagnostics should fail open: a telemetry outage must not silently
+prevent customer handling. Surface gaps through app health/native workflow error
+handling and reconcile failed writes where possible. Do not silently swallow
+logging failures or represent incomplete coverage as a measured success rate.
+
+A fail-open event ledger is not a lossless regulated audit. Financial-record
+auditing and any required durable outbox/acknowledgement policy are separate.
+Also, logging deduplication does not make sending, case creation or servicing
+exactly-once. A processing guard/business-action idempotency policy needs a
+separate explicit decision before introducing it into the existing workflow.
+
+9. STUDIO READ MODEL AND METRICS
+
+Poll compact Process projections around every 10 seconds, using modified-time
+filters and paging. Fetch Events only for selected trace drill-downs. At larger
+volumes, add a server-side summary read rather than downloading all events.
+
+Provide:
+- Per-message timeline and real flow/tool/case links.
+- Distinct message throughput; separate tool-call, attempt and case counts.
+- Measured stage duration and p50/p95; intake delay versus active processing.
+- Explicit human-review backlog/age and separate waiting/handling duration.
+- Failure, retry, skipped-stage and incomplete-instrumentation indicators.
+- Expected versus observed category/outcome for registered test messages.
+- Actual provider usage where exposed; otherwise clearly estimated running cost.
+- Savings relative to editable manual baselines, not asserted realised savings.
+
+A successful flow run is not automatically a completed customer request.
+Keep waiting_review until an observed, defined business review outcome exists.
+Align funnel counts to the same received-message cohort and label current
+backlog snapshots separately. Unobserved stages remain unknown, not zero.
+Historical rows reconstructed later must be labelled imported/partial history.
+
+10. WHY NOT APPLICATION INSIGHTS FIRST?
+
+Dataverse already supplies the app's data/security/connector path and supports
+queryable, unsampled business-event rows committed before the next UI poll.
+
+Application Insights is excellent for platform performance, exceptions,
+dependencies and distributed diagnostic traces. But Azure provisioning/access,
+ingestion/retention cost and licensing need consideration. Native cloud-flow
+export has a documented delivery SLA of 24 hours and is not transactional or
+lossless; it is not the Studio's near-real-time business source.
+
+Later, send selected sanitized diagnostics with TraceId/SpanId and source
+references in custom dimensions. Map to standard distributed tracing where the
+producer supports it; never assume a custom GUID field automatically becomes
+operation_Id or propagates through connector/agent boundaries.
+
+Do not duplicate the full business ledger. Review Managed Environment/Premium
+requirements for native exports, previews and which payload fields are exported
+before enabling anything. Native agent exports can include prompts, outputs,
+tool arguments and user identifiers; they are not privacy-safe by assumption.
+
+11. PRIVACY, CAPACITY AND RETENTION
+
+Allowlist IDs, stages, outcomes, timestamps, durations and sanitized error codes.
+Do not record email bodies/subjects, prompts, reasoning, OCR/attachment content,
+card/account numbers, credentials or raw free-text errors.
+
+Restrict raw InternetMessageId and any customer/case references through the
+Dataverse security model. No raw message IDs or personal data in Insights.
+Limit callers to the writer; no direct event update/delete privileges for
+ordinary producers. Retention is a separate admin permission.
+
+Proposed demo retention: 90 days of events, then review measured storage and
+reporting needs; retain process summaries only under an agreed policy.
+As a sizing example, 5,000 messages/month at 12-20 events/message means
+60,000-100,000 event rows/month, before retries. Measure actual rows/request
+overhead and capacity; do not invent a per-event monetary rate.
+
+12. INCREMENTAL IMPLEMENTATION
+
+1. Inventory the real flow branches, agent invocations/tools and case updates.
+   Define business completion, required versus optional stages, role access,
+   missing-ID policy and representative retry/replay examples.
+2. Add the two standard tables, active uniqueness index and writer API to the
+   approved solution. Generate the Studio API service. Prove an App event and
+   flow event round-trip to one trace before broad wiring.
+3. Instrument Help intake, outer classifier/handler calls, Studio generation
+   and dispatch. Query a single trace end to end. Then add tool and human-review
+   boundaries, including paths outside the Studio that need observation.
+4. Connect the Studio projection/timeline views and measured/estimated cost
+   labels. Pilot controlled messages, then decide whether Insights closes a
+   demonstrated diagnostic gap.
+
+Acceptance checks:
+- One test joins app -> Help -> flow -> agent/tool -> case/review with one TraceId.
+- Different emails in one conversation remain distinct linked traces.
+- Duplicate intake and duplicate telemetry writes do not inflate message/events.
+- Separate processing attempts remain visible; business actions are not silently
+  retried just because logging failed.
+- Replay/out-of-order events do not regress final projections.
+- An agent success claim without a confirmed tool result is not an action success.
+- Missing IDs, writer outages, stuck spans and waiting review are visible.
+- No sensitive payload or unintended mailbox polling reaches the stores.
+- Counts reconcile under a stated cohort/coverage policy and remain responsive.
+
+PUBLIC REFERENCES
+
+Code Apps Dataverse actions/functions:
+https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/add-dataverse-action-function
+Dataverse Custom API:
+https://learn.microsoft.com/en-us/power-apps/developer/data-platform/custom-api
+Unbound action from Power Automate:
+https://learn.microsoft.com/en-us/power-automate/dataverse/bound-unbound
+Dataverse alternate-key constraints:
+https://learn.microsoft.com/en-us/power-apps/developer/data-platform/define-alternate-keys-entity
+Graph message identifiers and immutable IDs:
+https://learn.microsoft.com/en-us/graph/api/resources/message?view=graph-rest-1.0
+https://learn.microsoft.com/en-us/graph/outlook-immutable-id
+Outlook connector limitations:
+https://learn.microsoft.com/en-us/connectors/office365/
+Cloud-flow Insights telemetry and export prerequisites:
+https://learn.microsoft.com/en-us/power-platform/admin/app-insights-cloud-flow
+https://learn.microsoft.com/en-us/power-platform/admin/set-up-export-application-insights
+Agent telemetry limitations/privacy:
+https://learn.microsoft.com/en-us/microsoft-copilot-studio/telemetry-overview
+https://learn.microsoft.com/en-us/microsoft-copilot-studio/advanced-environment-level-agent-telemetry
+Child flow / Code Apps flow integration:
+https://learn.microsoft.com/en-us/power-automate/create-child-flows
+https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/add-flows
+Dataverse transactions / concurrency:
+https://learn.microsoft.com/en-us/power-apps/developer/data-platform/scalable-customization-design/database-transactions
+https://learn.microsoft.com/en-us/power-apps/developer/data-platform/optimistic-concurrency

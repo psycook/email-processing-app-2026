@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Gravity Bank">
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="#11151C"/>
+  <ellipse cx="32" cy="32" rx="25" ry="10.5" transform="rotate(-26 32 32)" fill="none" stroke="#B8A9FF" stroke-width="1.6" opacity="0.6"/>
+  <path d="M42 26 A12 12 0 1 0 43 38 L43 32 L34 32" fill="none" stroke="#D7FF3F" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="51.8" cy="20.5" r="2.7" fill="#D7FF3F"/>
+</svg>

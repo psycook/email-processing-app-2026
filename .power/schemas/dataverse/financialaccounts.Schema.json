@@ -1,0 +1,1268 @@
+{
+  "name": "rfd_financialaccount",
+  "title": "Financial Accounts",
+  "schema": {
+    "type": "array",
+    "items": {
+      "type": "object",
+      "x-ms-dataverse-entity": true,
+      "x-ms-dataverse-entityset": "rfd_financialaccounts",
+      "x-ms-dataverse-primary-id": "rfd_financialaccountid",
+      "x-ms-dataverse-primary-name": "rfd_name",
+      "properties": {
+        "createdby": {
+          "type": "string",
+          "title": "Created By",
+          "x-ms-dataverse-attribute": "createdby",
+          "x-ms-dataverse-type": "LookupType",
+          "x-ms-schema-name": "CreatedBy",
+          "x-ms-read-only": true
+        },
+        "createdbyname": {
+          "type": "string",
+          "title": "createdbyname",
+          "x-ms-dataverse-attribute": "createdbyname",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "CreatedByName",
+          "x-ms-read-only": true,
+          "maxLength": 100
+        },
+        "createdbyyominame": {
+          "type": "string",
+          "title": "createdbyyominame",
+          "x-ms-dataverse-attribute": "createdbyyominame",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "CreatedByYomiName",
+          "x-ms-read-only": true,
+          "required": true,
+          "maxLength": 100
+        },
+        "createdon": {
+          "type": "string",
+          "title": "Created On",
+          "x-ms-dataverse-attribute": "createdon",
+          "x-ms-dataverse-type": "DateTimeType",
+          "x-ms-schema-name": "CreatedOn",
+          "x-ms-read-only": true
+        },
+        "createdonbehalfby": {
+          "type": "string",
+          "title": "Created By (Delegate)",
+          "x-ms-dataverse-attribute": "createdonbehalfby",
+          "x-ms-dataverse-type": "LookupType",
+          "x-ms-schema-name": "CreatedOnBehalfBy",
+          "x-ms-read-only": true
+        },
+        "createdonbehalfbyname": {
+          "type": "string",
+          "title": "createdonbehalfbyname",
+          "x-ms-dataverse-attribute": "createdonbehalfbyname",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "CreatedOnBehalfByName",
+          "x-ms-read-only": true,
+          "maxLength": 100
+        },
+        "createdonbehalfbyyominame": {
+          "type": "string",
+          "title": "createdonbehalfbyyominame",
+          "x-ms-dataverse-attribute": "createdonbehalfbyyominame",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "CreatedOnBehalfByYomiName",
+          "x-ms-read-only": true,
+          "required": true,
+          "maxLength": 100
+        },
+        "exchangerate": {
+          "type": "string",
+          "title": "Exchange Rate",
+          "x-ms-dataverse-attribute": "exchangerate",
+          "x-ms-dataverse-type": "DecimalType",
+          "x-ms-schema-name": "ExchangeRate",
+          "x-ms-read-only": true
+        },
+        "importsequencenumber": {
+          "type": "string",
+          "title": "Import Sequence Number",
+          "x-ms-dataverse-attribute": "importsequencenumber",
+          "x-ms-dataverse-type": "IntegerType",
+          "x-ms-schema-name": "ImportSequenceNumber"
+        },
+        "modifiedby": {
+          "type": "string",
+          "title": "Modified By",
+          "x-ms-dataverse-attribute": "modifiedby",
+          "x-ms-dataverse-type": "LookupType",
+          "x-ms-schema-name": "ModifiedBy",
+          "x-ms-read-only": true
+        },
+        "modifiedbyname": {
+          "type": "string",
+          "title": "modifiedbyname",
+          "x-ms-dataverse-attribute": "modifiedbyname",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "ModifiedByName",
+          "x-ms-read-only": true,
+          "maxLength": 100
+        },
+        "modifiedbyyominame": {
+          "type": "string",
+          "title": "modifiedbyyominame",
+          "x-ms-dataverse-attribute": "modifiedbyyominame",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "ModifiedByYomiName",
+          "x-ms-read-only": true,
+          "required": true,
+          "maxLength": 100
+        },
+        "modifiedon": {
+          "type": "string",
+          "title": "Modified On",
+          "x-ms-dataverse-attribute": "modifiedon",
+          "x-ms-dataverse-type": "DateTimeType",
+          "x-ms-schema-name": "ModifiedOn",
+          "x-ms-read-only": true
+        },
+        "modifiedonbehalfby": {
+          "type": "string",
+          "title": "Modified By (Delegate)",
+          "x-ms-dataverse-attribute": "modifiedonbehalfby",
+          "x-ms-dataverse-type": "LookupType",
+          "x-ms-schema-name": "ModifiedOnBehalfBy",
+          "x-ms-read-only": true
+        },
+        "modifiedonbehalfbyname": {
+          "type": "string",
+          "title": "modifiedonbehalfbyname",
+          "x-ms-dataverse-attribute": "modifiedonbehalfbyname",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "ModifiedOnBehalfByName",
+          "x-ms-read-only": true,
+          "maxLength": 100
+        },
+        "modifiedonbehalfbyyominame": {
+          "type": "string",
+          "title": "modifiedonbehalfbyyominame",
+          "x-ms-dataverse-attribute": "modifiedonbehalfbyyominame",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "ModifiedOnBehalfByYomiName",
+          "x-ms-read-only": true,
+          "required": true,
+          "maxLength": 100
+        },
+        "overriddencreatedon": {
+          "type": "string",
+          "title": "Record Created On",
+          "x-ms-dataverse-attribute": "overriddencreatedon",
+          "x-ms-dataverse-type": "DateTimeType",
+          "x-ms-schema-name": "OverriddenCreatedOn"
+        },
+        "ownerid": {
+          "type": "string",
+          "title": "Owner",
+          "x-ms-dataverse-attribute": "ownerid",
+          "x-ms-dataverse-type": "OwnerType",
+          "x-ms-schema-name": "OwnerId",
+          "required": true
+        },
+        "owneridname": {
+          "type": "string",
+          "title": "owneridname",
+          "x-ms-dataverse-attribute": "owneridname",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "OwnerIdName",
+          "x-ms-read-only": true,
+          "required": true,
+          "maxLength": 100
+        },
+        "owneridtype": {
+          "type": "string",
+          "title": "owneridtype",
+          "x-ms-dataverse-attribute": "owneridtype",
+          "x-ms-dataverse-type": "EntityNameType",
+          "x-ms-schema-name": "OwnerIdType",
+          "required": true
+        },
+        "owneridyominame": {
+          "type": "string",
+          "title": "owneridyominame",
+          "x-ms-dataverse-attribute": "owneridyominame",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "OwnerIdYomiName",
+          "x-ms-read-only": true,
+          "required": true,
+          "maxLength": 100
+        },
+        "owningbusinessunit": {
+          "type": "string",
+          "title": "Owning Business Unit",
+          "x-ms-dataverse-attribute": "owningbusinessunit",
+          "x-ms-dataverse-type": "LookupType",
+          "x-ms-schema-name": "OwningBusinessUnit",
+          "x-ms-read-only": true
+        },
+        "owningbusinessunitname": {
+          "type": "string",
+          "title": "owningbusinessunitname",
+          "x-ms-dataverse-attribute": "owningbusinessunitname",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "OwningBusinessUnitName",
+          "x-ms-read-only": true,
+          "required": true,
+          "maxLength": 100
+        },
+        "owningteam": {
+          "type": "string",
+          "title": "Owning Team",
+          "x-ms-dataverse-attribute": "owningteam",
+          "x-ms-dataverse-type": "LookupType",
+          "x-ms-schema-name": "OwningTeam",
+          "x-ms-read-only": true
+        },
+        "owninguser": {
+          "type": "string",
+          "title": "Owning User",
+          "x-ms-dataverse-attribute": "owninguser",
+          "x-ms-dataverse-type": "LookupType",
+          "x-ms-schema-name": "OwningUser",
+          "x-ms-read-only": true
+        },
+        "rfd_accountnumber": {
+          "type": "string",
+          "title": "Bank Account Number",
+          "x-ms-dataverse-attribute": "rfd_accountnumber",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "rfd_AccountNumber",
+          "maxLength": 34
+        },
+        "rfd_annualinterestrate": {
+          "type": "string",
+          "title": "Annual Interest Rate (%)",
+          "x-ms-dataverse-attribute": "rfd_annualinterestrate",
+          "x-ms-dataverse-type": "DecimalType",
+          "x-ms-schema-name": "rfd_AnnualInterestRate"
+        },
+        "rfd_arrearsamount": {
+          "type": "string",
+          "title": "Arrears Amount",
+          "x-ms-dataverse-attribute": "rfd_arrearsamount",
+          "x-ms-dataverse-type": "MoneyType",
+          "x-ms-schema-name": "rfd_ArrearsAmount"
+        },
+        "rfd_arrearsamount_base": {
+          "type": "string",
+          "title": "Arrears Amount (Base)",
+          "x-ms-dataverse-attribute": "rfd_arrearsamount_base",
+          "x-ms-dataverse-type": "MoneyType",
+          "x-ms-schema-name": "rfd_arrearsamount_Base",
+          "x-ms-read-only": true
+        },
+        "rfd_availablebalance": {
+          "type": "string",
+          "title": "Available Balance",
+          "x-ms-dataverse-attribute": "rfd_availablebalance",
+          "x-ms-dataverse-type": "MoneyType",
+          "x-ms-schema-name": "rfd_AvailableBalance"
+        },
+        "rfd_availablebalance_base": {
+          "type": "string",
+          "title": "Available Balance (Base)",
+          "x-ms-dataverse-attribute": "rfd_availablebalance_base",
+          "x-ms-dataverse-type": "MoneyType",
+          "x-ms-schema-name": "rfd_availablebalance_Base",
+          "x-ms-read-only": true
+        },
+        "rfd_balanceasof": {
+          "type": "string",
+          "title": "Balance As Of",
+          "x-ms-dataverse-attribute": "rfd_balanceasof",
+          "x-ms-dataverse-type": "DateTimeType",
+          "x-ms-schema-name": "rfd_BalanceAsOf"
+        },
+        "rfd_bic": {
+          "type": "string",
+          "title": "BIC / SWIFT",
+          "x-ms-dataverse-attribute": "rfd_bic",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "rfd_BIC",
+          "maxLength": 11
+        },
+        "rfd_cardexpirymonth": {
+          "type": "string",
+          "title": "Card Expiry Month",
+          "x-ms-dataverse-attribute": "rfd_cardexpirymonth",
+          "x-ms-dataverse-type": "IntegerType",
+          "x-ms-schema-name": "rfd_CardExpiryMonth"
+        },
+        "rfd_cardexpiryyear": {
+          "type": "string",
+          "title": "Card Expiry Year",
+          "x-ms-dataverse-attribute": "rfd_cardexpiryyear",
+          "x-ms-dataverse-type": "IntegerType",
+          "x-ms-schema-name": "rfd_CardExpiryYear"
+        },
+        "rfd_cardlastfour": {
+          "type": "string",
+          "title": "Card Last Four",
+          "x-ms-dataverse-attribute": "rfd_cardlastfour",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "rfd_CardLastFour",
+          "maxLength": 4
+        },
+        "rfd_cardnetwork": {
+          "type": "string",
+          "title": "Card Network",
+          "x-ms-dataverse-attribute": "rfd_cardnetwork",
+          "x-ms-dataverse-type": "PicklistType",
+          "x-ms-schema-name": "rfd_CardNetwork",
+          "enum": [
+            "Visa",
+            "Mastercard",
+            "American Express",
+            "Other"
+          ],
+          "x-ms-enum-values": [
+            100000000,
+            100000001,
+            100000002,
+            100000003
+          ],
+          "Color": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "4d0c5493-c0bc-f111-aaaf-70a8a5b10a05",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "Card Network",
+          "x-ms-optionSetType": "Picklist"
+        },
+        "rfd_cardnetworkname": {
+          "type": "string",
+          "title": "rfd_cardnetworkname",
+          "x-ms-dataverse-attribute": "rfd_cardnetworkname",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "rfd_cardnetworkName",
+          "x-ms-read-only": true
+        },
+        "rfd_cardreference": {
+          "type": "string",
+          "title": "Card System Reference",
+          "x-ms-dataverse-attribute": "rfd_cardreference",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "rfd_CardReference",
+          "maxLength": 100
+        },
+        "rfd_cardstatus": {
+          "type": "string",
+          "title": "Card Status",
+          "x-ms-dataverse-attribute": "rfd_cardstatus",
+          "x-ms-dataverse-type": "PicklistType",
+          "x-ms-schema-name": "rfd_CardStatus",
+          "enum": [
+            "Pending activation",
+            "Active",
+            "Temporarily frozen",
+            "Lost",
+            "Stolen",
+            "Expired",
+            "Replaced",
+            "Cancelled"
+          ],
+          "x-ms-enum-values": [
+            100000000,
+            100000001,
+            100000002,
+            100000003,
+            100000004,
+            100000005,
+            100000006,
+            100000007
+          ],
+          "Color": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "500c5493-c0bc-f111-aaaf-70a8a5b10a05",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "Card Status",
+          "x-ms-optionSetType": "Picklist"
+        },
+        "rfd_cardstatusname": {
+          "type": "string",
+          "title": "rfd_cardstatusname",
+          "x-ms-dataverse-attribute": "rfd_cardstatusname",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "rfd_cardstatusName",
+          "x-ms-read-only": true
+        },
+        "rfd_closedon": {
+          "type": "string",
+          "title": "Closed On",
+          "x-ms-dataverse-attribute": "rfd_closedon",
+          "x-ms-dataverse-type": "DateTimeType",
+          "x-ms-schema-name": "rfd_ClosedOn"
+        },
+        "rfd_creditlimit": {
+          "type": "string",
+          "title": "Credit Limit",
+          "x-ms-dataverse-attribute": "rfd_creditlimit",
+          "x-ms-dataverse-type": "MoneyType",
+          "x-ms-schema-name": "rfd_CreditLimit"
+        },
+        "rfd_creditlimit_base": {
+          "type": "string",
+          "title": "Credit Limit (Base)",
+          "x-ms-dataverse-attribute": "rfd_creditlimit_base",
+          "x-ms-dataverse-type": "MoneyType",
+          "x-ms-schema-name": "rfd_creditlimit_Base",
+          "x-ms-read-only": true
+        },
+        "rfd_currentbalance": {
+          "type": "string",
+          "title": "Current Balance",
+          "x-ms-dataverse-attribute": "rfd_currentbalance",
+          "x-ms-dataverse-type": "MoneyType",
+          "x-ms-schema-name": "rfd_CurrentBalance"
+        },
+        "rfd_currentbalance_base": {
+          "type": "string",
+          "title": "Current Balance (Base)",
+          "x-ms-dataverse-attribute": "rfd_currentbalance_base",
+          "x-ms-dataverse-type": "MoneyType",
+          "x-ms-schema-name": "rfd_currentbalance_Base",
+          "x-ms-read-only": true
+        },
+        "rfd_customerid": {
+          "type": "string",
+          "title": "Customer",
+          "x-ms-dataverse-attribute": "rfd_customerid",
+          "x-ms-dataverse-type": "CustomerType",
+          "x-ms-schema-name": "rfd_CustomerId",
+          "required": true
+        },
+        "rfd_customeridname": {
+          "type": "string",
+          "title": "rfd_customeridname",
+          "x-ms-dataverse-attribute": "rfd_customeridname",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "rfd_CustomerIdName",
+          "x-ms-read-only": true,
+          "maxLength": 4000
+        },
+        "rfd_customeridtype": {
+          "type": "string",
+          "title": "rfd_customeridtype",
+          "x-ms-dataverse-attribute": "rfd_customeridtype",
+          "x-ms-dataverse-type": "EntityNameType",
+          "x-ms-schema-name": "rfd_CustomerIdType"
+        },
+        "rfd_customeridyominame": {
+          "type": "string",
+          "title": "rfd_customeridyominame",
+          "x-ms-dataverse-attribute": "rfd_customeridyominame",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "rfd_CustomerIdYomiName",
+          "x-ms-read-only": true,
+          "maxLength": 4000
+        },
+        "rfd_duediligencestatus": {
+          "type": "string",
+          "title": "Product Due Diligence Status",
+          "x-ms-dataverse-attribute": "rfd_duediligencestatus",
+          "x-ms-dataverse-type": "PicklistType",
+          "x-ms-schema-name": "rfd_DueDiligenceStatus",
+          "enum": [
+            "Not assessed",
+            "Not required",
+            "Pending",
+            "Cleared",
+            "Enhanced review required",
+            "Not cleared",
+            "Expired"
+          ],
+          "x-ms-enum-values": [
+            100000000,
+            100000001,
+            100000002,
+            100000003,
+            100000004,
+            100000005,
+            100000006
+          ],
+          "Color": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "7a0c5493-c0bc-f111-aaaf-70a8a5b10a05",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "Product Due Diligence Status",
+          "x-ms-optionSetType": "Picklist"
+        },
+        "rfd_duediligencestatusname": {
+          "type": "string",
+          "title": "rfd_duediligencestatusname",
+          "x-ms-dataverse-attribute": "rfd_duediligencestatusname",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "rfd_duediligencestatusName",
+          "x-ms-read-only": true
+        },
+        "rfd_externalreference": {
+          "type": "string",
+          "title": "External Reference",
+          "x-ms-dataverse-attribute": "rfd_externalreference",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "rfd_ExternalReference",
+          "maxLength": 100
+        },
+        "rfd_financialaccountid": {
+          "type": "string",
+          "title": "Financial Account",
+          "x-ms-dataverse-attribute": "rfd_financialaccountid",
+          "x-ms-dataverse-type": "UniqueidentifierType",
+          "x-ms-schema-name": "rfd_FinancialAccountId",
+          "x-ms-dataverse-primary-id": true,
+          "required": true,
+          "x-ms-keyType": "primary"
+        },
+        "rfd_holdingnumber": {
+          "type": "string",
+          "title": "Holding Number",
+          "x-ms-dataverse-attribute": "rfd_holdingnumber",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "rfd_HoldingNumber",
+          "required": true,
+          "maxLength": 50
+        },
+        "rfd_iban": {
+          "type": "string",
+          "title": "IBAN",
+          "x-ms-dataverse-attribute": "rfd_iban",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "rfd_IBAN",
+          "maxLength": 34
+        },
+        "rfd_interestratetype": {
+          "type": "string",
+          "title": "Interest Rate Type",
+          "x-ms-dataverse-attribute": "rfd_interestratetype",
+          "x-ms-dataverse-type": "PicklistType",
+          "x-ms-schema-name": "rfd_InterestRateType",
+          "enum": [
+            "Fixed",
+            "Variable",
+            "Tracker",
+            "Introductory"
+          ],
+          "x-ms-enum-values": [
+            100000000,
+            100000001,
+            100000002,
+            100000003
+          ],
+          "Color": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "4a0c5493-c0bc-f111-aaaf-70a8a5b10a05",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "Interest Rate Type",
+          "x-ms-optionSetType": "Picklist"
+        },
+        "rfd_interestratetypename": {
+          "type": "string",
+          "title": "rfd_interestratetypename",
+          "x-ms-dataverse-attribute": "rfd_interestratetypename",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "rfd_interestratetypeName",
+          "x-ms-read-only": true
+        },
+        "rfd_isaremainingallowance": {
+          "type": "string",
+          "title": "ISA Remaining Allowance",
+          "x-ms-dataverse-attribute": "rfd_isaremainingallowance",
+          "x-ms-dataverse-type": "MoneyType",
+          "x-ms-schema-name": "rfd_ISARemainingAllowance"
+        },
+        "rfd_isaremainingallowance_base": {
+          "type": "string",
+          "title": "ISA Remaining Allowance (Base)",
+          "x-ms-dataverse-attribute": "rfd_isaremainingallowance_base",
+          "x-ms-dataverse-type": "MoneyType",
+          "x-ms-schema-name": "rfd_isaremainingallowance_Base",
+          "x-ms-read-only": true
+        },
+        "rfd_isasubscriptionsytd": {
+          "type": "string",
+          "title": "ISA Subscriptions This Tax Year",
+          "x-ms-dataverse-attribute": "rfd_isasubscriptionsytd",
+          "x-ms-dataverse-type": "MoneyType",
+          "x-ms-schema-name": "rfd_ISASubscriptionsYTD"
+        },
+        "rfd_isasubscriptionsytd_base": {
+          "type": "string",
+          "title": "ISA Subscriptions This Tax Year (Base)",
+          "x-ms-dataverse-attribute": "rfd_isasubscriptionsytd_base",
+          "x-ms-dataverse-type": "MoneyType",
+          "x-ms-schema-name": "rfd_isasubscriptionsytd_Base",
+          "x-ms-read-only": true
+        },
+        "rfd_isataxyear": {
+          "type": "string",
+          "title": "ISA Tax Year",
+          "x-ms-dataverse-attribute": "rfd_isataxyear",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "rfd_ISATaxYear",
+          "maxLength": 7
+        },
+        "rfd_isatransferreference": {
+          "type": "string",
+          "title": "ISA Transfer Reference",
+          "x-ms-dataverse-attribute": "rfd_isatransferreference",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "rfd_ISATransferReference",
+          "maxLength": 100
+        },
+        "rfd_isatransferstatus": {
+          "type": "string",
+          "title": "ISA Transfer Status",
+          "x-ms-dataverse-attribute": "rfd_isatransferstatus",
+          "x-ms-dataverse-type": "PicklistType",
+          "x-ms-schema-name": "rfd_ISATransferStatus",
+          "enum": [
+            "Not requested",
+            "Requested",
+            "In progress",
+            "Completed",
+            "Rejected",
+            "Cancelled"
+          ],
+          "x-ms-enum-values": [
+            100000000,
+            100000001,
+            100000002,
+            100000003,
+            100000004,
+            100000005
+          ],
+          "Color": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "770c5493-c0bc-f111-aaaf-70a8a5b10a05",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "ISA Transfer Status",
+          "x-ms-optionSetType": "Picklist"
+        },
+        "rfd_isatransferstatusname": {
+          "type": "string",
+          "title": "rfd_isatransferstatusname",
+          "x-ms-dataverse-attribute": "rfd_isatransferstatusname",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "rfd_isatransferstatusName",
+          "x-ms-read-only": true
+        },
+        "rfd_isatype": {
+          "type": "string",
+          "title": "ISA Type",
+          "x-ms-dataverse-attribute": "rfd_isatype",
+          "x-ms-dataverse-type": "PicklistType",
+          "x-ms-schema-name": "rfd_ISAType",
+          "enum": [
+            "Cash",
+            "Stocks and shares",
+            "Innovative finance",
+            "Lifetime cash",
+            "Lifetime stocks and shares",
+            "Junior cash",
+            "Junior stocks and shares"
+          ],
+          "x-ms-enum-values": [
+            100000000,
+            100000001,
+            100000002,
+            100000003,
+            100000004,
+            100000005,
+            100000006
+          ],
+          "Color": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "690c5493-c0bc-f111-aaaf-70a8a5b10a05",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "ISA Type",
+          "x-ms-optionSetType": "Picklist"
+        },
+        "rfd_isatypename": {
+          "type": "string",
+          "title": "rfd_isatypename",
+          "x-ms-dataverse-attribute": "rfd_isatypename",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "rfd_isatypeName",
+          "x-ms-read-only": true
+        },
+        "rfd_isflexibleisa": {
+          "type": "string",
+          "title": "Flexible ISA",
+          "x-ms-dataverse-attribute": "rfd_isflexibleisa",
+          "x-ms-dataverse-type": "BooleanType",
+          "x-ms-schema-name": "rfd_IsFlexibleISA",
+          "enum": [
+            "No",
+            "Yes"
+          ],
+          "x-ms-enum-values": [
+            0,
+            1
+          ],
+          "Color": [
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "740c5493-c0bc-f111-aaaf-70a8a5b10a05",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "Flexible ISA",
+          "x-ms-optionSetType": "Boolean"
+        },
+        "rfd_isflexibleisaname": {
+          "type": "string",
+          "title": "rfd_isflexibleisaname",
+          "x-ms-dataverse-attribute": "rfd_isflexibleisaname",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "rfd_isflexibleisaName",
+          "x-ms-read-only": true
+        },
+        "rfd_isvirtualcard": {
+          "type": "string",
+          "title": "Virtual Card",
+          "x-ms-dataverse-attribute": "rfd_isvirtualcard",
+          "x-ms-dataverse-type": "BooleanType",
+          "x-ms-schema-name": "rfd_IsVirtualCard",
+          "enum": [
+            "No",
+            "Yes"
+          ],
+          "x-ms-enum-values": [
+            0,
+            1
+          ],
+          "Color": [
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "530c5493-c0bc-f111-aaaf-70a8a5b10a05",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "Virtual Card",
+          "x-ms-optionSetType": "Boolean"
+        },
+        "rfd_isvirtualcardname": {
+          "type": "string",
+          "title": "rfd_isvirtualcardname",
+          "x-ms-dataverse-attribute": "rfd_isvirtualcardname",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "rfd_isvirtualcardName",
+          "x-ms-read-only": true
+        },
+        "rfd_lifecyclestatus": {
+          "type": "string",
+          "title": "Lifecycle Status",
+          "x-ms-dataverse-attribute": "rfd_lifecyclestatus",
+          "x-ms-dataverse-type": "PicklistType",
+          "x-ms-schema-name": "rfd_LifecycleStatus",
+          "enum": [
+            "Pending opening",
+            "Active",
+            "Restricted",
+            "Frozen",
+            "Dormant",
+            "Matured",
+            "Closed"
+          ],
+          "x-ms-enum-values": [
+            100000000,
+            100000001,
+            100000002,
+            100000003,
+            100000004,
+            100000005,
+            100000006
+          ],
+          "Color": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "2f0c5493-c0bc-f111-aaaf-70a8a5b10a05",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "Lifecycle Status",
+          "x-ms-optionSetType": "Picklist"
+        },
+        "rfd_lifecyclestatusname": {
+          "type": "string",
+          "title": "rfd_lifecyclestatusname",
+          "x-ms-dataverse-attribute": "rfd_lifecyclestatusname",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "rfd_lifecyclestatusName",
+          "x-ms-read-only": true
+        },
+        "rfd_linkedfinancialaccountid": {
+          "type": "string",
+          "title": "Linked Financial Account",
+          "x-ms-dataverse-attribute": "rfd_linkedfinancialaccountid",
+          "x-ms-dataverse-type": "LookupType",
+          "x-ms-schema-name": "rfd_LinkedFinancialAccountId"
+        },
+        "rfd_linkedfinancialaccountidname": {
+          "type": "string",
+          "title": "rfd_linkedfinancialaccountidname",
+          "x-ms-dataverse-attribute": "rfd_linkedfinancialaccountidname",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "rfd_LinkedFinancialAccountIdName",
+          "x-ms-read-only": true,
+          "maxLength": 200
+        },
+        "rfd_maturitydate": {
+          "type": "string",
+          "title": "Maturity Date",
+          "x-ms-dataverse-attribute": "rfd_maturitydate",
+          "x-ms-dataverse-type": "DateTimeType",
+          "x-ms-schema-name": "rfd_MaturityDate"
+        },
+        "rfd_name": {
+          "type": "string",
+          "title": "Financial Account Name",
+          "x-ms-dataverse-attribute": "rfd_name",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "rfd_Name",
+          "x-ms-dataverse-primary-name": true,
+          "required": true,
+          "maxLength": 200
+        },
+        "rfd_nextpaymentamount": {
+          "type": "string",
+          "title": "Next Payment Amount",
+          "x-ms-dataverse-attribute": "rfd_nextpaymentamount",
+          "x-ms-dataverse-type": "MoneyType",
+          "x-ms-schema-name": "rfd_NextPaymentAmount"
+        },
+        "rfd_nextpaymentamount_base": {
+          "type": "string",
+          "title": "Next Payment Amount (Base)",
+          "x-ms-dataverse-attribute": "rfd_nextpaymentamount_base",
+          "x-ms-dataverse-type": "MoneyType",
+          "x-ms-schema-name": "rfd_nextpaymentamount_Base",
+          "x-ms-read-only": true
+        },
+        "rfd_nextpaymentdate": {
+          "type": "string",
+          "title": "Next Payment Date",
+          "x-ms-dataverse-attribute": "rfd_nextpaymentdate",
+          "x-ms-dataverse-type": "DateTimeType",
+          "x-ms-schema-name": "rfd_NextPaymentDate"
+        },
+        "rfd_openedon": {
+          "type": "string",
+          "title": "Opened On",
+          "x-ms-dataverse-attribute": "rfd_openedon",
+          "x-ms-dataverse-type": "DateTimeType",
+          "x-ms-schema-name": "rfd_OpenedOn"
+        },
+        "rfd_originalprincipal": {
+          "type": "string",
+          "title": "Original Principal",
+          "x-ms-dataverse-attribute": "rfd_originalprincipal",
+          "x-ms-dataverse-type": "MoneyType",
+          "x-ms-schema-name": "rfd_OriginalPrincipal"
+        },
+        "rfd_originalprincipal_base": {
+          "type": "string",
+          "title": "Original Principal (Base)",
+          "x-ms-dataverse-attribute": "rfd_originalprincipal_base",
+          "x-ms-dataverse-type": "MoneyType",
+          "x-ms-schema-name": "rfd_originalprincipal_Base",
+          "x-ms-read-only": true
+        },
+        "rfd_outstandingprincipal": {
+          "type": "string",
+          "title": "Outstanding Principal",
+          "x-ms-dataverse-attribute": "rfd_outstandingprincipal",
+          "x-ms-dataverse-type": "MoneyType",
+          "x-ms-schema-name": "rfd_OutstandingPrincipal"
+        },
+        "rfd_outstandingprincipal_base": {
+          "type": "string",
+          "title": "Outstanding Principal (Base)",
+          "x-ms-dataverse-attribute": "rfd_outstandingprincipal_base",
+          "x-ms-dataverse-type": "MoneyType",
+          "x-ms-schema-name": "rfd_outstandingprincipal_Base",
+          "x-ms-read-only": true
+        },
+        "rfd_overdraftlimit": {
+          "type": "string",
+          "title": "Overdraft Limit",
+          "x-ms-dataverse-attribute": "rfd_overdraftlimit",
+          "x-ms-dataverse-type": "MoneyType",
+          "x-ms-schema-name": "rfd_OverdraftLimit"
+        },
+        "rfd_overdraftlimit_base": {
+          "type": "string",
+          "title": "Overdraft Limit (Base)",
+          "x-ms-dataverse-attribute": "rfd_overdraftlimit_base",
+          "x-ms-dataverse-type": "MoneyType",
+          "x-ms-schema-name": "rfd_overdraftlimit_Base",
+          "x-ms-read-only": true
+        },
+        "rfd_productid": {
+          "type": "string",
+          "title": "Product",
+          "x-ms-dataverse-attribute": "rfd_productid",
+          "x-ms-dataverse-type": "LookupType",
+          "x-ms-schema-name": "rfd_ProductId"
+        },
+        "rfd_productidname": {
+          "type": "string",
+          "title": "rfd_productidname",
+          "x-ms-dataverse-attribute": "rfd_productidname",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "rfd_ProductIdName",
+          "x-ms-read-only": true,
+          "maxLength": 100
+        },
+        "rfd_productreviewdue": {
+          "type": "string",
+          "title": "Product Review Due",
+          "x-ms-dataverse-attribute": "rfd_productreviewdue",
+          "x-ms-dataverse-type": "DateTimeType",
+          "x-ms-schema-name": "rfd_ProductReviewDue"
+        },
+        "rfd_producttype": {
+          "type": "string",
+          "title": "Product Type",
+          "x-ms-dataverse-attribute": "rfd_producttype",
+          "x-ms-dataverse-type": "PicklistType",
+          "x-ms-schema-name": "rfd_ProductType",
+          "required": true,
+          "enum": [
+            "Current account",
+            "Savings account",
+            "ISA",
+            "Mortgage",
+            "Loan",
+            "Credit card account",
+            "Debit card",
+            "Credit card",
+            "Investment account",
+            "Other"
+          ],
+          "x-ms-enum-values": [
+            100000000,
+            100000001,
+            100000002,
+            100000003,
+            100000004,
+            100000005,
+            100000006,
+            100000007,
+            100000008,
+            100000009
+          ],
+          "Color": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "2c0c5493-c0bc-f111-aaaf-70a8a5b10a05",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "Product Type",
+          "x-ms-optionSetType": "Picklist"
+        },
+        "rfd_producttypename": {
+          "type": "string",
+          "title": "rfd_producttypename",
+          "x-ms-dataverse-attribute": "rfd_producttypename",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "rfd_producttypeName",
+          "x-ms-read-only": true
+        },
+        "rfd_remainingtermmonths": {
+          "type": "string",
+          "title": "Remaining Term (Months)",
+          "x-ms-dataverse-attribute": "rfd_remainingtermmonths",
+          "x-ms-dataverse-type": "IntegerType",
+          "x-ms-schema-name": "rfd_RemainingTermMonths"
+        },
+        "rfd_repaymentfrequency": {
+          "type": "string",
+          "title": "Repayment Frequency",
+          "x-ms-dataverse-attribute": "rfd_repaymentfrequency",
+          "x-ms-dataverse-type": "PicklistType",
+          "x-ms-schema-name": "rfd_RepaymentFrequency",
+          "enum": [
+            "Weekly",
+            "Fortnightly",
+            "Monthly",
+            "Quarterly",
+            "Annually",
+            "At maturity",
+            "Revolving"
+          ],
+          "x-ms-enum-values": [
+            100000000,
+            100000001,
+            100000002,
+            100000003,
+            100000004,
+            100000005,
+            100000006
+          ],
+          "Color": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "660c5493-c0bc-f111-aaaf-70a8a5b10a05",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "Repayment Frequency",
+          "x-ms-optionSetType": "Picklist"
+        },
+        "rfd_repaymentfrequencyname": {
+          "type": "string",
+          "title": "rfd_repaymentfrequencyname",
+          "x-ms-dataverse-attribute": "rfd_repaymentfrequencyname",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "rfd_repaymentfrequencyName",
+          "x-ms-read-only": true
+        },
+        "rfd_restrictionreason": {
+          "type": "string",
+          "title": "Restriction Reason",
+          "x-ms-dataverse-attribute": "rfd_restrictionreason",
+          "x-ms-dataverse-type": "MemoType",
+          "x-ms-schema-name": "rfd_RestrictionReason",
+          "maxLength": 2000
+        },
+        "rfd_servicingnotes": {
+          "type": "string",
+          "title": "Servicing Notes",
+          "x-ms-dataverse-attribute": "rfd_servicingnotes",
+          "x-ms-dataverse-type": "MemoType",
+          "x-ms-schema-name": "rfd_ServicingNotes",
+          "maxLength": 4000
+        },
+        "rfd_servicingrestriction": {
+          "type": "string",
+          "title": "Servicing Restriction",
+          "x-ms-dataverse-attribute": "rfd_servicingrestriction",
+          "x-ms-dataverse-type": "PicklistType",
+          "x-ms-schema-name": "rfd_ServicingRestriction",
+          "enum": [
+            "None",
+            "Debit restriction",
+            "Credit restriction",
+            "All transactions restricted",
+            "Manual review required"
+          ],
+          "x-ms-enum-values": [
+            100000000,
+            100000001,
+            100000002,
+            100000003,
+            100000004
+          ],
+          "Color": [
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "7d0c5493-c0bc-f111-aaaf-70a8a5b10a05",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "Servicing Restriction",
+          "x-ms-optionSetType": "Picklist"
+        },
+        "rfd_servicingrestrictionname": {
+          "type": "string",
+          "title": "rfd_servicingrestrictionname",
+          "x-ms-dataverse-attribute": "rfd_servicingrestrictionname",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "rfd_servicingrestrictionName",
+          "x-ms-read-only": true
+        },
+        "rfd_sortcode": {
+          "type": "string",
+          "title": "Sort Code",
+          "x-ms-dataverse-attribute": "rfd_sortcode",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "rfd_SortCode",
+          "maxLength": 8
+        },
+        "rfd_sourcesystem": {
+          "type": "string",
+          "title": "Source System",
+          "x-ms-dataverse-attribute": "rfd_sourcesystem",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "rfd_SourceSystem",
+          "maxLength": 100
+        },
+        "statecode": {
+          "type": "string",
+          "title": "Status",
+          "x-ms-dataverse-attribute": "statecode",
+          "x-ms-dataverse-type": "StateType",
+          "x-ms-schema-name": "statecode",
+          "required": true,
+          "enum": [
+            "Active",
+            "Inactive"
+          ],
+          "x-ms-enum-values": [
+            0,
+            1
+          ],
+          "Color": [
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "c30b5493-c0bc-f111-aaaf-70a8a5b10a05",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "Status",
+          "x-ms-optionSetType": "State"
+        },
+        "statecodename": {
+          "type": "string",
+          "title": "statecodename",
+          "x-ms-dataverse-attribute": "statecodename",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "statecodeName",
+          "x-ms-read-only": true
+        },
+        "statuscode": {
+          "type": "string",
+          "title": "Status Reason",
+          "x-ms-dataverse-attribute": "statuscode",
+          "x-ms-dataverse-type": "StatusType",
+          "x-ms-schema-name": "statuscode",
+          "enum": [
+            "Active",
+            "Inactive"
+          ],
+          "x-ms-enum-values": [
+            1,
+            2
+          ],
+          "Color": [
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "cd0b5493-c0bc-f111-aaaf-70a8a5b10a05",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "Status Reason",
+          "x-ms-optionSetType": "Status"
+        },
+        "statuscodename": {
+          "type": "string",
+          "title": "statuscodename",
+          "x-ms-dataverse-attribute": "statuscodename",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "statuscodeName",
+          "x-ms-read-only": true
+        },
+        "timezoneruleversionnumber": {
+          "type": "string",
+          "title": "Time Zone Rule Version Number",
+          "x-ms-dataverse-attribute": "timezoneruleversionnumber",
+          "x-ms-dataverse-type": "IntegerType",
+          "x-ms-schema-name": "TimeZoneRuleVersionNumber"
+        },
+        "transactioncurrencyid": {
+          "type": "string",
+          "title": "Currency",
+          "x-ms-dataverse-attribute": "transactioncurrencyid",
+          "x-ms-dataverse-type": "LookupType",
+          "x-ms-schema-name": "TransactionCurrencyId"
+        },
+        "transactioncurrencyidname": {
+          "type": "string",
+          "title": "transactioncurrencyidname",
+          "x-ms-dataverse-attribute": "transactioncurrencyidname",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "TransactionCurrencyIdName",
+          "x-ms-read-only": true,
+          "maxLength": 100
+        },
+        "utcconversiontimezonecode": {
+          "type": "string",
+          "title": "UTC Conversion Time Zone Code",
+          "x-ms-dataverse-attribute": "utcconversiontimezonecode",
+          "x-ms-dataverse-type": "IntegerType",
+          "x-ms-schema-name": "UTCConversionTimeZoneCode"
+        },
+        "versionnumber": {
+          "type": "string",
+          "title": "Version Number",
+          "x-ms-dataverse-attribute": "versionnumber",
+          "x-ms-dataverse-type": "BigIntType",
+          "x-ms-schema-name": "VersionNumber",
+          "x-ms-read-only": true
+        }
+      },
+      "required": [
+        "createdbyyominame",
+        "createdonbehalfbyyominame",
+        "modifiedbyyominame",
+        "modifiedonbehalfbyyominame",
+        "ownerid",
+        "owneridname",
+        "owneridtype",
+        "owneridyominame",
+        "owningbusinessunitname",
+        "rfd_customerid",
+        "rfd_financialaccountid",
+        "rfd_holdingnumber",
+        "rfd_name",
+        "rfd_producttype",
+        "statecode"
+      ]
+    }
+  }
+}
