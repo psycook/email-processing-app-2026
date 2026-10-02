@@ -23,7 +23,7 @@ export function Modal({
   description?: ReactNode
   children: ReactNode
   footer?: ReactNode
-  size?: 'sm' | 'md' | 'lg'
+  size?: 'sm' | 'md' | 'lg' | 'fullscreen'
   tone?: 'neutral' | 'danger' | 'accent'
 }) {
   const dialogRef = useRef<HTMLDivElement>(null)

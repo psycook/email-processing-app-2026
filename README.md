@@ -18,22 +18,90 @@ Run `npm run dev -- --host 127.0.0.1 --port 3000 --strictPort`.
 - Production output: `npm run build`. Existing lint: `npm run lint`.
 - Focused composition/evidence regression tests: `npm run test:studio` (Node 24).
 
+## Process-tracking implementation v0.2.0
+
+Stages 1-3 were approved for implementation. The new process canvas, fixtures,
+validated read gateway, C# plug-in/API source, guarded schema tooling and offline
+workflow adapters are in this working tree. Stage 4 is not implemented.
+
+v0.2.1 simplifies the dashboard and Process Studio diagram into a
+single-line React Flow business view: Shared Mailbox -> Classifier -> Agent ->
+Case Management -> Outcome -> Email Response. The detailed stage list and ledger
+drill-down remain available without crowding the dashboard. This v0.2.1 UI change
+was published on 2 October 2026.
+
+v0.2.2 adds data-aware node chips to that six-node view. When a ledger
+snapshot is available, each node shows execution counts and latest activity; the
+Classifier and Agent nodes also surface the selected route/handler. In
+configuration-only mode the nodes clearly state that no live execution is present.
+This v0.2.2 UI change was published on 2 October 2026.
+
+v0.2.3 adds an Expand map action that opens the six-node React Flow map in
+an almost full-screen closeable modal with a dark blurred transparent backdrop.
+This v0.2.3 UI change was published on 2 October 2026.
+
+Seven Dataverse tables, seven Active alternate keys and 18 configuration rows
+have been provisioned in RetailFinanceDemo. Generated solution XML is under
+`solutions\RetailFinanceDemo`; runtime tracking tables remain empty.
+
+The v0.2.0 app shell and process UI were published on 2 October 2026. **Stage 3
+is still not end-to-end complete.** The approved completion route is deterministic
+flow orchestration: customer lookup, case mutation and process linkage move into
+reviewed flow/tool actions that call the plug-in Custom APIs, while the saved
+Card Servicing agent can return recommendations only. Plug-in/API registration,
+identity/role configuration, source-guarded flow binding, native integration
+proofs and flow cutover remain release gates. Do not substitute prompt-based
+logging, generic MCP writes or inferred Case links. The intended custom Case
+Management Workflow also requires identification or replacement with an approved
+owned orchestration.
+
+See `docs\process-implementation-status.txt`, `server\api-contract.txt`,
+`server\runtime-prerequisites.txt` and `docs\process-flow-integration.txt`
+for exact completed work, commands and blockers. Preview uses local fixtures;
+`?legacyProcess=true` restores the original process renderer. No live pilot
+messages have been performed for v0.2.0.
+
 ## Environment and publication
 
 Environment: `b17908ad-6b6b-eefb-98bc-79cc7e20ab08`.
 Dataverse: https://smc-diamond-service.crm.dynamics.com/
 
 Code Apps are enabled in this environment and the Studio is published.
-The hosted version is v0.1.6, published on 2 October 2026, setting both From and
-Reply-To to the selected customer alias while preserving simple HTML paragraphs
-in sends, previews and exports. Alphabetical customer/holding
-selectors, natural subjects, fuller AI instructions, redesigned Evaluation
-panels, bundled branding, Help-only monitoring,
-readable connections and aligned pipeline cards/captions are preserved.
+The hosted version is v0.2.3, published on 2 October 2026, with the simplified
+six-node process flow, execution-aware node chips and expandable full-screen map,
+compact case-category panel and dismissible footer note,
+aligned inbound email rows and clearer chart spacing. Both From and Reply-To
+remain set to the selected customer alias while preserving simple HTML paragraphs
+in sends, previews and exports. Alphabetical customer/holding selectors, natural
+subjects, fuller AI instructions, redesigned Evaluation panels, bundled branding,
+Help-only monitoring, readable connections and aligned pipeline cards/captions
+are preserved.
 App ID: `a9b487ae-7eee-4f6f-ba71-ed18e50c021c`.
 Launch: https://apps.powerapps.com/play/e/b17908ad-6b6b-eefb-98bc-79cc7e20ab08/app/a9b487ae-7eee-4f6f-ba71-ed18e50c021c?tenantId=fc547a7e-3617-4e9c-a506-83fa37eb5247
 After approval for an update, build with `npm run build` and publish with
 `npx power-apps push`.
+
+## Inbound panel formatting v0.1.7 (published)
+
+The Overview's Latest inbound email rows now use fixed status/content/metadata
+columns instead of distributing free space between the three items. Sender
+and subject text share a consistent left edge, long values ellipsize with full
+text available on hover, and timestamps/attachment icons remain right-aligned.
+The daily chart has a separate divider and spacing; the panel header wraps at
+narrow widths. Message contents, sorting, counts and navigation are unchanged.
+
+## Case category layout v0.1.8 (published)
+
+The Request mix card now sizes to its content instead of stretching to the
+height of the adjacent email panel. Category labels and explicit case counts
+sit above slim bars, with a loaded-case summary and clearer spacing.
+
+The explanation is a quieter footer below a divider. Close it with the X, or
+reopen it with the header's information button. Dismissal lasts while Overview
+is mounted, including data refreshes; it resets when returning to Overview or
+reloading. Keyboard dismissal returns focus to the information button. Category
+values, counts, ordering and relative bar scaling remain unchanged; lists over
+seven categories now disclose the number omitted.
 
 ## Capabilities
 
@@ -177,12 +245,17 @@ Queues, drafts, reviewer verdicts and preview reviews are memory-only. Keep the
 tab open for a campaign and export reports before reloading. This is not a
 durable background job service; in-flight sends cannot be recalled.
 
-## Instrumentation proposal
+## Instrumentation plan and implementation status
 
-See `docs\email-process-instrumentation-plan.txt` for the proposed two-table
-Dataverse ledger, shared writer API, message/operation correlation, producer
-hooks, reliability/privacy policy and rollout. This is a plan, not implemented
-instrumentation. Application Insights is an optional later diagnostic layer.
+See `docs\email-process-instrumentation-plan.txt` for the revised 2 October plan,
+split into four independently approvable stages: professional process UI;
+Dataverse schema and correlation; plug-in-backed Custom APIs and producer
+wiring; optional event-bus/browser push. Stages 1-3 are approved: UI/service code
+and schema are implemented to the readiness boundaries documented above;
+runtime wiring and release are not complete. Stage 4/outbox is not approved.
+The earlier subject-marker proposal is superseded:
+canonical tracing starts at intake, without restoring technical subject tags.
+Application Insights remains an optional diagnostic layer, not the process ledger.
 
 ## Evaluation usability update v0.1.4 (published)
 

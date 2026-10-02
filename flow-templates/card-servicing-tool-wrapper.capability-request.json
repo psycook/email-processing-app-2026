@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "mode": "APPROVED_DETERMINISTIC_FLOW_ORCHESTRATION_HANDOFF_NOT_AN_IMPORTABLE_PATCH",
+  "publishable": false,
+  "approvedStage3Decision": "DETERMINISTIC_FLOW_ORCHESTRATION",
+  "decisionMeaning": "Move customer lookup, case writes and telemetry linkage into explicitly reviewed flow/tool wrappers. The saved agent may return recommendations but must not own Dataverse lookup/write authority for process completion.",
+  "currentBindingSupportsDeterministicPatch": false,
+  "inventory": "card-servicing-agent.structural-inventory.json",
+  "automaticPatchBlocker": "UNSUPPORTED_INLINE_SKILL_MCP_DETERMINISTIC_INTERCEPTION",
+  "locatedOperations": {
+    "customerLookup": {
+      "componentId": "4cda87d1-e42d-4cac-a890-a946bd18ca2c",
+      "componentName": "query-or-update-card",
+      "kind": "InlineAgentSkill",
+      "instructionReferences": ["read_query", "contact", "contactid", "emailaddress1"],
+      "deterministicLookupImplementationLocated": false
+    },
+    "caseWriting": {
+      "componentId": "4cda87d1-e42d-4cac-a890-a946bd18ca2c",
+      "componentName": "query-or-update-card",
+      "kind": "InlineAgentSkill",
+      "instructionReferences": ["create_record", "update_record", "incident", "incidentid", "customerid"],
+      "dedicatedCaseWorkflowLocated": false
+    },
+    "actualToolTransport": {
+      "componentId": "b3fd18c9-91a2-43c7-9270-d08cef89f785",
+      "kind": "McpTool",
+      "connectorApi": "shared_commondataserviceforapps",
+      "operationId": "InvokeMCP",
+      "perOperationHooksConfigured": false
+    }
+  },
+  "ownersRequired": [
+    {
+      "role": "Saved agent owner and approved solution author",
+      "ownerId": "0a61bb38-ef8b-f111-8076-7ced8d3c0da2",
+      "decision": "Approve the revised Card Servicing shape where the agent returns recommendations only, and Dataverse lookup/case mutations move to deterministic flow-owned actions."
+    },
+    {
+      "role": "shared_agentnode InvokeAgent runtime/connector owner",
+      "decision": "No longer a Stage 3 prerequisite for process linkage if the agent is removed from Dataverse mutation authority; still required before any future typed agent-internal telemetry claim."
+    },
+    {
+      "role": "Microsoft Dataverse MCP connector owner or approved replacement tool-service owner",
+      "decision": "Generic MCP calls must not be treated as process-authoritative. Approved deterministic wrappers or first-party Dataverse connector actions own lookup, case write and process API calls."
+    }
+  ],
+  "requiredTypedContext": {
+    "source": "Authenticated host invocation binding, not a model-generated tool argument",
+    "traceIdMeaning": "Optional host alias of the existing server-issued ProcessId, not a new customer-derived correlation key",
+    "requiredFields": ["processId", "workflowId", "sourceExecutionId", "nativeToolInvocationId"],
+    "currentInvokeAgentConfiguredFields": ["body/agentId", "body/prompt"],
+    "verifiedTypedContextInputForCurrentRuntime": null,
+    "forbidden": [
+      "Append TraceId or ProcessId to the prompt and trust the model to repeat it",
+      "Correlate by customer email, Reply-To, subject or latest case",
+      "Invent an undocumented body/context parameter",
+      "Treat a conversation-scoped global as safe across concurrent email runs without verified isolation"
+    ]
+  },
+  "orchestrationBoundary": {
+    "flowOwns": [
+      "Carry ProcessId from the intake API receipt on the Card Servicing branch.",
+      "Resolve the Contact using reviewed deterministic Dataverse query/action logic, then record contact-lookup started/completed via rfd_RecordEmailProcessEvent.",
+      "Create or update the actual Incident using deterministic connector actions or a reviewed domain action, then call rfd_LinkEmailProcessCase with the explicit ProcessId and IncidentId.",
+      "Record case workflow progress and closure attempts as workflow-authority stage events only after the corresponding original connector action succeeds.",
+      "Rely on the registered case lifecycle observer, or explicit current-state reconciliation API, for actual resolved/cancelled/merged/reopened case facts."
+    ],
+    "agentOwnsOnly": [
+      "Interpretation, summarisation and recommendation text that a flow can review and map through explicit allowlisted logic.",
+      "No authoritative ContactId, IncidentId, process completion, case linkage or financial-record mutation."
+    ],
+    "genericMcpRestriction": "The existing Dataverse MCP read_query/create_record/update_record path must be disabled, removed, or ignored for process-authoritative lookup/write evidence before live cutover.",
+    "requiredFlowFragments": [
+      "server/customer-resolution-example.json",
+      "flow-templates/case-workflow.actions.example.json"
+    ],
+    "releaseGate": "Identify the actual custom Case Management flow or create an approved owned orchestration; bind exact actions privately with source/ETag guards before any publish."
+  },
+  "futureWrapperExecutionTemplate": [
+    "Validate trusted ProcessId, native run/tool invocation identity and authorization before accepting the business call.",
+    "Allocate immutable full-GUID spanId, startedEventId and completedEventId once per real tool attempt; preserve them for telemetry transport retries.",
+    "Call rfd_RecordEmailProcessEvent through a separately authorized tool producer; RequestJson/ResponseJson remain String envelopes.",
+    "Invoke the original approved deterministic business operation once; preserve its own result, exception and retry policy independently of telemetry.",
+    "For verified unique customer lookup output, emit completed for the Help definition's contact-lookup stage with the actual readable ContactId under explicit canResolveCustomer/customerResolutionStageCodes policy.",
+    "For actual case creation output, use the real IncidentId plus the same explicit ProcessId to invoke rfd_LinkEmailProcessCase only after confirmed Contact binding.",
+    "Return the original business result even if telemetry failed; reconcile a logging gap without repeating the financial, email or case operation.",
+    "Report attempted closure separately; trusted case observer supplies actual committed lifecycle facts."
+  ],
+  "supportedExistingTelemetryApis": [
+    "rfd_RecordEmailProcessEvent",
+    "rfd_LinkEmailProcessCase"
+  ],
+  "releaseEvidenceRequired": [
+    "Actual deterministic flow-owned lookup and case implementation, input/output signatures and owner-approved business semantics",
+    "Verified agent change or orchestration guard proving the saved agent is recommendation-only for Dataverse customer/case operations",
+    "Exact source/ETag guards for the Help/Card branch and the identified owned Case Management orchestration",
+    "Narrow separate producer identity, role, stage and customer-resolution capability grants",
+    "Private backup, designer review and native fail-open pilot covering telemetry outage, duplicate intake, lookup ambiguity, case link race and case close/reopen",
+    "Parent releasegate approval"
+  ],
+  "liveChangesPerformed": false,
+  "rawInstructionsPromptsOrCustomerPayloadsIncluded": false,
+  "physicalConnectionIdentifiersIncluded": false
+}

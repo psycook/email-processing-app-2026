@@ -1,0 +1,335 @@
+{
+  "mode": "DESIGNER_REVIEW_FRAGMENT_ONLY",
+  "publishable": false,
+  "requiredOriginalActions": [
+    "Create_case",
+    "Case_progress",
+    "Close_case"
+  ],
+  "processIdSource": "Explicit processId passed from original intake API receipt.",
+  "caseIdSource": "Actual Create_case connector incidentid output; never customer email.",
+  "closureMeaning": "Close_case connector returned successfully, NOT an observed case resolution.",
+  "actionsToAdd": {
+    "EP_Link_case": {
+      "type": "Scope",
+      "actions": {
+        "EP_Link_case_Identity": {
+          "type": "Compose",
+          "inputs": {
+            "eventId": "@guid()",
+            "spanId": "@guid()",
+            "occurredAtUtc": "@utcNow()"
+          },
+          "runAfter": {},
+          "runtimeConfiguration": {
+            "secureData": {
+              "properties": [
+                "inputs",
+                "outputs"
+              ]
+            }
+          }
+        },
+        "EP_Link_case_Payload": {
+          "type": "Compose",
+          "inputs": {
+            "schemaVersion": 1,
+            "eventId": "@outputs('EP_Link_case_Identity')?['eventId']",
+            "producerId": "reviewed-workflow-producer",
+            "workflowId": "00000000-0000-4000-8000-000000000001",
+            "sourceExecutionId": "@workflow()?['run']?['name']",
+            "operation": "9800d790cc2251eaa78cc2313d71a3e3f2792f70aded924b9a39f101d80ad7d1",
+            "branch": "root",
+            "attempt": 1,
+            "eventType": "case-linked",
+            "occurredAtUtc": "@actions('Create_case')?['endTime']",
+            "processId": "@triggerBody()?['processId']",
+            "caseId": "@body('Create_case')?['incidentid']",
+            "blocksCompletion": true,
+            "relationshipRole": "service-request"
+          },
+          "runAfter": {
+            "EP_Link_case_Identity": [
+              "Succeeded"
+            ]
+          },
+          "runtimeConfiguration": {
+            "secureData": {
+              "properties": [
+                "inputs",
+                "outputs"
+              ]
+            }
+          }
+        },
+        "EP_Link_case_Write": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "connectionName": "rfd_process_dataverse",
+              "operationId": "PerformUnboundAction"
+            },
+            "parameters": {
+              "actionName": "rfd_LinkEmailProcessCase",
+              "item/RequestJson": "@string(outputs('EP_Link_case_Payload'))"
+            },
+            "retryPolicy": {
+              "type": "fixed",
+              "count": 2,
+              "interval": "PT5S"
+            }
+          },
+          "runAfter": {
+            "EP_Link_case_Payload": [
+              "Succeeded"
+            ]
+          },
+          "runtimeConfiguration": {
+            "secureData": {
+              "properties": [
+                "inputs",
+                "outputs"
+              ]
+            }
+          }
+        },
+        "EP_Link_case_Settled": {
+          "type": "Compose",
+          "inputs": {
+            "observationOnly": true
+          },
+          "runAfter": {
+            "EP_Link_case_Write": [
+              "Succeeded",
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ]
+          }
+        }
+      },
+      "runAfter": {
+        "Create_case": [
+          "Succeeded"
+        ]
+      }
+    },
+    "EP_Case_progress": {
+      "type": "Scope",
+      "actions": {
+        "EP_Case_progress_Identity": {
+          "type": "Compose",
+          "inputs": {
+            "eventId": "@guid()",
+            "spanId": "@guid()",
+            "occurredAtUtc": "@utcNow()"
+          },
+          "runAfter": {},
+          "runtimeConfiguration": {
+            "secureData": {
+              "properties": [
+                "inputs",
+                "outputs"
+              ]
+            }
+          }
+        },
+        "EP_Case_progress_Payload": {
+          "type": "Compose",
+          "inputs": {
+            "schemaVersion": 1,
+            "eventId": "@outputs('EP_Case_progress_Identity')?['eventId']",
+            "producerId": "reviewed-workflow-producer",
+            "workflowId": "00000000-0000-4000-8000-000000000001",
+            "sourceExecutionId": "@workflow()?['run']?['name']",
+            "operation": "1c9af10c593c39d2b2941f3d8efc407850a855ea7181ae94050e87e6250b82ca",
+            "branch": "root",
+            "attempt": 1,
+            "eventType": "completed",
+            "occurredAtUtc": "@actions('Case_progress')?['endTime']",
+            "stageCode": "case-workflow-progress",
+            "stageExecutionId": "@outputs('EP_Case_progress_Identity')?['spanId']",
+            "processId": "@triggerBody()?['processId']",
+            "caseId": "@body('Create_case')?['incidentid']"
+          },
+          "runAfter": {
+            "EP_Case_progress_Identity": [
+              "Succeeded"
+            ]
+          },
+          "runtimeConfiguration": {
+            "secureData": {
+              "properties": [
+                "inputs",
+                "outputs"
+              ]
+            }
+          }
+        },
+        "EP_Case_progress_Write": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "connectionName": "rfd_process_dataverse",
+              "operationId": "PerformUnboundAction"
+            },
+            "parameters": {
+              "actionName": "rfd_RecordEmailProcessEvent",
+              "item/RequestJson": "@string(outputs('EP_Case_progress_Payload'))"
+            },
+            "retryPolicy": {
+              "type": "fixed",
+              "count": 2,
+              "interval": "PT5S"
+            }
+          },
+          "runAfter": {
+            "EP_Case_progress_Payload": [
+              "Succeeded"
+            ]
+          },
+          "runtimeConfiguration": {
+            "secureData": {
+              "properties": [
+                "inputs",
+                "outputs"
+              ]
+            }
+          }
+        },
+        "EP_Case_progress_Settled": {
+          "type": "Compose",
+          "inputs": {
+            "observationOnly": true
+          },
+          "runAfter": {
+            "EP_Case_progress_Write": [
+              "Succeeded",
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ]
+          }
+        }
+      },
+      "runAfter": {
+        "Case_progress": [
+          "Succeeded"
+        ],
+        "EP_Link_case": [
+          "Succeeded"
+        ]
+      }
+    },
+    "EP_Close_case": {
+      "type": "Scope",
+      "actions": {
+        "EP_Close_case_Identity": {
+          "type": "Compose",
+          "inputs": {
+            "eventId": "@guid()",
+            "spanId": "@guid()",
+            "occurredAtUtc": "@utcNow()"
+          },
+          "runAfter": {},
+          "runtimeConfiguration": {
+            "secureData": {
+              "properties": [
+                "inputs",
+                "outputs"
+              ]
+            }
+          }
+        },
+        "EP_Close_case_Payload": {
+          "type": "Compose",
+          "inputs": {
+            "schemaVersion": 1,
+            "eventId": "@outputs('EP_Close_case_Identity')?['eventId']",
+            "producerId": "reviewed-workflow-producer",
+            "workflowId": "00000000-0000-4000-8000-000000000001",
+            "sourceExecutionId": "@workflow()?['run']?['name']",
+            "operation": "1beabd6bd2e7d006d757d507e8c8b21d8b5cf3a8d553e566f297acbf31ea48e8",
+            "branch": "root",
+            "attempt": 1,
+            "eventType": "completed",
+            "occurredAtUtc": "@actions('Close_case')?['endTime']",
+            "stageCode": "case-closure-attempt",
+            "stageExecutionId": "@outputs('EP_Close_case_Identity')?['spanId']",
+            "processId": "@triggerBody()?['processId']",
+            "caseId": "@body('Create_case')?['incidentid']"
+          },
+          "runAfter": {
+            "EP_Close_case_Identity": [
+              "Succeeded"
+            ]
+          },
+          "runtimeConfiguration": {
+            "secureData": {
+              "properties": [
+                "inputs",
+                "outputs"
+              ]
+            }
+          }
+        },
+        "EP_Close_case_Write": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "connectionName": "rfd_process_dataverse",
+              "operationId": "PerformUnboundAction"
+            },
+            "parameters": {
+              "actionName": "rfd_RecordEmailProcessEvent",
+              "item/RequestJson": "@string(outputs('EP_Close_case_Payload'))"
+            },
+            "retryPolicy": {
+              "type": "fixed",
+              "count": 2,
+              "interval": "PT5S"
+            }
+          },
+          "runAfter": {
+            "EP_Close_case_Payload": [
+              "Succeeded"
+            ]
+          },
+          "runtimeConfiguration": {
+            "secureData": {
+              "properties": [
+                "inputs",
+                "outputs"
+              ]
+            }
+          }
+        },
+        "EP_Close_case_Settled": {
+          "type": "Compose",
+          "inputs": {
+            "observationOnly": true
+          },
+          "runAfter": {
+            "EP_Close_case_Write": [
+              "Succeeded",
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ]
+          }
+        }
+      },
+      "runAfter": {
+        "Close_case": [
+          "Succeeded"
+        ],
+        "EP_Link_case": [
+          "Succeeded"
+        ]
+      }
+    }
+  }
+}

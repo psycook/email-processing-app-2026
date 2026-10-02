@@ -1,0 +1,331 @@
+EMAIL PROCESS TRACKING - STAGE 2 SCHEMA REFERENCE
+Generated locally by scripts\process_build_manifest.py --write.
+
+SOURCE OF TRUTH AND REVIEW
+config\process-tracking-schema.json is the complete reviewable metadata manifest.
+server\process-contract.json supplies service field names/types/lengths/requiredness.
+The manifest adds explicit table ownership, entity sets, relationship/cascade settings,
+the observed graph, security and deployment gates; it never invents service columns.
+Manifest SHA-256: e1103c0ef2d1d5df5da893c93b3439bfda6c19b4b90a47db670db2cba1f53424
+Digest: entire parsed JSON, sorted keys, UTF-8, ensure_ascii=False, separators=(',', ':').
+A changed contract requires regeneration, review and a new explicitly approved hash.
+
+VERIFIED PROVISIONING RECORD - 2 OCTOBER 2026
+Authorized additive apply completed: 7 tables, 109 declared columns (83 scalar/name
+and 26 lookup columns/relationships), 7 Active alternate keys in RetailFinanceDemo.
+The 18 deterministic definition/stage/transition rows were verified and published.
+A subsequent identical apply performed ZERO writes. All four runtime tables were
+verified empty. No business records, emails, role grants, flows or deployments changed.
+Four newly created empty runtime primary-name defaults were corrected to the reviewed
+200/ApplicationRequired using exact table metadata IDs and full preserved metadata.
+Private parent-session files: process-schema-ready.json;
+RetailFinanceDemo-after-process-schema.zip; RetailFinanceDemo-after-process-schema
+(PAC-generated unpacked directory, all seven Entity.xml artifacts verified).
+Roles, field-security profile assignments and end-to-end producer tests remain gated.
+This dated evidence is not a substitute for running a fresh --inspect.
+
+SAFE COMMANDS (from the project root)
+python scripts\process_build_manifest.py --check
+python scripts\process_provision.py --dry-run
+python scripts\process_provision.py --inspect
+python -m unittest discover -s scripts -p "process_*test.py" -v
+Dry run is offline and never loads auth. Inspect reads live identity and metadata only.
+Neither mode creates tables, seeds, messages, cases, plugins or runtime records.
+
+APPLY IS A SEPARATE AUTHORIZED ACTION; DO NOT RUN AS PART OF PREVIEW
+python scripts\process_provision.py --apply --expected-manifest-sha256 <reviewed-hash>
+  --expected-url https://smc-diamond-service.crm.dynamics.com
+  --expected-solution RetailFinanceDemo --expected-publisher rfd
+  --expected-identity admin@diax47618638.onmicrosoft.com
+Pass these on one command line, or use normal PowerShell continuation.
+Add --schema-only to provision metadata without seeding/publishing the definition.
+There is no delete, replace, force, overwrite-schema, runtime-import or email-send mode.
+Preflight checks CLI and SDK identity, organization/environment URL and IDs, existing
+unmanaged solution and publisher; it rechecks immediately before metadata/seed writes.
+Apply refuses ALL writes on existing schema/seed drift, unmanaged-solution mismatch,
+unsupported target relationship capability or a missing explicit approval argument.
+
+SUPPORTED SDK / MANAGED CLI BOUNDARIES
+SDK clients come only from the initialized Scout scripts\auth.py get_client.
+SDK reads columns/relationships/records, creates full 1:N relationships with a solution,
+and creates deterministic seed records. No token caches or credentials are inspected.
+Installed SDK tables.create has no ownership flag; column helpers lack exact lengths,
+requiredness and field security; alternate-key helper has no solution argument.
+For those gaps only, use managed dataverse api request with a fixed environment and
+MSCRM.SolutionUniqueName. No custom HTTP/auth client and no hand-authored solution XML.
+Metadata bodies use short-lived project-local JSON files, always removed in finally.
+Windows runs the installed PowerShell CLI wrapper with literal argv, avoiding cmd.exe
+percent/ampersand expansion and inline JSON length limits.
+
+PROVISIONING / IDEMPOTENCY
+Create missing tables, then missing scalar fields, lookups, and alternate keys.
+Never alter/delete unknown existing schema. Existing declared properties must match.
+Publish only these seven tables' metadata, not PublishAllXml.
+Poll all key indexes until Active (default 600 seconds); Failed/timeout is not ready.
+Only then create the reviewed definition as draft, stages and transitions using UUIDv5.
+Verify every scalar, typed reference and complete child-row set before publishing.
+Before any seed writes, validate Help producer stage authorities and six-route mapping;
+require a nonsuperseded current-source review delta with matching definitionSeed
+definitionCode/version/seedSha256. Metadata-only apply is available while this gate blocks.
+The only seed update permitted is the matching draft definition's state to published.
+A repeated identical run is a no-op; an interrupted draft resumes missing rows.
+An incomplete or edited published definition is never repaired/overwritten in place.
+Use a quiet definition-administration window: SDK record updates have no ETag option.
+The graph verification/publish sequence is not one transaction. Install immutable
+definition guards before enabling producers; use a new version for later graph changes.
+Observed runtime table-shell creation returned primary-name defaults (850/None).
+A narrowly scoped recovery flag --repair-created-primary TABLE=METADATA_GUID accepts
+only exact known created runtime table IDs, empty tables, the observed default shape,
+and no unrelated metadata drift. It preserves full attribute metadata/labels and sets
+only the reviewed rfd_name MaxLength=200 and ApplicationRequired, then republishes.
+Never use this recovery flag for an unknown preexisting table or a table with data.
+
+GRAPH AND PRODUCER MAP
+Observed receipt (intake/start), then Classify_Email (classify), then Switch (route).
+The actual received fact creates the intake execution; there is no synthetic success-end node.
+Observed routes: Card Servicing -> saved agent; SPAM/default -> explicit terminal.
+Four observed empty switch cases reach Mock_Response_Agent: payment-direct-debits,
+disputes-fraud, details-documents, complaints. Each required selected edge leads to
+the same optional workflow-authority mock-response host stage; its internals stay opaque.
+Existing Card/default Terminate(Failed) actions remain producer facts, not rewritten success.
+The saved agent is an opaque outer boundary. No invented internal tools or outcomes.
+Card-servicing completion authority is workflow, explicitly HOST INVOCATION ONLY.
+The observed InvokeAgent result settles this host span, never a financial-tool outcome.
+requirescase=true prevents host success becoming no-case completion. Actual financial
+tool stages require independently observed wrappers and are not invented in this version.
+contact-lookup is an OPTIONAL planned identify-phase tool-observation overlay, not a
+claim that saved-agent internals are instrumented. It has no graph dependency edge.
+Only an authorized real lookup wrapper may produce it and bind a caller-readable Contact.
+reviewcase is separate and reached only by an actual explicit case link.
+Seed coverage says uninstrumented/opaque/unknown, never falsely instrumented.
+Intake, classifier and switch are required; branch/review applicability is runtime evidence.
+All six switch transitions are required only when their normalized branch is selected.
+Their target stages are not unconditional requirements. Mock response is not evidence
+of a financial action or an invented no-case success.
+The service supports definition+stage gated no-case completion, but this observed
+definition disables it: both Card/default branches explicitly Terminate(Failed).
+No stage is marked no-case; card-servicing requirescase=true. A successful SPAM
+host call before the original Failed termination is not end-to-end success.
+Ingress carries full ProcessId and source run; transport retries retain event/span IDs.
+
+SOURCE REFERENCES AND DELETE BEHAVIOR
+Contact=contact/contactid; Case=incident/incidentid; Holding=rfd_financialaccount/
+rfd_financialaccountid; Email=email/activityid; Task=task/activityid;
+Note=annotation/annotationid; Workflow=workflow/workflowid.
+Native flow-run/conversation references remain external strings, never fake lookups.
+Read-only inspection on 2026-10-02: annotation's CanBePrimaryEntityInRelationship
+is false and immutable; all other listed targets plus systemuser allow relationships.
+The canonical contract therefore uses nullable rfd_noteid String(36), marked
+referenceTarget=annotation/referenceKind=non-relational-guid. The service validates
+the GUID and caller's annotation read access; this is not a Dataverse lookup.
+There is no database FK/delete cleanup for this reference; retention/anonymization
+must handle unavailable notes explicitly. No annotation business row is modified.
+Source CRM lookups use RemoveLink: CRM deletion never cascades into event loss.
+Required tracking-parent lookups Restrict deletion while children/history exist.
+Optional parent process/execution and source-event references RemoveLink.
+No relationship uses Cascade delete. ApplicationRequired is a UI requirement, not
+a server integrity constraint: APIs/guards must reject empty/null runtime keys.
+Contact is mergeable: Dataverse requires Merge=Cascade for its relationships (this
+reparents links on merge; it is NOT Cascade delete). All other declared Merge settings
+are NoCascade. Event facts/digests remain immutable; prove merge/guard behavior in pilot.
+Reference: learn.microsoft.com/power-apps/developer/data-platform/
+configure-entity-relationship-cascading-behavior
+The unique process/case pair represents one-message/many-case and many-message/one-case.
+fixtures\process-tracking-relations.json demonstrates both without creating live rows.
+
+SECURITY DESIGN / PERMISSION GATES
+Reader: configuration Read; scoped team/user runtime Read; no restricted identities.
+Producer: only reviewed API privileges plus necessary narrow runtime CRUD/Append/
+AppendTo in its operations-team scope; trusted mutation guards reject direct writes.
+Reviewer: Reader plus separately approved case business operations, not event writes.
+Definition administrator: configuration create/update only; immutable published graphs.
+Retention administrator: separately approved retention path; no blanket user delete.
+Raw InternetMessageId, locator, actual From, Reply-To, customer email and identity-source
+fields request IsSecured=true. A rejected security capability is a blocker, not a
+reason to silently create an unprotected field. Field-security profiles/grants require
+separate review and two-user/producer tests; roles/profiles are NOT installed here.
+Current admin preflight is not proof of producer/reader authorization.
+Runtime ownership must be assigned consistently by the service; a Case lookup does
+not grant access to the process, event or another user's identity columns.
+
+RETENTION AND ALM
+90-day event detail is a proposal, not an enabled deletion job. Keep open-process
+summaries/links until approved closure rules; flag histories after detail retention.
+No body, subject, prompt, reasoning, attachment, account/card number or arbitrary
+error payload belongs here. rfd_payloadjson is sanitized allowlisted event data only.
+Dry-run and inspect perform no writes. Seven tables were absent on the initial
+2026-10-02 read-only inspection. Subsequent inspect is authoritative after authorized apply.
+After separately authorized apply, parent-owned export/unpack captures server-generated
+solution artifacts. This tooling neither deploys, exports, commits nor sends emails.
+schema_ready means exact metadata and Active keys, not production readiness.
+production_ready remains false pending all deployment gates below.
+
+DEPLOYMENT GATES
+- Only metadata and definition seeds are provisioned; no runtime/business/email rows are written.
+- Require Active alternate-key indexes before definition publication or producer enablement.
+- Install and verify trusted API mutation guards, definition immutability and append-only event guards.
+- Provision reviewed reader/producer/reviewer/retention-admin roles and identity field-security profiles.
+- Prove two-user/team visibility and actual producer privileges; table links do not grant record access.
+- Approve operations-team ownership and owner propagation for all runtime rows.
+- Test live transaction/concurrency, duplicate replay, case lifecycle and schema round trips.
+- Preserve observed Failed terminations; do not enable no-case completion from host success.
+- Verify exact Help seed/profile/current-source delta hashes before definition publication.
+- Export/unpack generated solution metadata after separately authorized live apply.
+
+TABLE / COLUMN DICTIONARY
+R=ApplicationRequired; O=optional. Logical names/navigation names are lowercase.
+System primary IDs, ownerid, statecode/statuscode, audit timestamps and versionnumber
+are server-created columns and are not redeclared. Semantic rfd_state is a string.
+All tables are Standard with optimistic concurrency enabled. Plugin updates must
+still explicitly request IfRowVersionMatches; metadata alone is not concurrency control.
+
+rfd_processdefinition [OrganizationOwned]
+  Entity set: rfd_processdefinitions
+  Primary GUID: rfd_processdefinitionid; display: rfd_name
+  Unique key rfd_definitionversion: rfd_code, rfd_version
+  rfd_name: string(200); R
+  rfd_code: string(80); R
+  rfd_version: integer; R
+  rfd_state: string(40); R
+  rfd_coverageversion: string(80); O
+  rfd_allowcasefreecompletion: boolean; O
+
+rfd_processstagedefinition [OrganizationOwned]
+  Entity set: rfd_processstagedefinitions
+  Primary GUID: rfd_processstagedefinitionid; display: rfd_name
+  Unique key rfd_definitionstage: rfd_definition, rfd_code
+  rfd_name: string(200); R
+  rfd_definition: lookup -> rfd_processdefinition; delete=Restrict; merge=NoCascade; relationship=rfd_processstagedefinition_definition; R
+  rfd_code: string(80); R
+  rfd_phase: string(80); O
+  rfd_lane: string(80); O
+  rfd_nodekind: string(40); O
+  rfd_displayorder: integer; O
+  rfd_required: boolean; O
+  rfd_coverage: string(40); O
+  rfd_allowcasefreecompletion: boolean; O
+  rfd_requirescase: boolean; O
+  rfd_completionauthority: string(40); O
+
+rfd_processtransition [OrganizationOwned]
+  Entity set: rfd_processtransitions
+  Primary GUID: rfd_processtransitionid; display: rfd_name
+  Unique key rfd_definitiontransition: rfd_definition, rfd_code
+  rfd_name: string(200); R
+  rfd_definition: lookup -> rfd_processdefinition; delete=Restrict; merge=NoCascade; relationship=rfd_processtransition_definition; R
+  rfd_code: string(80); R
+  rfd_fromstage: lookup -> rfd_processstagedefinition; delete=Restrict; merge=NoCascade; relationship=rfd_processtransition_fromstage; R
+  rfd_tostage: lookup -> rfd_processstagedefinition; delete=Restrict; merge=NoCascade; relationship=rfd_processtransition_tostage; R
+  rfd_branchcode: string(80); O
+  rfd_eventcode: string(80); O
+  rfd_displayorder: integer; O
+  rfd_required: boolean; O
+
+rfd_emailprocess [UserOwned]
+  Entity set: rfd_emailprocesses
+  Primary GUID: rfd_emailprocessid; display: rfd_name
+  Unique key rfd_ingestkey: rfd_ingestkey
+  rfd_name: string(200); R
+  rfd_ingestkey: string(64); R
+  rfd_definition: lookup -> rfd_processdefinition; delete=Restrict; merge=NoCascade; relationship=rfd_emailprocess_definition; R
+  rfd_state: string(40); R
+  rfd_receivedat: datetime; R
+  rfd_lasteventat: datetime; O
+  rfd_revision: integer; R
+  rfd_coverage: string(40); O
+  rfd_health: string(40); O
+  rfd_parentprocess: lookup -> rfd_emailprocess; delete=RemoveLink; merge=NoCascade; relationship=rfd_emailprocess_parentprocess; O
+  rfd_batchid: string(36); O
+  rfd_draftid: string(36); O
+  rfd_weakcorrelation: boolean; O
+  rfd_correlationreason: string(80); O
+  rfd_internetmessageid: string(2000); field-security enabled; O
+  rfd_sourcelocator: string(2000); field-security enabled; O
+  rfd_actualfrom: string(320); field-security enabled; O
+  rfd_replyto: string(320); field-security enabled; O
+  rfd_customeremail: string(320); field-security enabled; O
+  rfd_identitysource: string(80); field-security enabled; O
+  rfd_contact: lookup -> contact; delete=RemoveLink; merge=Cascade; relationship=rfd_emailprocess_contact; O
+  rfd_email: lookup -> email; delete=RemoveLink; merge=NoCascade; relationship=rfd_emailprocess_email; O
+  rfd_primarycase: lookup -> incident; delete=RemoveLink; merge=NoCascade; relationship=rfd_emailprocess_primarycase; O
+  rfd_reconciliationrequired: boolean; O
+
+rfd_emailprocessstage [UserOwned]
+  Entity set: rfd_emailprocessstages
+  Primary GUID: rfd_emailprocessstageid; display: rfd_name
+  Unique key rfd_sourceoperationkey: rfd_sourceoperationkey
+  rfd_name: string(200); R
+  rfd_sourceoperationkey: string(64); R
+  rfd_process: lookup -> rfd_emailprocess; delete=Restrict; merge=NoCascade; relationship=rfd_emailprocessstage_process; R
+  rfd_stagedefinition: lookup -> rfd_processstagedefinition; delete=Restrict; merge=NoCascade; relationship=rfd_emailprocessstage_stagedefinition; R
+  rfd_parentexecution: lookup -> rfd_emailprocessstage; delete=RemoveLink; merge=NoCascade; relationship=rfd_emailprocessstage_parentexecution; O
+  rfd_branch: string(80); O
+  rfd_attempt: integer; R
+  rfd_state: string(40); R
+  rfd_startedat: datetime; O
+  rfd_endedat: datetime; O
+  rfd_durationms: decimal; O
+  rfd_durationprovenance: string(40); O
+  rfd_sourceexecutionid: string(200); O
+  rfd_operation: string(80); O
+  rfd_producerid: string(80); O
+  rfd_workflowid: string(200); O
+  rfd_workflow: lookup -> workflow; delete=RemoveLink; merge=NoCascade; relationship=rfd_emailprocessstage_workflow; O
+  rfd_case: lookup -> incident; delete=RemoveLink; merge=NoCascade; relationship=rfd_emailprocessstage_case; O
+  rfd_sourceversion: string(80); O
+
+rfd_emailprocessevent [UserOwned]
+  Entity set: rfd_emailprocessevents
+  Primary GUID: rfd_emailprocesseventid; display: rfd_name
+  Unique key rfd_sourceeventkey: rfd_sourceeventkey
+  rfd_name: string(200); R
+  rfd_sourceeventkey: string(64); R
+  rfd_process: lookup -> rfd_emailprocess; delete=Restrict; merge=NoCascade; relationship=rfd_emailprocessevent_process; R
+  rfd_stageexecution: lookup -> rfd_emailprocessstage; delete=Restrict; merge=NoCascade; relationship=rfd_emailprocessevent_stageexecution; O
+  rfd_eventtype: string(80); R
+  rfd_stagecode: string(80); O
+  rfd_outcome: string(80); O
+  rfd_sourceexecutionid: string(200); O
+  rfd_sourceversion: string(80); O
+  rfd_occurredat: datetime; R
+  rfd_recordedat: datetime; R
+  rfd_revision: integer; R
+  rfd_schemaversion: integer; R
+  rfd_payloaddigest: string(64); R
+  rfd_producerid: string(80); O
+  rfd_actor: lookup -> systemuser; delete=RemoveLink; merge=NoCascade; relationship=rfd_emailprocessevent_actor; R
+  rfd_errorcode: string(80); O
+  rfd_durationms: decimal; O
+  rfd_usage: integer; O
+  rfd_payloadjson: memo(16000); O
+  rfd_case: lookup -> incident; delete=RemoveLink; merge=NoCascade; relationship=rfd_emailprocessevent_case; O
+  rfd_contact: lookup -> contact; delete=RemoveLink; merge=Cascade; relationship=rfd_emailprocessevent_contact; O
+  rfd_task: lookup -> task; delete=RemoveLink; merge=NoCascade; relationship=rfd_emailprocessevent_task; O
+  rfd_noteid: string(36); validated non-relational GUID -> annotation; O
+  rfd_holding: lookup -> rfd_financialaccount; delete=RemoveLink; merge=NoCascade; relationship=rfd_emailprocessevent_holding; O
+  rfd_workflow: lookup -> workflow; delete=RemoveLink; merge=NoCascade; relationship=rfd_emailprocessevent_workflow; O
+  rfd_email: lookup -> email; delete=RemoveLink; merge=NoCascade; relationship=rfd_emailprocessevent_email; O
+
+rfd_emailprocesscase [UserOwned]
+  Entity set: rfd_emailprocesscases
+  Primary GUID: rfd_emailprocesscaseid; display: rfd_name
+  Unique key rfd_processcase: rfd_process, rfd_case
+  rfd_name: string(200); R
+  rfd_process: lookup -> rfd_emailprocess; delete=Restrict; merge=NoCascade; relationship=rfd_emailprocesscase_process; R
+  rfd_case: lookup -> incident; delete=RemoveLink; merge=NoCascade; relationship=rfd_emailprocesscase_case; R
+  rfd_role: string(80); O
+  rfd_blockscompletion: boolean; O
+  rfd_linkedat: datetime; O
+  rfd_sourceevent: lookup -> rfd_emailprocessevent; delete=RemoveLink; merge=NoCascade; relationship=rfd_emailprocesscase_sourceevent; O
+  rfd_casestate: integer; O
+  rfd_casestatus: integer; O
+  rfd_caseversion: string(80); O
+  rfd_merged: boolean; O
+  rfd_reconciliationrequired: boolean; O
+
+SEMANTIC STRING ALLOWLISTS
+Definition states: draft, published, retired
+Process states: received, processing, waiting-review, completed, failed, cancelled, needs-reconciliation
+Execution states: running, waiting, succeeded, failed, skipped, cancelled
+Event types: received, started, waiting, completed, failed, skipped, cancelled, case-linked, case-resolved, case-cancelled, case-merged, case-reopened, case-reconciled
+Not-started/unknown/uninstrumented are presentation states, not fabricated execution rows.

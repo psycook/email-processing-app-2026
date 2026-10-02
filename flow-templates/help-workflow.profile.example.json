@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "workflowId": "f1875d78-ffe5-64c8-d7bf-76a7f7a6b63f",
+  "definitionId": "00000000-0000-4000-8000-000000000002",
+  "producerId": "reviewed-workflow-producer",
+  "connectionReference": "rfd_process_dataverse",
+  "observations": [
+    {
+      "action": "Classify_Email",
+      "stageCode": "classify"
+    },
+    {
+      "action": "Classify_Email_Switch",
+      "stageCode": "route"
+    },
+    {
+      "action": "Card_Servicing_Agent",
+      "stageCode": "card-servicing"
+    },
+    {
+      "action": "SPAM_Response",
+      "stageCode": "spam"
+    },
+    {
+      "action": "Mock_Response_Agent",
+      "stageCode": "mock-response"
+    }
+  ],
+  "adapter": "help-v1"
+}

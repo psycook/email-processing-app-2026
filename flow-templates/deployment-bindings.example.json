@@ -1,0 +1,15 @@
+{
+  "mode": "PARENT_RELEASEGATE_REQUIRED",
+  "publishable": false,
+  "environmentUrl": "https://smc-diamond-service.crm.dynamics.com",
+  "connectionReference": {
+    "logicalName": "rfd_process_dataverse",
+    "connectorApi": "shared_commondataserviceforapps",
+    "physicalConnectionId": null,
+    "connectionIdSource": {
+      "kind": "privateDeploymentSettingsOrEnvironmentReference",
+      "name": "RFD_PROCESS_DATAVERSE_CONNECTION_ID"
+    }
+  },
+  "note": "A connected tenant connection was found read-only; its identifier is intentionally excluded. Existence is not authorization to bind, mutate or publish a flow."
+}

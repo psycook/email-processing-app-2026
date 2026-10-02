@@ -1,0 +1,636 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <systemform>
+    <formid>{d6c4aa79-909d-40a9-b204-b006344df509}</formid>
+    <IntroducedVersion>1.0.0.0</IntroducedVersion>
+    <FormPresentation>1</FormPresentation>
+    <FormActivationState>1</FormActivationState>
+    <form>
+      <tabs>
+        <tab id="{249CDEEA-2841-5F85-B0AA-1C3190F6765A}" name="financial_overview" IsUserDefined="1" showlabel="true" expanded="true" verticallayout="true">
+          <labels>
+            <label description="Overview" languagecode="1033" />
+          </labels>
+          <columns>
+            <column width="50%">
+              <sections>
+                <section id="{9FD111B3-3B43-5EF3-A849-7997F343FF25}" name="financial_overview_panel0" showlabel="true" showbar="true" IsUserDefined="1" layout="varwidth" columns="1" labelwidth="180">
+                  <labels>
+                    <label description="Account and Customer" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{EA6DB50B-545C-52D8-98E3-900CA148383D}" showlabel="true">
+                        <labels>
+                          <label description="Financial Account Name" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_name" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="rfd_name" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{C7845831-1CA8-5CBC-8DD1-C7710FBE637B}" showlabel="true">
+                        <labels>
+                          <label description="Holding Number" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_holdingnumber" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="rfd_holdingnumber" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{2D96A11C-79E7-57C7-8D3C-1BCA5D993C8C}" showlabel="true">
+                        <labels>
+                          <label description="Customer" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_customerid" classid="{270BD3DB-D9AF-4782-9025-509E298DEC0A}" datafieldname="rfd_customerid" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{0B0CB607-DC7A-5DAD-9065-BA9E60C950AF}" showlabel="true">
+                        <labels>
+                          <label description="Product Type" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_producttype" classid="{3EF39988-22BB-4F0B-BBBE-64B5A3748AEE}" datafieldname="rfd_producttype" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{A7A6DCBA-5FED-52DB-BEA0-F7EB34497AB8}" showlabel="true">
+                        <labels>
+                          <label description="Product" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_productid" classid="{270BD3DB-D9AF-4782-9025-509E298DEC0A}" datafieldname="rfd_productid" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{AEB8EF2F-C06D-53E5-AB21-6170CAA0D79A}" showlabel="true">
+                        <labels>
+                          <label description="Linked Financial Account" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_linkedfinancialaccountid" classid="{270BD3DB-D9AF-4782-9025-509E298DEC0A}" datafieldname="rfd_linkedfinancialaccountid" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{8EF1AA0F-7843-5202-A6AB-02D1A64495C6}" showlabel="true">
+                        <labels>
+                          <label description="Lifecycle Status" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_lifecyclestatus" classid="{3EF39988-22BB-4F0B-BBBE-64B5A3748AEE}" datafieldname="rfd_lifecyclestatus" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{650128BF-6176-5F15-B84E-398E1941EE41}" showlabel="true">
+                        <labels>
+                          <label description="Currency" languagecode="1033" />
+                        </labels>
+                        <control id="transactioncurrencyid" classid="{270BD3DB-D9AF-4782-9025-509E298DEC0A}" datafieldname="transactioncurrencyid" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{A37F9A10-F131-5F1A-8612-5E49B5F352A2}" showlabel="true">
+                        <labels>
+                          <label description="Owner" languagecode="1033" />
+                        </labels>
+                        <control id="ownerid" classid="{270BD3DB-D9AF-4782-9025-509E298DEC0A}" datafieldname="ownerid" disabled="false" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+            <column width="50%">
+              <sections>
+                <section id="{FD0A4660-F8FF-52C7-9D83-3C5EA2A4E0F3}" name="financial_overview_panel1" showlabel="true" showbar="true" IsUserDefined="1" layout="varwidth" columns="1" labelwidth="180">
+                  <labels>
+                    <label description="Dates and Servicing" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{155403C6-32A7-5EEA-BA68-7DFB5D4665EE}" showlabel="true">
+                        <labels>
+                          <label description="External Reference" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_externalreference" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="rfd_externalreference" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{641017BB-B77F-5EDE-A95A-868681A309B4}" showlabel="true">
+                        <labels>
+                          <label description="Source System" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_sourcesystem" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="rfd_sourcesystem" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{62391A4A-6A1D-52F9-9442-0170D4A388A1}" showlabel="true">
+                        <labels>
+                          <label description="Opened On" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_openedon" classid="{5B773807-9FB2-42DB-97C3-7A91EFF8ADFF}" datafieldname="rfd_openedon" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{CE37B416-8BED-549F-AED2-3CA2C9B08F9F}" showlabel="true">
+                        <labels>
+                          <label description="Closed On" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_closedon" classid="{5B773807-9FB2-42DB-97C3-7A91EFF8ADFF}" datafieldname="rfd_closedon" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{70C71CD5-9866-5FED-9B47-AC941BEA7E19}" showlabel="true">
+                        <labels>
+                          <label description="Maturity Date" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_maturitydate" classid="{5B773807-9FB2-42DB-97C3-7A91EFF8ADFF}" datafieldname="rfd_maturitydate" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{5E1F054F-B8A4-5B68-AE33-5FCBCF76D3ED}" showlabel="true">
+                        <labels>
+                          <label description="Servicing Notes" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_servicingnotes" classid="{E0DECE4B-6FC8-4A8F-A065-082708572369}" datafieldname="rfd_servicingnotes" disabled="false" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+                <section showlabel="false" showbar="false" id="{cf4cdb9b-bbd5-4239-9721-b1311db3a528}" IsUserDefined="0" height="auto">
+                  <labels>
+                    <label description="Notes" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell showlabel="false" rowspan="15" auto="false" id="{5fcfda2e-a34e-4600-b8ff-b1e77f501fe6}">
+                        <labels>
+                          <label description="Note Text" languagecode="1033" />
+                        </labels>
+                        <control id="notescontrol" classid="{06375649-c143-495e-a496-c962e5b4488e}">
+                          <parameters>
+                            <DefaultTabId>NotesTab</DefaultTabId>
+                          </parameters>
+                        </control>
+                      </cell>
+                    </row>
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                    <row height="auto" />
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+        <tab id="{29C19A6B-97A3-5220-A3A1-BE9B23407A89}" name="financial_banking" IsUserDefined="1" showlabel="true" expanded="true" verticallayout="true">
+          <labels>
+            <label description="Banking" languagecode="1033" />
+          </labels>
+          <columns>
+            <column width="50%">
+              <sections>
+                <section id="{821A8787-41C4-5857-A80E-2EF75BE2AEA6}" name="financial_banking_panel0" showlabel="true" showbar="true" IsUserDefined="1" layout="varwidth" columns="1" labelwidth="180">
+                  <labels>
+                    <label description="Banking Details" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{26206A79-9BE5-5775-94C1-32A346587739}" showlabel="true">
+                        <labels>
+                          <label description="Bank Account Number" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_accountnumber" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="rfd_accountnumber" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{B528EEBA-6386-5E30-9567-D4B3AE696C57}" showlabel="true">
+                        <labels>
+                          <label description="Sort Code" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_sortcode" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="rfd_sortcode" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{0AE53C55-95D2-52D1-A713-BF2AB3FE0EFC}" showlabel="true">
+                        <labels>
+                          <label description="IBAN" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_iban" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="rfd_iban" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{EEC67096-DEF7-55BD-B743-8C6FB42EF04B}" showlabel="true">
+                        <labels>
+                          <label description="BIC / SWIFT" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_bic" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="rfd_bic" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{1BFB8C3A-B1C2-5011-9086-C3F31075167F}" showlabel="true">
+                        <labels>
+                          <label description="Current Balance" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_currentbalance" classid="{533B9108-5A8B-42CB-BD37-52D1B8E7C741}" datafieldname="rfd_currentbalance" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{9C9E2E41-16DC-5CA9-800E-1DEF6DC4533C}" showlabel="true">
+                        <labels>
+                          <label description="Available Balance" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_availablebalance" classid="{533B9108-5A8B-42CB-BD37-52D1B8E7C741}" datafieldname="rfd_availablebalance" disabled="false" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+            <column width="50%">
+              <sections>
+                <section id="{03E950FE-AD78-5D32-B716-C21F2512E710}" name="financial_banking_panel1" showlabel="true" showbar="true" IsUserDefined="1" layout="varwidth" columns="1" labelwidth="180">
+                  <labels>
+                    <label description="Banking Details" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{F0A801B0-83DA-56F5-905F-4768F7E09818}" showlabel="true">
+                        <labels>
+                          <label description="Balance As Of" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_balanceasof" classid="{5B773807-9FB2-42DB-97C3-7A91EFF8ADFF}" datafieldname="rfd_balanceasof" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{837D64CE-B189-5AFE-9029-561C781E3C6C}" showlabel="true">
+                        <labels>
+                          <label description="Overdraft Limit" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_overdraftlimit" classid="{533B9108-5A8B-42CB-BD37-52D1B8E7C741}" datafieldname="rfd_overdraftlimit" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{5684FAD8-3E18-5266-8A0B-F8B003603E65}" showlabel="true">
+                        <labels>
+                          <label description="Credit Limit" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_creditlimit" classid="{533B9108-5A8B-42CB-BD37-52D1B8E7C741}" datafieldname="rfd_creditlimit" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{F75E9EF3-B420-5BD5-845C-95588FE6D5CB}" showlabel="true">
+                        <labels>
+                          <label description="Annual Interest Rate (%)" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_annualinterestrate" classid="{C3EFE0C3-0EC6-42BE-8349-CBD9079C5A6F}" datafieldname="rfd_annualinterestrate" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{C1F6D6F1-7C57-58A8-A9E0-FD34A1A6FE9E}" showlabel="true">
+                        <labels>
+                          <label description="Interest Rate Type" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_interestratetype" classid="{3EF39988-22BB-4F0B-BBBE-64B5A3748AEE}" datafieldname="rfd_interestratetype" disabled="false" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+        <tab id="{AFB2671B-081D-541A-AFA9-667CC4CF36AF}" name="financial_cards" IsUserDefined="1" showlabel="true" expanded="true" verticallayout="true">
+          <labels>
+            <label description="Cards" languagecode="1033" />
+          </labels>
+          <columns>
+            <column width="50%">
+              <sections>
+                <section id="{F3E7D1EA-1454-5B4C-8402-F10F03474735}" name="financial_cards_panel0" showlabel="true" showbar="true" IsUserDefined="1" layout="varwidth" columns="1" labelwidth="180">
+                  <labels>
+                    <label description="Cards Details" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{FC877B11-FB69-5295-B898-43620F2AB806}" showlabel="true">
+                        <labels>
+                          <label description="Card Last Four" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_cardlastfour" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="rfd_cardlastfour" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{801D1593-97B8-5C16-A26A-38FA4A054312}" showlabel="true">
+                        <labels>
+                          <label description="Card Network" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_cardnetwork" classid="{3EF39988-22BB-4F0B-BBBE-64B5A3748AEE}" datafieldname="rfd_cardnetwork" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{5EA35BBA-CAA5-5941-A4E5-4B1E05232606}" showlabel="true">
+                        <labels>
+                          <label description="Card Status" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_cardstatus" classid="{3EF39988-22BB-4F0B-BBBE-64B5A3748AEE}" datafieldname="rfd_cardstatus" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{BA9FF959-EAE0-5986-A4AA-4653ECA6A16C}" showlabel="true">
+                        <labels>
+                          <label description="Card Expiry Month" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_cardexpirymonth" classid="{C6D124CA-7EDA-4A60-AEA9-7FB8D318B68F}" datafieldname="rfd_cardexpirymonth" disabled="false" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+            <column width="50%">
+              <sections>
+                <section id="{2CC44B59-8D0C-51D2-81C6-5E9DCAAA8E81}" name="financial_cards_panel1" showlabel="true" showbar="true" IsUserDefined="1" layout="varwidth" columns="1" labelwidth="180">
+                  <labels>
+                    <label description="Cards Details" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{3D9B3091-4D5E-5C05-8C62-6E290691D0C0}" showlabel="true">
+                        <labels>
+                          <label description="Card Expiry Year" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_cardexpiryyear" classid="{C6D124CA-7EDA-4A60-AEA9-7FB8D318B68F}" datafieldname="rfd_cardexpiryyear" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{E4252A7C-F8F4-5743-8BFE-9FFBCC939D6B}" showlabel="true">
+                        <labels>
+                          <label description="Virtual Card" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_isvirtualcard" classid="{67FAC785-CD58-4F9F-ABB3-4B7DDC6ED5ED}" datafieldname="rfd_isvirtualcard" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{B1FDDB92-749B-5D28-A094-E2B8DCAB21EA}" showlabel="true">
+                        <labels>
+                          <label description="Card System Reference" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_cardreference" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="rfd_cardreference" disabled="false" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+        <tab id="{8EBB7988-9DF6-508E-B1B0-10D2B1171105}" name="financial_lending" IsUserDefined="1" showlabel="true" expanded="true" verticallayout="true">
+          <labels>
+            <label description="Lending" languagecode="1033" />
+          </labels>
+          <columns>
+            <column width="50%">
+              <sections>
+                <section id="{B57A45A9-49E0-5620-9778-A72A872BFDC4}" name="financial_lending_panel0" showlabel="true" showbar="true" IsUserDefined="1" layout="varwidth" columns="1" labelwidth="180">
+                  <labels>
+                    <label description="Lending Details" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{74B637A3-698E-5764-9173-7CF4F85A561B}" showlabel="true">
+                        <labels>
+                          <label description="Original Principal" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_originalprincipal" classid="{533B9108-5A8B-42CB-BD37-52D1B8E7C741}" datafieldname="rfd_originalprincipal" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{82030342-DF80-52DC-82A0-989E35B64897}" showlabel="true">
+                        <labels>
+                          <label description="Outstanding Principal" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_outstandingprincipal" classid="{533B9108-5A8B-42CB-BD37-52D1B8E7C741}" datafieldname="rfd_outstandingprincipal" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{87248CB3-5680-53A7-A326-8067DF623E00}" showlabel="true">
+                        <labels>
+                          <label description="Next Payment Amount" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_nextpaymentamount" classid="{533B9108-5A8B-42CB-BD37-52D1B8E7C741}" datafieldname="rfd_nextpaymentamount" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{5522C125-9089-566E-B7E7-33C0F725CF47}" showlabel="true">
+                        <labels>
+                          <label description="Next Payment Date" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_nextpaymentdate" classid="{5B773807-9FB2-42DB-97C3-7A91EFF8ADFF}" datafieldname="rfd_nextpaymentdate" disabled="false" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+            <column width="50%">
+              <sections>
+                <section id="{2FABC460-8CCB-5BFB-A5D8-1F7C560A206A}" name="financial_lending_panel1" showlabel="true" showbar="true" IsUserDefined="1" layout="varwidth" columns="1" labelwidth="180">
+                  <labels>
+                    <label description="Lending Details" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{11D5E27E-7BE2-58B7-BBCE-06D7650933D7}" showlabel="true">
+                        <labels>
+                          <label description="Arrears Amount" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_arrearsamount" classid="{533B9108-5A8B-42CB-BD37-52D1B8E7C741}" datafieldname="rfd_arrearsamount" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{268B8AF2-E639-5CA9-893B-695AAB656385}" showlabel="true">
+                        <labels>
+                          <label description="Remaining Term (Months)" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_remainingtermmonths" classid="{C6D124CA-7EDA-4A60-AEA9-7FB8D318B68F}" datafieldname="rfd_remainingtermmonths" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{D5915596-76BC-561D-A9B7-873C36DEE85B}" showlabel="true">
+                        <labels>
+                          <label description="Repayment Frequency" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_repaymentfrequency" classid="{3EF39988-22BB-4F0B-BBBE-64B5A3748AEE}" datafieldname="rfd_repaymentfrequency" disabled="false" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+        <tab id="{D1585ADB-94F3-5115-BFE9-9362167908C6}" name="financial_isa" IsUserDefined="1" showlabel="true" expanded="true" verticallayout="true">
+          <labels>
+            <label description="ISA" languagecode="1033" />
+          </labels>
+          <columns>
+            <column width="50%">
+              <sections>
+                <section id="{560A061A-B75B-5E71-AA25-3486353C400A}" name="financial_isa_panel0" showlabel="true" showbar="true" IsUserDefined="1" layout="varwidth" columns="1" labelwidth="180">
+                  <labels>
+                    <label description="ISA Details" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{503BEB11-9CDE-5E69-8F3B-16F2DC680BC8}" showlabel="true">
+                        <labels>
+                          <label description="ISA Type" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_isatype" classid="{3EF39988-22BB-4F0B-BBBE-64B5A3748AEE}" datafieldname="rfd_isatype" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{4FC40849-A7C9-5396-A2FD-2974D5BD688D}" showlabel="true">
+                        <labels>
+                          <label description="ISA Tax Year" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_isataxyear" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="rfd_isataxyear" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{0735CBA4-461A-59BC-B404-E926765BE097}" showlabel="true">
+                        <labels>
+                          <label description="ISA Subscriptions This Tax Year" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_isasubscriptionsytd" classid="{533B9108-5A8B-42CB-BD37-52D1B8E7C741}" datafieldname="rfd_isasubscriptionsytd" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{973F4B82-CD4B-5E0F-A84F-4AC75C424F6B}" showlabel="true">
+                        <labels>
+                          <label description="ISA Remaining Allowance" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_isaremainingallowance" classid="{533B9108-5A8B-42CB-BD37-52D1B8E7C741}" datafieldname="rfd_isaremainingallowance" disabled="false" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+            <column width="50%">
+              <sections>
+                <section id="{BAF62D05-AB47-518C-9336-BED62E7CE172}" name="financial_isa_panel1" showlabel="true" showbar="true" IsUserDefined="1" layout="varwidth" columns="1" labelwidth="180">
+                  <labels>
+                    <label description="ISA Details" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{6614CECB-E4BF-5C8D-B413-33D05755E9A8}" showlabel="true">
+                        <labels>
+                          <label description="Flexible ISA" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_isflexibleisa" classid="{67FAC785-CD58-4F9F-ABB3-4B7DDC6ED5ED}" datafieldname="rfd_isflexibleisa" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{8F6A9E64-A381-59AB-94BF-71DA66586260}" showlabel="true">
+                        <labels>
+                          <label description="ISA Transfer Status" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_isatransferstatus" classid="{3EF39988-22BB-4F0B-BBBE-64B5A3748AEE}" datafieldname="rfd_isatransferstatus" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{7FF5514B-1DDB-5290-9734-DFACE333207A}" showlabel="true">
+                        <labels>
+                          <label description="ISA Transfer Reference" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_isatransferreference" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="rfd_isatransferreference" disabled="false" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+        <tab id="{289AC6C3-57BB-5B33-BDE3-DAB6A9412CD0}" name="financial_compliance" IsUserDefined="1" showlabel="true" expanded="true" verticallayout="true">
+          <labels>
+            <label description="Compliance" languagecode="1033" />
+          </labels>
+          <columns>
+            <column width="50%">
+              <sections>
+                <section id="{E48D9323-7FC2-5E36-8D80-CD0A55FA37EF}" name="financial_compliance_panel0" showlabel="true" showbar="true" IsUserDefined="1" layout="varwidth" columns="1" labelwidth="180">
+                  <labels>
+                    <label description="Compliance Details" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{5CA181A7-B957-5492-AA49-1E7AF76054F2}" showlabel="true">
+                        <labels>
+                          <label description="Product Due Diligence Status" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_duediligencestatus" classid="{3EF39988-22BB-4F0B-BBBE-64B5A3748AEE}" datafieldname="rfd_duediligencestatus" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{B9D2D20E-CF25-584E-A027-1C31001EBCB8}" showlabel="true">
+                        <labels>
+                          <label description="Product Review Due" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_productreviewdue" classid="{5B773807-9FB2-42DB-97C3-7A91EFF8ADFF}" datafieldname="rfd_productreviewdue" disabled="false" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+            <column width="50%">
+              <sections>
+                <section id="{8CE1C883-D2B9-5EC4-BC80-BE6322690C81}" name="financial_compliance_panel1" showlabel="true" showbar="true" IsUserDefined="1" layout="varwidth" columns="1" labelwidth="180">
+                  <labels>
+                    <label description="Compliance Details" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{89D85824-6C1B-5469-A20A-145D2373E923}" showlabel="true">
+                        <labels>
+                          <label description="Servicing Restriction" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_servicingrestriction" classid="{3EF39988-22BB-4F0B-BBBE-64B5A3748AEE}" datafieldname="rfd_servicingrestriction" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{636A2B50-5EC7-55DC-8EA7-E92968CAB072}" showlabel="true">
+                        <labels>
+                          <label description="Restriction Reason" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_restrictionreason" classid="{E0DECE4B-6FC8-4A8F-A065-082708572369}" datafieldname="rfd_restrictionreason" disabled="false" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+      </tabs>
+    </form>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>1</CanBeDeleted>
+    <LocalizedNames>
+      <LocalizedName description="Financial Account" languagecode="1033" />
+    </LocalizedNames>
+    <Descriptions>
+      <Description description="A form for this entity." languagecode="1033" />
+    </Descriptions>
+  </systemform>
+</forms>

@@ -1,0 +1,5 @@
+**/bin/
+**/obj/
+**/TestResults/
+*.snk
+*.local.json

@@ -1,0 +1,230 @@
+{
+  "mode": "READ_ONLY_SAVED_AGENT_STRUCTURAL_INVENTORY",
+  "publishable": false,
+  "evidenceScope": "Saved configuration only; not runtime tool execution or proof of published runtime equivalence.",
+  "snapshotConsistency": "Independent read-only records with individual ETags; recheck all guards before any authorized future change.",
+  "workflowGuard": {
+    "environmentUrl": "https://smc-diamond-service.crm.dynamics.com",
+    "workflowId": "f1875d78-ffe5-64c8-d7bf-76a7f7a6b63f",
+    "etag": "W/\"12218136\"",
+    "sourceSha256": "c32630b30d4026e21881e9ca2268365ccc2661afdbc2f243c3abeb4260fdc2b7",
+    "knownOperations": [
+      {
+        "path": "triggers/Email_Arrives_in_Help_Share_Mailbox",
+        "type": "OpenApiConnection",
+        "operationId": "SharedMailboxOnNewEmailV2"
+      },
+      {
+        "path": "actions/Classify_Email",
+        "type": "OpenApiConnection",
+        "operationId": "InvokeDefinition"
+      },
+      {
+        "path": "actions/Classify_Email_Switch",
+        "type": "Switch",
+        "operationId": null
+      },
+      {
+        "path": "actions/Classify_Email_Switch/cases/Card Servicing/Card_Servicing_Agent",
+        "type": "OpenApiConnection",
+        "operationId": "InvokeAgent"
+      },
+      {
+        "path": "actions/Classify_Email_Switch/cases/Card Servicing/Classify_Email_Switch_Terminate_category_5912ba73_a6ba_4d3d_b6f5_26711927d2fa",
+        "type": "Terminate",
+        "operationId": null
+      },
+      {
+        "path": "actions/Classify_Email_Switch/default/Classify_Email_Switch_Terminate_default",
+        "type": "Terminate",
+        "operationId": null
+      },
+      {
+        "path": "actions/Classify_Email_Switch/default/SPAM_Response",
+        "type": "OpenApiConnection",
+        "operationId": "InvokeDefinition"
+      },
+      {
+        "path": "actions/Mock_Response_Agent",
+        "type": "OpenApiConnection",
+        "operationId": "InvokeDefinition"
+      }
+    ]
+  },
+  "agent": {
+    "botId": "81e99072-f1e0-4d51-8f1a-c477008a864a",
+    "schemaName": "cr27f_cardservingagent_yqTNld",
+    "name": "Card Servicing Agent",
+    "ismanaged": false,
+    "statecode": 0,
+    "etag": "W/\"11824271\"",
+    "ownerId": "0a61bb38-ef8b-f111-8076-7ced8d3c0da2",
+    "publishedOn": "2026-09-30T17:08:06Z",
+    "runtimeProvider": 0,
+    "configurationFieldNames": [
+      "$kind",
+      "agentSettings",
+      "recognizer"
+    ],
+    "configurationSha256": "617800aebebb171de13fd763788ecfd6c970e35a28e3616caf5bf035094ec8f7"
+  },
+  "configuredInvokeAgentParameterNames": [
+    "body/agentId",
+    "body/prompt"
+  ],
+  "configuredTypedContextParameterNames": [],
+  "inlineBotDefinitionFields": [
+    {
+      "action": "Classify_Email",
+      "parameter": "body/definition",
+      "sourceType": "dict",
+      "definitionFieldNames": [
+        "$kind",
+        "aIModelDefinitions",
+        "aIPluginOperations",
+        "componentCollections",
+        "components",
+        "connectedAgentDefinitions",
+        "connectedBots",
+        "connectionReferences",
+        "connectorDefinitions",
+        "dataverseTableSearchEntityColumnSynonyms",
+        "dataverseTableSearchEntityConfigurations",
+        "dataverseTableSearchGlossaryConfigurations",
+        "dataverseTableSearchs",
+        "diagnostics",
+        "entity",
+        "environmentVariables",
+        "flows"
+      ]
+    },
+    {
+      "action": "Mock_Response_Agent",
+      "parameter": "body/botDefinition",
+      "sourceType": "str",
+      "definitionFieldNames": [
+        "model",
+        "outputFormat",
+        "structuredOutputSchema",
+        "tools",
+        "webSearchEnabled"
+      ]
+    }
+  ],
+  "componentCount": 6,
+  "activeToolComponents": [
+    {
+      "componentId": "21248975-810d-4fd3-a971-04dc06a252fd",
+      "name": "email-response",
+      "componentType": 9,
+      "ismanaged": false,
+      "etag": "W/\"11743791\"",
+      "dataSha256": "b7d80183afb7bc5ce295ebf7442f13a8bf56de79d4361dfe1160d21c619bad29",
+      "kind": "InlineAgentSkill",
+      "fieldNames": [
+        "authoringSource",
+        "content",
+        "kind"
+      ],
+      "machineSymbolsPresent": [],
+      "traceContextSymbolsPresent": false,
+      "deterministicActionsDefined": false,
+      "evidenceMeaning": "Instruction references only; not proof a tool executed."
+    },
+    {
+      "componentId": "65df3b76-ef79-444e-86ff-5fa7c66dd40c",
+      "name": "extract-email-entities",
+      "componentType": 9,
+      "ismanaged": false,
+      "etag": "W/\"11666171\"",
+      "dataSha256": "b4a18c5a24c18c0b9307edba124c70d7f9eecb5e14a1ee423c1ede030a7c4cf7",
+      "kind": "InlineAgentSkill",
+      "fieldNames": [
+        "authoringSource",
+        "content",
+        "kind"
+      ],
+      "machineSymbolsPresent": [],
+      "traceContextSymbolsPresent": true,
+      "deterministicActionsDefined": false,
+      "evidenceMeaning": "Instruction references only; not proof a tool executed."
+    },
+    {
+      "componentId": "4cda87d1-e42d-4cac-a890-a946bd18ca2c",
+      "name": "query-or-update-card",
+      "componentType": 9,
+      "ismanaged": false,
+      "etag": "W/\"11735358\"",
+      "dataSha256": "a9fa327bc1e73330bcc1c92e75dd970d6e0d53adb5e475da73384e426f5305cc",
+      "kind": "InlineAgentSkill",
+      "fieldNames": [
+        "authoringSource",
+        "content",
+        "kind"
+      ],
+      "machineSymbolsPresent": [
+        "contact",
+        "contactid",
+        "incident",
+        "incidentid",
+        "customerid",
+        "rfd_financialaccount",
+        "emailaddress1",
+        "read_query",
+        "create_record",
+        "update_record"
+      ],
+      "traceContextSymbolsPresent": false,
+      "deterministicActionsDefined": false,
+      "evidenceMeaning": "Instruction references only; not proof a tool executed."
+    },
+    {
+      "componentId": "b3fd18c9-91a2-43c7-9270-d08cef89f785",
+      "name": "Microsoft Dataverse MCP Server \u2014 Microsoft Dataverse MCP Server",
+      "componentType": 9,
+      "ismanaged": false,
+      "etag": "W/\"11735356\"",
+      "dataSha256": "fbb0dab49b44e715bf6117c917eeed89b98b4ec62cf2021e210434f209770841",
+      "kind": "McpTool",
+      "fieldNames": [
+        "allowedTools",
+        "authMode",
+        "connectionReference",
+        "connectorId",
+        "kind",
+        "operationId",
+        "toolPermissionMode"
+      ],
+      "connectorApi": "shared_commondataserviceforapps",
+      "operationId": "InvokeMCP",
+      "authMode": "Invoker",
+      "toolPermissionMode": "AlwaysApprove",
+      "allowedTools": [
+        "read_query",
+        "invoke_api",
+        "create_table",
+        "update_table",
+        "create_record",
+        "update_record",
+        "search",
+        "describe"
+      ],
+      "connectionReferencePresent": true,
+      "connectionReferenceValueExported": false
+    }
+  ],
+  "nonToolComponentTypes": [
+    14,
+    18
+  ],
+  "automaticToolPatchSupported": false,
+  "blocker": "UNSUPPORTED_INLINE_SKILL_MCP_DETERMINISTIC_INTERCEPTION",
+  "requiredCapabilities": [
+    "Supported typed per-invocation ProcessId/native-run context for this InvokeAgent runtime",
+    "Supported per-tool deterministic middleware or replacement explicit action wrapper",
+    "Saved agent owner-approved authoring, tool binding and verified publication surface"
+  ],
+  "instructionsPromptsOrCustomerPayloadsExported": false,
+  "physicalConnectionIdentifiersExported": false,
+  "verifiedPatchRefusal": "UNSUPPORTED_INLINE_SKILL_MCP_DETERMINISTIC_INTERCEPTION"
+}

@@ -1,0 +1,251 @@
+SCHEMA VERSION 1 WIRE CONTRACT
+
+Every API is a global Dataverse Action with RequestJson and ResponseJson String
+parameters. JSON is camelCase; schemaVersion=1 is mandatory. Unknown properties,
+oversized envelopes (>32768 characters), malformed/empty IDs, unknown codes,
+invalid timestamps and unauthorized producers fail the action. Failures are
+Dataverse faults with sanitized machine codes, not success-shaped responses.
+
+Reads
+-----
+rfd_ListEmailProcesses
+  Input: {schemaVersion:1,pageSize:50,state?:<process state>,definitionId?:GUID,
+          cursor?:<opaque continuation>}
+  Output: {schemaVersion:1,processes:[ProcessSummary],nextCursor?:string,
+           consistency:"live-projections",
+           counts:{scope:"returned-page",byState:{<state>:count,...}}}
+  Ordering: immutable createdon descending then process GUID ascending. A
+  creation-time fence excludes subsequently created processes. State changes
+  remain live and can change filter membership; restart polling from page 1.
+  Counts are exact for this returned page only, not an invented tenant total.
+
+rfd_GetEmailProcessState
+  Input: {schemaVersion:1,processId:GUID}
+  Output: {schemaVersion:1,process:ProcessSummary,revision:number,
+           stageExecutions:[StageExecution],caseLinks:[CaseLink]}
+  Bounds: 500 actual executions, 100 links, 200 stage definitions. Oversized
+  aggregates fail explicitly. Revision is reread after children; changes
+  produce ReadChangedRetry rather than silently mixing two revisions.
+
+ProcessSummary:
+  processId,definitionId,state,receivedAtUtc,lastEventAtUtc,revision,coverage,
+  health,reconciliationRequired,weakCorrelation,
+  parentProcessId?,contactId?,emailId?,primaryCaseId?
+StageExecution:
+  stageExecutionId,stageDefinitionId,stageCode,branch?,attempt,state,
+  startedAtUtc?,endedAtUtc?,durationMs?,durationProvenance?,caseId?,
+  sourceVersion?,sourceExecutionId?,producerId?,operation?,parentExecutionId?,workflowId?
+  Here attempt is the server-owned execution ordinal, allocated in committed
+  first-observation order within process/stage/branch/case. It is not the
+  producer's per-run source attempt number or a claim about wall-clock order.
+CaseLink:
+  caseId,relationshipRole,blocksCompletion,state,status,merged,sourceVersion,
+  reconciliationRequired
+  state/status are actual incident integer values. State 0=active, 1=resolved,
+  2=cancelled. Merged is a distinct fact; cancellation/merge are never success.
+
+rfd_GetEmailProcessEvents
+  Input: {schemaVersion:1,processId:GUID,pageSize:50,cursor?:string}
+  Output: {schemaVersion:1,processId,upperRevision,coverage,nextCursor?:string,
+           events:[Event]}
+Event:
+  eventId,processId,stageExecutionId?,eventType,stageCode?,outcome?,
+  occurredAtUtc,recordedAtUtc,revision,producerId,caseId?,contactId?,emailId?,
+  taskId?,noteId?,holdingId?,workflowId?,sourceVersion?,sourceExecutionId?,durationMs?,usage?,errorCode?
+  No message identity fields or raw canonical payloads are returned.
+
+Events order by per-process revision then event GUID. A first page freezes the
+upper revision; subsequent events are excluded until a new page session.
+Continuations are opaque HMAC-authenticated envelopes with 15-minute expiry,
+organization, initiating caller, action, process, definition, state filter and
+page-size scope, paging cookie, page number and upper revision. Authorization
+is rechecked through caller-context Dataverse on every page. Clients must not
+parse, alter or reuse a cursor for a different query/caller. Max page size=100.
+
+rfd_GetProcessDefinitions
+  Input: {schemaVersion:1,definitionId?:GUID,pageSize:10,cursor?:string}
+  Output: {schemaVersion:1,definitions:[Definition],nextCursor?:string}
+Definition:
+  definitionId,code,name,version,state,coverageVersion,allowCaseFreeCompletion,
+  stages:[{stageDefinitionId,code,label,phase,lane,nodeKind,displayOrder,
+           required,coverage,completionAuthority,allowCaseFreeCompletion,requiresCase}],
+  transitions:[{transitionId,code,fromStageId,toStageId,label,branchCode?,
+                eventCode?,displayOrder,required}]
+  Default lists published definitions; explicit ID can read an authorized
+  historical definition. Definition pages are capped at 10.
+
+Writes
+------
+All producer IDs are labels resolved against server policy AND authenticated
+initiating identity/role rights. Providing a producerId is not authority.
+Record timestamp and actor are server derived. Allocate EventId/execution IDs
+before connector retry boundaries. Retry the same request only in a NEW API
+operation after concurrency/unique-key transient faults; changed facts under
+one stable identity are IdempotencyConflict. No automatic business-action retry.
+
+rfd_RecordEmailProcessEvent (intake):
+{
+  "schemaVersion":1,
+  "eventId":"<stable GUID>",
+  "definitionId":"<published definition GUID>",
+  "producerId":"<configured intake-capable producer>",
+  "sourceExecutionId":"<real flow-run ID>",
+  "operation":"receive",
+  "eventType":"received",
+  "occurredAtUtc":"2026-10-02T12:00:00Z",
+  "internetMessageId":"<ExactCase@example>",
+  "sourceLocator":"<optional stable connector message locator>",
+  "actualFrom":"<optional restricted email>",
+  "replyTo":"<optional restricted email>",
+  "emailId":"<optional actual Dataverse email GUID>",
+  "parentProcessId":"<optional evidence-linked prior process GUID>",
+  "batchId":"<optional full GUID>",
+  "draftId":"<optional full GUID>"
+}
+  Optional fields must be omitted rather than sent as example placeholders.
+  The ingest digest uses v1, organization lowercase D GUID, literal help-inbox,
+  exact trimmed InternetMessageId. Each UTF-8 component has a 4-byte unsigned
+  big-endian BYTE length prefix. Hash is lowercase 64-character SHA-256 hex.
+  Brackets/case are preserved; max raw InternetMessageId=2000, never truncated.
+  Conflicting reliable locator/definition under the same key fails closed.
+  If Message-ID is absent, sourceLocator is required. A weak-v1 digest scopes
+  organization/mailbox/producer/run/locator/stable EventId, marks weak correlation
+  and reconciliation required. Only the exact request retries deduplicate;
+  another delivery with a new EventId is not silently merged.
+
+  An intake-authority node (at most one) gets a genuine deterministic succeeded
+  receipt execution. Other graph nodes are never fabricated as completed.
+
+rfd_RecordEmailProcessEvent (actual execution):
+{
+  "schemaVersion":1,
+  "processId":"<existing GUID>",
+  "eventId":"<stable event GUID>",
+  "stageExecutionId":"<stable actual attempt GUID>",
+  "stageCode":"<definition stage code>",
+  "attempt":1,
+  "producerId":"<configured producer>",
+  "sourceExecutionId":"<native run ID>",
+  "operation":"<machine operation code>",
+  "branch":"<optional definition route/iteration code>",
+  "eventType":"started",
+  "occurredAtUtc":"2026-10-02T12:00:01Z"
+}
+  Allowed execution events: started, waiting, completed, failed, skipped,
+  cancelled. completed means execution state succeeded. Optional outcome must
+  match event type (started => running, completed => succeeded).
+  Optional sourceVersion is a nonnegative numeric source sequence.
+  Optional parentExecutionId must belong to this process. Optional caseId must
+  already be explicitly linked and match this execution's identity.
+  contactId/emailId/taskId/noteId/holdingId/workflowId must resolve under caller
+  permissions. holdingId targets rfd_financialaccount; workflowId targets the
+  actual Dataverse workflow definition, not a cloud run identifier. Keep the
+  same workflowId across notifications about one stage execution.
+  noteId identifies an actual readable annotation. Dataverse metadata prohibits
+  annotation as a custom lookup parent: persist rfd_noteid String(36) as
+  an explicitly typed non-relational GUID reference, NOT an EntityReference.
+  Its target kind is fixed to annotation in this contract, never caller chosen.
+  noteId requires caseId, and annotation.objectid must reference that exact
+  incident. Missing case, unrelated regarding target or unreadable annotation
+  rejects the write. An execution's case must already be explicitly linked.
+  contactId is accepted ONLY on a completed customer-resolution execution:
+  the producer must separately have canResolveCustomer=true and stageCode in
+  customerResolutionStageCodes; the configured stage must have phase=identify
+  and completionAuthority=tool. Ordinary producer identity/role/stageCodes
+  authorization still applies. The readable Contact is bound once, or the same
+  ID can be confirmed; mismatched replacement, other stage/phase, unsuccessful
+  or stale execution and intake Contact claims are rejected. The immutable
+  contact-referencing event and process binding share the API transaction.
+  This establishes linkage provenance only; it is not KYC, consent or proof
+  of email sender identity. Never infer it from From/ReplyTo/subject. Complete
+  the actual lookup before the separate case-link action. See the deterministic
+  wrapper example in customer-resolution-example.json.
+  durationMs>=0 is producer-reported, never inferred; usage>=0 only if reported.
+  errorCode must be in the producer's configured sanitized errorCodes.
+
+  Request attempt is the positive native source-attempt number, scoped to the
+  producer/run/operation/stage/branch/case. A new native workflow run may start
+  at attempt=1 for the same ProcessId; callers never query or guess max+1.
+  SourceOperationKey hashes that native scope and request attempt.
+  SourceEventKey additionally scopes event type and source version.
+  The stored/read stage attempt is a separate server-owned ordinal allocated
+  as max+1 within process/stage/branch/case, protected by the process RowVersion
+  transaction. A new native run gets a new ordinal; all prior execution rows
+  remain visible. Existing execution notifications retain their ordinal.
+  The original native request attempt remains in the immutable sanitized event
+  payload, so retained revision-ordered replay can reproduce first-seen ordinals.
+  Changing only GUIDs within the same source attempt is an identity conflict,
+  not permission to invent another business attempt. A genuine retry inside
+  one run must explicitly increase the native request attempt and allocate a
+  new execution GUID; transport retries preserve all IDs and source fields.
+  Late starts/waits and older versions cannot regress a terminal execution.
+  Contradictory terminal outcomes require a new business attempt.
+
+  Only the producer's allowed stageCodes may be asserted. completed also
+  requires stage completionauthority == authenticated producer authority.
+  Human review completion is case-observer only. Agent prose, absence of
+  errors, flow termination and browser assertions are not business completion.
+
+rfd_LinkEmailProcessCase:
+  Required: schemaVersion,processId,eventId,producerId,sourceExecutionId,
+  operation,occurredAtUtc,caseId,relationshipRole.
+  Optional blocksCompletion defaults true. First link validates actual incident
+  customer contact against process contact. Reads live state/version; does not
+  accept case state claims. Creates immutable role/block relationship and
+  append-only case-linked fact; current closed state settles review immediately.
+  Repeat same identity/payload => AlreadyRecorded. A different request trying
+  to change an existing relationship fails. Use lifecycle reconciliation for
+  an already linked case, not a second link.
+
+rfd_RecordCaseLifecycle:
+  Trusted asynchronous observer supplies captured pre/post state,status,merged,
+  sourceVersion and occurred time; API verifies them against registered parent
+  context. Identities derive from case, source version, event kind and process.
+  External configured case-capable workflow may request CURRENT reconciliation:
+  {schemaVersion:1,processId,caseId,producerId,occurredAtUtc:<UTC timestamp>}
+  It must omit historical CaseState/CaseStatus/Merged/PreviousCaseState/
+  PreviousCaseStatus/SourceVersion. API reads actual incident modifiedon,
+  state/status/merged/version and labels case-reconciled with a sticky marker.
+  Supplying arbitrary resolved-state claims is rejected.
+
+All write receipts:
+  {schemaVersion:1,processId,eventId,status:"Applied"|"AlreadyRecorded",
+   revision:<committed event revision>}
+  Duplicate receipt returns canonical stored EventId even if the retried
+  caller uses another EventId with the same source identity and identical facts.
+
+Completion rules
+----------------
+Required stages are unconditional requirements. Required transition targets
+become applicable when their source succeeds; a branchCode activates only for
+that observed selected branch. Outgoing branch labels are allowlisted choices
+and completed routing stages must report one of them. Branch-choice validation
+applies to phase=route or gateway/decision nodes, not every node with labelled
+outgoing graph metadata; case-linked edges are not switch choices. Required incoming edges
+gate target start/completion against the latest predecessor attempts.
+Use required=false graph edges for illustrative/uninstrumented relationships,
+not to assert observed routing. EventCode is graph metadata, not executable code.
+
+All latest actual stage/branch/case attempts must settle successfully (optional
+explicit skips allowed), all applicable required stages/branches must succeed,
+and every blocking case must be resolved before completion. Case-free
+completion additionally requires the definition flag AND an actually succeeded
+stage explicitly marked allowCaseFreeCompletion. Any executed non-skipped stage
+marked requiresCase disables case-free completion. For example: mark the spam
+terminal stage allowCaseFreeCompletion=true and the card-servicing branch
+requiresCase=true; do not mark intake/classifier/routing as a case-free terminal.
+A successful agent reply
+cannot substitute for missing tool/routing/review executions.
+
+For the inspected Help flow, Card Servicing/SPAM observations currently prove
+only outer host-call outcomes before intentional Terminate(Failed) actions.
+Keep case-free flags disabled in that observed seed until a separately
+instrumented, approved terminal disposition proves business completion.
+Do not enable a case-free flag merely because an opaque host returned.
+
+One case closing never closes other blocking cases. Active On Hold/Waiting
+statuses remain active. Resolved, cancelled, merged and reopened facts differ.
+Reopen starts a new review attempt preserving prior successful history; old
+case versions never undo a newer observation. Merge marks reconciliation;
+cancel does not mean success. Sticky reconciliation/partial-coverage indicators
+are deliberately not cleared by merely observing a healthy current state.

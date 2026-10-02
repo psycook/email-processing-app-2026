@@ -1,0 +1,107 @@
+READ GATEWAY ADAPTER AGREEMENT
+
+The inspected src\process\types.ts describes UI view models, not the raw Custom
+API wire DTO. Do not cast parsed ResponseJson directly to those TypeScript types.
+The parent-owned ProcessReadGateway must validate and map these differences.
+The canonical wire contract remains api-contract.txt/process-contract.json.
+
+Envelope and identities
+-----------------------
+schemaVersion=1 exists on the wire response envelope, not every nested item.
+UI model item schemaVersion values can be attached after validating the envelope.
+StageExecution UI processId comes from the containing state response process.
+All GUID identities remain full values; do not correlate by a display string.
+
+Process summaries
+------------------
+Wire -> UI:
+  receivedAtUtc -> receivedAt
+  lastEventAtUtc -> latestEventAt
+  revision -> projectionRevision
+  definitionId -> definitionId (join exact immutable definition for version)
+  definition numeric version -> UI string version / definitionVersion
+  definition.coverageVersion -> UI coverageVersion
+  real API data -> mode "observed", never "synthetic"
+
+Lifecycle state mappings:
+  received -> notStarted
+  processing -> running
+  waiting-review -> waiting
+  completed -> succeeded
+  failed -> failed
+  cancelled -> cancelled
+  needs-reconciliation -> unknown PLUS an explicit source/health explanation.
+Never convert needs-reconciliation, unknown, failed reads or missing rows to
+succeeded/completed. A successful API response does not mean business success.
+Do not silently discard reconciliationRequired, weakCorrelation or partial
+coverage when adapting UI source diagnostics.
+
+Wire health current can be available only as current data-source health, not
+proof of complete coverage. Derive stale according to documented fetch/event
+freshness; do not invent an SLA. Use explicit API errors/unavailable diagnostics,
+not fixtures or successful empty arrays as a production read fallback.
+
+Definitions
+-----------
+Wire stage code,label,lane,phase,nodeKind,displayOrder,required ->
+UI stageCode,label,laneId,phase,kind,order,optional=!required.
+Convert graph nodeKind through a checked map into the UI discriminated union.
+Resolve transition fromStageId/toStageId via the definition's stageDefinitionId
+to stage code map; reject dangling identifiers rather than fabricating nodes.
+Wire transition code -> transitionCode, required -> optional=!required.
+Descriptions, lane labels and source diagnostics are presentation metadata;
+do not invent observed behavior/timings while supplying display defaults.
+Preserve coverage and opaque/unknown distinctions; uninstrumented is not skipped.
+allowCaseFreeCompletion/requiresCase are server completion policies, not client
+permission to fabricate success.
+
+Default GetProcessDefinitions lists published versions. A process pinned to a
+different authorized version requires a read using that exact definitionId.
+Do not substitute the newest graph for a process's immutable definition.
+
+Executions and events
+---------------------
+Execution state values running/waiting/succeeded/failed/skipped/cancelled map
+directly. UI-only notStarted/unknown nodes derive from absent execution coverage,
+not persisted successful rows.
+Execution attempt is the canonical server-owned ordinal within the logical
+stage/branch/case, not the native producer's per-run request attempt. New runs
+can all submit native attempt=1 while producing separately visible ordinals.
+startedAtUtc/endedAtUtc -> startedAt/endedAt.
+producerId -> source (or documented server producer label).
+durationProvenance "producer-reported" -> "reported"; absent -> "unknown".
+Never derive handling duration from page views or missing timestamps.
+
+Event occurredAtUtc/recordedAtUtc/revision/producerId ->
+UI occurredAt/recordedAt/projectionRevision/source.
+Event upperRevision belongs to the page session; continuation preserves it.
+Do not merge later event pages into an older projection as if a new snapshot.
+Keep sourceVersion as a string (Dataverse versions can exceed JS safe integers).
+
+Build links ONLY from fixed typed record IDs and an approved URL builder:
+caseId/contactId/holdingId/taskId/noteId/emailId. noteId is an annotation GUID
+stored non-relationally because annotation cannot be a custom lookup parent.
+workflowId is a real workflow definition; sourceExecutionId is an external
+native run ID, not a Dataverse lookup or automatically trusted URL. UI currently
+has workflowRun, not workflow-definition, as a link kind; omit an unsupported
+link rather than mislabel it. No raw HTML/URLs come from process metadata.
+
+Case links
+----------
+relationshipRole -> role; blocksCompletion maps directly. Derive display state
+from actual incident integer state and merged flag:
+merged=true -> merged; otherwise 0=active, 1=resolved, 2=cancelled.
+Keep sourceVersion/reconciliation diagnostics if the current UI shape lacks
+dedicated fields. Active status reasons remain active; cancellation/merge never
+become resolved success. linkedAt is optional and must not be invented.
+
+Paging and dependency injection
+-------------------------------
+UI ProcessReadGateway has four methods; raw Actions all accept JSON strings.
+loadProcessDefinitions/listProcesses may need bounded continuation handling
+because their UI interfaces return arrays. Do not silently claim one page is a
+global total; wire list counts scope is returned-page and projections are live.
+getProcessEvents preserves nextCursor exactly; caller/query changes invalidate
+the cursor. State response revision changes must not replace a newer snapshot.
+Pass the validated gateway into ProcessPage; undefined gateway intentionally
+makes no live calls. Fixtures remain explicitly synthetic/configuration mode.

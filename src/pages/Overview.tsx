@@ -3,9 +3,11 @@ import type { ReactNode } from 'react'
 import { estimateCosts, formatMoney, formatDate } from '../lib/studioEngine'
 import { useApp } from '../ui/studioContext'
 import { Card, CardHeader, SectionLabel, Badge, StatusDot, Button, EmptyState } from '../ui/primitives'
-import { InlineNote } from '../ui/Banners'
+import { CaseCategoryCard } from '../ui/CaseCategoryCard'
 import { Pipeline } from '../ui/Pipeline'
 import type { StageCount } from '../ui/Pipeline'
+import { ProcessCanvas } from '../ui/ProcessCanvas'
+import { INVENTORIED_PROCESS, legacyProcessEnabled } from '../process/definition'
 import {
   openCases,
   unreadMessages,
@@ -14,7 +16,6 @@ import {
   sortByReceived,
   caseCategoryMix,
   totalBalance,
-  EXPECTED_CLASS_LABELS,
 } from '../ui/selectors'
 import { priorityLabel, priorityTone } from '../ui/constants'
 import { relativeTime } from '../ui/util'
@@ -94,7 +95,6 @@ export function OverviewPage() {
   }
 
   const topOpen = open.slice(0, 5)
-  const mixMax = mix.reduce((peak, item) => Math.max(peak, item.count), 0) || 1
 
   return (
     <div className="page">
@@ -112,7 +112,7 @@ export function OverviewPage() {
             Open mailboxes
           </Button>
           <Button variant="secondary" icon={<Activity size={16} />} onClick={() => actions.navigate('process')}>
-            View pipeline
+            View process
           </Button>
         </div>
       </section>
@@ -153,20 +153,20 @@ export function OverviewPage() {
 
       <Card className="pipeline-card">
         <CardHeader
-          label="Observed pipeline"
-          title="Mailbox to human review"
-          description="Counts appear only where the connector exposes them. Other stages are process configuration, not measured throughput."
+          label="Process map · read-only"
+          title="Shared mailbox to customer response."
+          description="A simple business view of the process: mailbox, classifier, agent, case handling, outcome and email response. The stage list keeps the underlying configuration detail available without crowding the dashboard."
           actions={
             <Button variant="ghost" size="sm" iconRight={<ArrowRight size={14} />} onClick={() => actions.navigate('process')}>
-              Inspect stages
+              Open Process Studio
             </Button>
           }
         />
-        <Pipeline counts={counts} refreshing={state.refreshing} />
+        {legacyProcessEnabled() ? <Pipeline counts={counts} refreshing={state.refreshing} /> : <ProcessCanvas definition={INVENTORIED_PROCESS} compact />}
       </Card>
 
       <div className="split-2">
-        <Card>
+        <Card className="recent-mail-card">
           <CardHeader
             label="Recent communications"
             title="Latest inbound email"
@@ -185,12 +185,12 @@ export function OverviewPage() {
                   <button type="button" className="comm-row" onClick={() => actions.navigate('mailbox')}>
                     <StatusDot tone={message.isRead ? 'neutral' : 'accent'} />
                     <span className="comm-row__main">
-                      <span className="comm-row__from">{message.from}</span>
-                      <span className="comm-row__subject">{message.subject || '(no subject)'}</span>
+                      <span className="comm-row__from" title={message.from}>{message.from}</span>
+                      <span className="comm-row__subject" title={message.subject || '(no subject)'}>{message.subject || '(no subject)'}</span>
                     </span>
                     <span className="comm-row__meta">
                       {message.hasAttachments ? <Paperclip size={13} aria-label="Has attachments" /> : null}
-                      <span>{relativeTime(message.receivedAt)}</span>
+                      <time dateTime={message.receivedAt} title={formatDate(message.receivedAt)}>{relativeTime(message.receivedAt)}</time>
                     </span>
                   </button>
                 </li>
@@ -214,28 +214,7 @@ export function OverviewPage() {
           </div>
         </Card>
 
-        <Card>
-          <CardHeader label="Request mix" title="Case categories" />
-          {mix.length === 0 ? (
-            <EmptyState icon={<ClipboardCheck size={20} />} title="No cases recorded" description="Categories appear once cases exist in scope." />
-          ) : (
-            <ul className="mix-list">
-              {mix.slice(0, 7).map((item) => (
-                <li key={item.category} className="mix-row">
-                  <span className="mix-row__label">{item.category}</span>
-                  <span className="mix-row__track">
-                    <span className="mix-row__fill" style={{ width: `${(item.count / mixMax) * 100}%` }} />
-                  </span>
-                  <span className="mix-row__count">{item.count}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-          <InlineNote tone="info">
-            These are CRM case categories as recorded by the connector. They differ from the evaluation taxonomy (
-            {EXPECTED_CLASS_LABELS.slice(0, 3).map((item) => item.label).join(', ')}…) used when composing test emails.
-          </InlineNote>
-        </Card>
+        <CaseCategoryCard categories={mix} />
       </div>
 
       <div className="split-2">

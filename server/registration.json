@@ -1,0 +1,172 @@
+{
+  "schemaVersion": 1,
+  "deploymentPerformed": false,
+  "releaseGate": "No live registration or activation without separately approved deployment/pilot checks",
+  "assembly": {
+    "name": "EmailProcess.Plugin",
+    "targetFramework": "net48",
+    "isolationMode": 2,
+    "sourceType": 0,
+    "recommendedArtifact": "EmailProcess.Plugin\\bin\\Release\\EmailProcess.Plugin.1.0.0.nupkg",
+    "packageIncludesDependencies": true,
+    "dependentAssemblies": ["Newtonsoft.Json"],
+    "dllOnlyRegistrationSupported": false,
+    "strongNameKey": "External local SigningKeyPath MSBuild property; never committed"
+  },
+  "types": {
+    "api": "EmailProcess.Plugin.ProcessApi",
+    "guard": "EmailProcess.Plugin.TableGuard",
+    "observer": "EmailProcess.Plugin.CaseLifecycleObserver"
+  },
+  "configuration": {
+    "default": "Embedded EmailProcess.Policy.json resource from EmailProcess.Plugin\\policy.json; fails closed",
+    "productionBuild": {
+      "msbuildProperty": "ProducerPolicyPath",
+      "pathRule": "Use ignored *.local.json outside source control",
+      "resourceName": "EmailProcess.Policy.json",
+      "policyFields": {
+        "producers": [
+          {
+            "producerId": "Explicit machine producer label",
+            "authority": "intake | workflow | tool",
+            "userIds": ["Approved initiating user/application user GUID"],
+            "roleIds": ["Approved effective Dataverse role GUID; both identity AND role required"],
+            "stageCodes": ["Allowed definition stage code"],
+            "errorCodes": ["Allowed sanitized machine error code"],
+            "canReceive": false,
+            "canLinkCases": false,
+            "canResolveCustomer": false,
+            "customerResolutionStageCodes": ["Explicit approved identify-phase tool-stage code; separate from general stageCodes"]
+          }
+        ],
+        "observerStepIds": ["Exact registered async incident Update sdkmessageprocessingstep GUID"],
+        "definitionAdministratorUserIds": ["Approved definition administrator GUID"],
+        "cursorSigningKey": "Base64 secret containing at least 32 random bytes"
+      }
+    },
+    "customApi": {
+      "reliesOnStepConstructorConfiguration": false,
+      "source": "Environment-specific embedded policy resource",
+      "secureOrUnsecureConfigurationFieldOnCustomApi": false
+    },
+    "ordinarySteps": {
+      "unsecureConfiguration": null,
+      "secureConfiguration": "Optional full policy JSON override; absent/blank uses embedded resource",
+      "requiredConsistency": "API, guard and observer policies must agree on observer step IDs and producer/admin identities"
+    },
+    "environmentVariableResolverImplemented": false,
+    "restrictedConfigurationTableResolverImplemented": false,
+    "prohibition": "Never put cursor secrets or producer policy in public unsecure configuration; protect compiled deployment artifacts"
+  },
+  "customApiDefaults": {
+    "bindingtype": 0,
+    "isfunction": false,
+    "isprivate": false,
+    "allowedcustomprocessingsteptype": 0,
+    "isworkflowsdkstepenabled": false,
+    "iscustomizable": false,
+    "plugintype": "EmailProcess.Plugin.ProcessApi",
+    "requestParameters": [
+      { "uniquename": "RequestJson", "name": "RequestJson", "type": 10, "isoptional": false, "iscustomizable": false }
+    ],
+    "responseProperties": [
+      { "uniquename": "ResponseJson", "name": "ResponseJson", "type": 10, "iscustomizable": false }
+    ]
+  },
+  "customApis": [
+    { "uniquename": "rfd_RecordEmailProcessEvent", "access": "producer", "executePrivilegeLookup": "prvCreaterfd_emailprocessevent" },
+    { "uniquename": "rfd_LinkEmailProcessCase", "access": "producer", "executePrivilegeLookup": "prvCreaterfd_emailprocessevent" },
+    { "uniquename": "rfd_RecordCaseLifecycle", "access": "trusted-observer-or-authorized-current-reconciliation", "executePrivilegeLookup": "prvCreaterfd_emailprocessevent" },
+    { "uniquename": "rfd_GetEmailProcessState", "access": "reader", "executePrivilegeLookup": "prvReadrfd_emailprocess" },
+    { "uniquename": "rfd_GetEmailProcessEvents", "access": "reader", "executePrivilegeLookup": "prvReadrfd_emailprocess" },
+    { "uniquename": "rfd_ListEmailProcesses", "access": "reader", "executePrivilegeLookup": "prvReadrfd_emailprocess" },
+    { "uniquename": "rfd_GetProcessDefinitions", "access": "reader", "executePrivilegeLookup": "prvReadrfd_emailprocess" }
+  ],
+  "privilegeResolution": {
+    "required": true,
+    "timing": "After schema creation, before creating APIs",
+    "rule": "Query exact named existing privilege records; require exactly one match. Abort if missing/ambiguous. These names are lookup candidates, not authority to invent privileges.",
+    "forbidden": "Do not create arbitrary custom privileges or silently omit ExecutePrivilegeName"
+  },
+  "guardDefaults": {
+    "type": "EmailProcess.Plugin.TableGuard",
+    "stage": 20,
+    "mode": 0,
+    "rank": 1,
+    "supporteddeployment": 0,
+    "impersonatinguserid": null,
+    "runAs": "Calling User",
+    "filteringattributes": "",
+    "images": [],
+    "initialState": "enabled-before-writer-API-registration"
+  },
+  "guardGroups": [
+    {
+      "tables": ["rfd_processdefinition", "rfd_processstagedefinition", "rfd_processtransition"],
+      "requiredMessages": ["Create", "Update", "Delete"],
+      "metadataGatedAdditionalMessages": ["Upsert", "CreateMultiple", "UpdateMultiple", "UpsertMultiple", "DeleteMultiple"],
+      "behavior": "Allow only configured definition administrators with native table rights; published/used rows immutable; non-CRUD mutation messages denied"
+    },
+    {
+      "tables": ["rfd_emailprocess", "rfd_emailprocessstage", "rfd_emailprocessevent", "rfd_emailprocesscase"],
+      "requiredMessages": ["Create", "Update", "Delete", "Assign"],
+      "metadataGatedAdditionalMessages": ["Upsert", "CreateMultiple", "UpdateMultiple", "UpsertMultiple", "DeleteMultiple", "SetState", "GrantAccess", "ModifyAccess", "RevokeAccess"],
+      "behavior": "Only trusted transactional API-scoped Create/Update permitted; event Update/Delete always denied; no general Assign/share/retention bypass"
+    }
+  ],
+  "messageResolution": {
+    "rule": "Resolve supported sdkmessage/sdkmessagefilter for each table and fail if a required core message cannot be protected. Register metadata-gated messages only when Dataverse exposes a supported filter. Verify all supported bulk mutation paths invoke guards before granting corresponding privileges.",
+    "missingGuardCoverage": "Keep writer API unavailable and do not grant unguarded/bypass privileges",
+    "bypassPrivileges": "Must not be assigned to producer/reader identities"
+  },
+  "observer": {
+    "type": "EmailProcess.Plugin.CaseLifecycleObserver",
+    "message": "Update",
+    "primaryentity": "incident",
+    "stage": 40,
+    "mode": 1,
+    "rank": 1,
+    "supporteddeployment": 0,
+    "impersonatinguserid": null,
+    "runAs": "Calling User",
+    "filteringattributes": "statecode,statuscode,merged",
+    "asyncautodelete": false,
+    "initialState": "disabled",
+    "enableGate": "Explicit pilot authorization plus proven images/version/caller table rights/native case messages and monitoring",
+    "images": [
+      {
+        "name": "PreImage", "entityalias": "PreImage", "imagetype": 0,
+        "messagepropertyname": "Target", "attributes": "statecode,statuscode,merged,versionnumber"
+      },
+      {
+        "name": "PostImage", "entityalias": "PostImage", "imagetype": 1,
+        "messagepropertyname": "Target", "attributes": "statecode,statuscode,merged,versionnumber"
+      }
+    ],
+    "policyBootstrap": "Create disabled step first, record its GUID, build approved API embedded policy and/or matching step secure configuration; only then activate under pilot gate",
+    "boundedFanOut": 50,
+    "overflow": "Processed subset marked reconciliation-required; async job retries/logs. External paged worker remains unimplemented.",
+    "originalCaseTransaction": "Fail open because observer is asynchronous after commit",
+    "nativeRetry": "OperationStatus.Retry on Dataverse faults/timeouts; stop request immediately, never reuse failed API transaction",
+    "noHistoricalImages": "Read current case through API and mark explicit current-state reconciliation; do not fabricate pre/post history"
+  },
+  "activationOrder": [
+    "Validate seven-table schema/field security, native rights and active unique indexes; take approved backup",
+    "Build and register signed dependent-assembly package through supported tooling; default producer policy remains deny-all",
+    "Register all runtime and definition mutation guards while writer APIs do not exist; verify guard coverage before native write grants",
+    "Create incident observer step and both images DISABLED; record step GUID",
+    "Build/re-register environment-specific embedded policy and matching secure step overrides as applicable",
+    "Resolve existing execute privileges and create read APIs and writer APIs with None custom-processing extensibility",
+    "Verify transaction rollback, idempotency, concurrency, caller/field security, parent-context guards and graph contracts",
+    "Generate official Code App service signatures and run read-only smoke checks",
+    "Enable producer adapters and then observer only after explicit controlled-pilot authorization"
+  ],
+  "acceptanceNotYetProven": [
+    "Actual Dataverse API IsInTransaction and parent-context propagation",
+    "Unique-key race rollback and complete-request concurrency retry",
+    "Caller role and record/field visibility, no SYSTEM impersonation",
+    "CloseIncident/cancel/merge/reopen Update image/version behavior",
+    "All direct and bulk mutation guard coverage",
+    "Connector/generated Code App API signatures and live round trips"
+  ]
+}

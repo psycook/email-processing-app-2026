@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<savedqueries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <savedquery>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>0</CanBeDeleted>
+    <isquickfindquery>0</isquickfindquery>
+    <isprivate>0</isprivate>
+    <isdefault>1</isdefault>
+    <savedqueryid>{bd90ffcb-eec8-4c70-b517-8597528839e8}</savedqueryid>
+    <layoutxml>
+      <grid name="resultset" jump="rfd_name" select="1" icon="1" preview="1">
+        <row name="result" id="rfd_financialaccountid">
+          <cell name="rfd_name" width="220" />
+          <cell name="rfd_holdingnumber" width="150" />
+          <cell name="rfd_customerid" width="220" />
+          <cell name="rfd_producttype" width="150" />
+          <cell name="rfd_lifecyclestatus" width="150" />
+          <cell name="rfd_currentbalance" width="150" />
+          <cell name="transactioncurrencyid" width="150" />
+          <cell name="rfd_productreviewdue" width="150" />
+        </row>
+      </grid>
+    </layoutxml>
+    <querytype>0</querytype>
+    <fetchxml>
+      <fetch version="1.0" mapping="logical">
+        <entity name="rfd_financialaccount">
+          <attribute name="rfd_financialaccountid" />
+          <attribute name="rfd_name" />
+          <attribute name="rfd_holdingnumber" />
+          <attribute name="rfd_customerid" />
+          <attribute name="rfd_producttype" />
+          <attribute name="rfd_lifecyclestatus" />
+          <attribute name="rfd_currentbalance" />
+          <attribute name="transactioncurrencyid" />
+          <attribute name="rfd_productreviewdue" />
+          <order attribute="rfd_name" descending="false" />
+          <filter type="and">
+            <condition attribute="statecode" operator="eq" value="0" />
+            <filter type="or">
+              <condition attribute="rfd_lifecyclestatus" operator="null" />
+              <condition attribute="rfd_lifecyclestatus" operator="ne" value="100000006" />
+            </filter>
+          </filter>
+        </entity>
+      </fetch>
+    </fetchxml>
+    <IntroducedVersion>1.0.0.0</IntroducedVersion>
+    <LocalizedNames>
+      <LocalizedName description="Active Financial Accounts" languagecode="1033" />
+    </LocalizedNames>
+  </savedquery>
+</savedqueries>

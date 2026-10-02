@@ -1,0 +1,1176 @@
+{
+  "schema_version": 1,
+  "target": {
+    "url": "https://smc-diamond-service.crm.dynamics.com",
+    "environment_id": "b17908ad-6b6b-eefb-98bc-79cc7e20ab08",
+    "organization_id": "d594142a-e0b5-f111-8add-6045bd02251f",
+    "user_id": "0a61bb38-ef8b-f111-8076-7ced8d3c0da2",
+    "identity": "admin@diax47618638.onmicrosoft.com",
+    "solution": "RetailFinanceDemo",
+    "publisher": "rfd"
+  },
+  "service_contract": "server\\process-contract.json",
+  "service_table_contract_sha256": "abffb04b298c05937d8b0c5bace6e880c12585fd789fe8d609cd050821b23f11",
+  "semantics": {
+    "choice_storage": "Allowlisted case-sensitive strings, not custom Dataverse state/status reasons.",
+    "definition_states": [
+      "draft",
+      "published",
+      "retired"
+    ],
+    "process_states": [
+      "received",
+      "processing",
+      "waiting-review",
+      "completed",
+      "failed",
+      "cancelled",
+      "needs-reconciliation"
+    ],
+    "execution_states": [
+      "running",
+      "waiting",
+      "succeeded",
+      "failed",
+      "skipped",
+      "cancelled"
+    ],
+    "event_types": [
+      "received",
+      "started",
+      "waiting",
+      "completed",
+      "failed",
+      "skipped",
+      "cancelled",
+      "case-linked",
+      "case-resolved",
+      "case-cancelled",
+      "case-merged",
+      "case-reopened",
+      "case-reconciled"
+    ],
+    "key_integrity": "ApplicationRequired is not server enforcement. API/guards must reject null/empty keys.",
+    "source_versions": "Decimal version strings preserve Dataverse row-version precision; compare numerically.",
+    "event_payload": "Allowlisted sanitized canonical event envelope only; never free-form producer payloads.",
+    "time": "DateAndTime/UserLocal metadata; producers send UTC and UI localizes.",
+    "index_scope": "Alternate keys below create supported unique indexes; no fabricated SQL index DDL.",
+    "overflow": "Reject overlength values; never truncate identifiers, source versions or hash input."
+  },
+  "tables": [
+    {
+      "logical_name": "rfd_processdefinition",
+      "label": "Process definition",
+      "collection_label": "Process definitions",
+      "entity_set": "rfd_processdefinitions",
+      "primary_id": "rfd_processdefinitionid",
+      "primary_name": "rfd_name",
+      "ownership": "OrganizationOwned",
+      "table_type": "Standard",
+      "optimistic_concurrency": true,
+      "columns": [
+        {
+          "logical_name": "rfd_name",
+          "type": "string",
+          "required": true,
+          "max_length": 200
+        },
+        {
+          "logical_name": "rfd_code",
+          "type": "string",
+          "required": true,
+          "max_length": 80
+        },
+        {
+          "logical_name": "rfd_version",
+          "type": "integer",
+          "required": true
+        },
+        {
+          "logical_name": "rfd_state",
+          "type": "string",
+          "required": true,
+          "max_length": 40
+        },
+        {
+          "logical_name": "rfd_coverageversion",
+          "type": "string",
+          "required": false,
+          "max_length": 80
+        },
+        {
+          "logical_name": "rfd_allowcasefreecompletion",
+          "type": "boolean",
+          "required": false
+        }
+      ],
+      "keys": [
+        {
+          "name": "rfd_definitionversion",
+          "columns": [
+            "rfd_code",
+            "rfd_version"
+          ]
+        }
+      ]
+    },
+    {
+      "logical_name": "rfd_processstagedefinition",
+      "label": "Process stage definition",
+      "collection_label": "Process stage definitions",
+      "entity_set": "rfd_processstagedefinitions",
+      "primary_id": "rfd_processstagedefinitionid",
+      "primary_name": "rfd_name",
+      "ownership": "OrganizationOwned",
+      "table_type": "Standard",
+      "optimistic_concurrency": true,
+      "columns": [
+        {
+          "logical_name": "rfd_name",
+          "type": "string",
+          "required": true,
+          "max_length": 200
+        },
+        {
+          "logical_name": "rfd_definition",
+          "type": "lookup",
+          "required": true,
+          "target": "rfd_processdefinition",
+          "relationship": "rfd_processstagedefinition_definition",
+          "delete": "Restrict",
+          "merge": "NoCascade",
+          "navigation_property": "rfd_definition"
+        },
+        {
+          "logical_name": "rfd_code",
+          "type": "string",
+          "required": true,
+          "max_length": 80
+        },
+        {
+          "logical_name": "rfd_phase",
+          "type": "string",
+          "required": false,
+          "max_length": 80
+        },
+        {
+          "logical_name": "rfd_lane",
+          "type": "string",
+          "required": false,
+          "max_length": 80
+        },
+        {
+          "logical_name": "rfd_nodekind",
+          "type": "string",
+          "required": false,
+          "max_length": 40
+        },
+        {
+          "logical_name": "rfd_displayorder",
+          "type": "integer",
+          "required": false
+        },
+        {
+          "logical_name": "rfd_required",
+          "type": "boolean",
+          "required": false
+        },
+        {
+          "logical_name": "rfd_coverage",
+          "type": "string",
+          "required": false,
+          "max_length": 40
+        },
+        {
+          "logical_name": "rfd_allowcasefreecompletion",
+          "type": "boolean",
+          "required": false
+        },
+        {
+          "logical_name": "rfd_requirescase",
+          "type": "boolean",
+          "required": false
+        },
+        {
+          "logical_name": "rfd_completionauthority",
+          "type": "string",
+          "required": false,
+          "max_length": 40
+        }
+      ],
+      "keys": [
+        {
+          "name": "rfd_definitionstage",
+          "columns": [
+            "rfd_definition",
+            "rfd_code"
+          ]
+        }
+      ]
+    },
+    {
+      "logical_name": "rfd_processtransition",
+      "label": "Process transition",
+      "collection_label": "Process transitions",
+      "entity_set": "rfd_processtransitions",
+      "primary_id": "rfd_processtransitionid",
+      "primary_name": "rfd_name",
+      "ownership": "OrganizationOwned",
+      "table_type": "Standard",
+      "optimistic_concurrency": true,
+      "columns": [
+        {
+          "logical_name": "rfd_name",
+          "type": "string",
+          "required": true,
+          "max_length": 200
+        },
+        {
+          "logical_name": "rfd_definition",
+          "type": "lookup",
+          "required": true,
+          "target": "rfd_processdefinition",
+          "relationship": "rfd_processtransition_definition",
+          "delete": "Restrict",
+          "merge": "NoCascade",
+          "navigation_property": "rfd_definition"
+        },
+        {
+          "logical_name": "rfd_code",
+          "type": "string",
+          "required": true,
+          "max_length": 80
+        },
+        {
+          "logical_name": "rfd_fromstage",
+          "type": "lookup",
+          "required": true,
+          "target": "rfd_processstagedefinition",
+          "relationship": "rfd_processtransition_fromstage",
+          "delete": "Restrict",
+          "merge": "NoCascade",
+          "navigation_property": "rfd_fromstage"
+        },
+        {
+          "logical_name": "rfd_tostage",
+          "type": "lookup",
+          "required": true,
+          "target": "rfd_processstagedefinition",
+          "relationship": "rfd_processtransition_tostage",
+          "delete": "Restrict",
+          "merge": "NoCascade",
+          "navigation_property": "rfd_tostage"
+        },
+        {
+          "logical_name": "rfd_branchcode",
+          "type": "string",
+          "required": false,
+          "max_length": 80
+        },
+        {
+          "logical_name": "rfd_eventcode",
+          "type": "string",
+          "required": false,
+          "max_length": 80
+        },
+        {
+          "logical_name": "rfd_displayorder",
+          "type": "integer",
+          "required": false
+        },
+        {
+          "logical_name": "rfd_required",
+          "type": "boolean",
+          "required": false
+        }
+      ],
+      "keys": [
+        {
+          "name": "rfd_definitiontransition",
+          "columns": [
+            "rfd_definition",
+            "rfd_code"
+          ]
+        }
+      ]
+    },
+    {
+      "logical_name": "rfd_emailprocess",
+      "label": "Email process",
+      "collection_label": "Email processes",
+      "entity_set": "rfd_emailprocesses",
+      "primary_id": "rfd_emailprocessid",
+      "primary_name": "rfd_name",
+      "ownership": "UserOwned",
+      "table_type": "Standard",
+      "optimistic_concurrency": true,
+      "columns": [
+        {
+          "logical_name": "rfd_name",
+          "type": "string",
+          "required": true,
+          "max_length": 200
+        },
+        {
+          "logical_name": "rfd_ingestkey",
+          "type": "string",
+          "required": true,
+          "max_length": 64
+        },
+        {
+          "logical_name": "rfd_definition",
+          "type": "lookup",
+          "required": true,
+          "target": "rfd_processdefinition",
+          "relationship": "rfd_emailprocess_definition",
+          "delete": "Restrict",
+          "merge": "NoCascade",
+          "navigation_property": "rfd_definition"
+        },
+        {
+          "logical_name": "rfd_state",
+          "type": "string",
+          "required": true,
+          "max_length": 40
+        },
+        {
+          "logical_name": "rfd_receivedat",
+          "type": "datetime",
+          "required": true
+        },
+        {
+          "logical_name": "rfd_lasteventat",
+          "type": "datetime",
+          "required": false
+        },
+        {
+          "logical_name": "rfd_revision",
+          "type": "integer",
+          "required": true
+        },
+        {
+          "logical_name": "rfd_coverage",
+          "type": "string",
+          "required": false,
+          "max_length": 40
+        },
+        {
+          "logical_name": "rfd_health",
+          "type": "string",
+          "required": false,
+          "max_length": 40
+        },
+        {
+          "logical_name": "rfd_parentprocess",
+          "type": "lookup",
+          "required": false,
+          "target": "rfd_emailprocess",
+          "relationship": "rfd_emailprocess_parentprocess",
+          "delete": "RemoveLink",
+          "merge": "NoCascade",
+          "navigation_property": "rfd_parentprocess"
+        },
+        {
+          "logical_name": "rfd_batchid",
+          "type": "string",
+          "required": false,
+          "max_length": 36
+        },
+        {
+          "logical_name": "rfd_draftid",
+          "type": "string",
+          "required": false,
+          "max_length": 36
+        },
+        {
+          "logical_name": "rfd_weakcorrelation",
+          "type": "boolean",
+          "required": false
+        },
+        {
+          "logical_name": "rfd_correlationreason",
+          "type": "string",
+          "required": false,
+          "max_length": 80
+        },
+        {
+          "logical_name": "rfd_internetmessageid",
+          "type": "string",
+          "required": false,
+          "max_length": 2000,
+          "secured": true
+        },
+        {
+          "logical_name": "rfd_sourcelocator",
+          "type": "string",
+          "required": false,
+          "max_length": 2000,
+          "secured": true
+        },
+        {
+          "logical_name": "rfd_actualfrom",
+          "type": "string",
+          "required": false,
+          "max_length": 320,
+          "secured": true
+        },
+        {
+          "logical_name": "rfd_replyto",
+          "type": "string",
+          "required": false,
+          "max_length": 320,
+          "secured": true
+        },
+        {
+          "logical_name": "rfd_customeremail",
+          "type": "string",
+          "required": false,
+          "max_length": 320,
+          "secured": true
+        },
+        {
+          "logical_name": "rfd_identitysource",
+          "type": "string",
+          "required": false,
+          "max_length": 80,
+          "secured": true
+        },
+        {
+          "logical_name": "rfd_contact",
+          "type": "lookup",
+          "required": false,
+          "target": "contact",
+          "relationship": "rfd_emailprocess_contact",
+          "delete": "RemoveLink",
+          "merge": "Cascade",
+          "navigation_property": "rfd_contact"
+        },
+        {
+          "logical_name": "rfd_email",
+          "type": "lookup",
+          "required": false,
+          "target": "email",
+          "relationship": "rfd_emailprocess_email",
+          "delete": "RemoveLink",
+          "merge": "NoCascade",
+          "navigation_property": "rfd_email"
+        },
+        {
+          "logical_name": "rfd_primarycase",
+          "type": "lookup",
+          "required": false,
+          "target": "incident",
+          "relationship": "rfd_emailprocess_primarycase",
+          "delete": "RemoveLink",
+          "merge": "NoCascade",
+          "navigation_property": "rfd_primarycase"
+        },
+        {
+          "logical_name": "rfd_reconciliationrequired",
+          "type": "boolean",
+          "required": false
+        }
+      ],
+      "keys": [
+        {
+          "name": "rfd_ingestkey",
+          "columns": [
+            "rfd_ingestkey"
+          ]
+        }
+      ]
+    },
+    {
+      "logical_name": "rfd_emailprocessstage",
+      "label": "Email process stage",
+      "collection_label": "Email process stages",
+      "entity_set": "rfd_emailprocessstages",
+      "primary_id": "rfd_emailprocessstageid",
+      "primary_name": "rfd_name",
+      "ownership": "UserOwned",
+      "table_type": "Standard",
+      "optimistic_concurrency": true,
+      "columns": [
+        {
+          "logical_name": "rfd_name",
+          "type": "string",
+          "required": true,
+          "max_length": 200
+        },
+        {
+          "logical_name": "rfd_sourceoperationkey",
+          "type": "string",
+          "required": true,
+          "max_length": 64
+        },
+        {
+          "logical_name": "rfd_process",
+          "type": "lookup",
+          "required": true,
+          "target": "rfd_emailprocess",
+          "relationship": "rfd_emailprocessstage_process",
+          "delete": "Restrict",
+          "merge": "NoCascade",
+          "navigation_property": "rfd_process"
+        },
+        {
+          "logical_name": "rfd_stagedefinition",
+          "type": "lookup",
+          "required": true,
+          "target": "rfd_processstagedefinition",
+          "relationship": "rfd_emailprocessstage_stagedefinition",
+          "delete": "Restrict",
+          "merge": "NoCascade",
+          "navigation_property": "rfd_stagedefinition"
+        },
+        {
+          "logical_name": "rfd_parentexecution",
+          "type": "lookup",
+          "required": false,
+          "target": "rfd_emailprocessstage",
+          "relationship": "rfd_emailprocessstage_parentexecution",
+          "delete": "RemoveLink",
+          "merge": "NoCascade",
+          "navigation_property": "rfd_parentexecution"
+        },
+        {
+          "logical_name": "rfd_branch",
+          "type": "string",
+          "required": false,
+          "max_length": 80
+        },
+        {
+          "logical_name": "rfd_attempt",
+          "type": "integer",
+          "required": true
+        },
+        {
+          "logical_name": "rfd_state",
+          "type": "string",
+          "required": true,
+          "max_length": 40
+        },
+        {
+          "logical_name": "rfd_startedat",
+          "type": "datetime",
+          "required": false
+        },
+        {
+          "logical_name": "rfd_endedat",
+          "type": "datetime",
+          "required": false
+        },
+        {
+          "logical_name": "rfd_durationms",
+          "type": "decimal",
+          "required": false
+        },
+        {
+          "logical_name": "rfd_durationprovenance",
+          "type": "string",
+          "required": false,
+          "max_length": 40
+        },
+        {
+          "logical_name": "rfd_sourceexecutionid",
+          "type": "string",
+          "required": false,
+          "max_length": 200
+        },
+        {
+          "logical_name": "rfd_operation",
+          "type": "string",
+          "required": false,
+          "max_length": 80
+        },
+        {
+          "logical_name": "rfd_producerid",
+          "type": "string",
+          "required": false,
+          "max_length": 80
+        },
+        {
+          "logical_name": "rfd_workflowid",
+          "type": "string",
+          "required": false,
+          "max_length": 200
+        },
+        {
+          "logical_name": "rfd_workflow",
+          "type": "lookup",
+          "required": false,
+          "target": "workflow",
+          "relationship": "rfd_emailprocessstage_workflow",
+          "delete": "RemoveLink",
+          "merge": "NoCascade",
+          "navigation_property": "rfd_workflow"
+        },
+        {
+          "logical_name": "rfd_case",
+          "type": "lookup",
+          "required": false,
+          "target": "incident",
+          "relationship": "rfd_emailprocessstage_case",
+          "delete": "RemoveLink",
+          "merge": "NoCascade",
+          "navigation_property": "rfd_case"
+        },
+        {
+          "logical_name": "rfd_sourceversion",
+          "type": "string",
+          "required": false,
+          "max_length": 80
+        }
+      ],
+      "keys": [
+        {
+          "name": "rfd_sourceoperationkey",
+          "columns": [
+            "rfd_sourceoperationkey"
+          ]
+        }
+      ]
+    },
+    {
+      "logical_name": "rfd_emailprocessevent",
+      "label": "Email process event",
+      "collection_label": "Email process events",
+      "entity_set": "rfd_emailprocessevents",
+      "primary_id": "rfd_emailprocesseventid",
+      "primary_name": "rfd_name",
+      "ownership": "UserOwned",
+      "table_type": "Standard",
+      "optimistic_concurrency": true,
+      "columns": [
+        {
+          "logical_name": "rfd_name",
+          "type": "string",
+          "required": true,
+          "max_length": 200
+        },
+        {
+          "logical_name": "rfd_sourceeventkey",
+          "type": "string",
+          "required": true,
+          "max_length": 64
+        },
+        {
+          "logical_name": "rfd_process",
+          "type": "lookup",
+          "required": true,
+          "target": "rfd_emailprocess",
+          "relationship": "rfd_emailprocessevent_process",
+          "delete": "Restrict",
+          "merge": "NoCascade",
+          "navigation_property": "rfd_process"
+        },
+        {
+          "logical_name": "rfd_stageexecution",
+          "type": "lookup",
+          "required": false,
+          "target": "rfd_emailprocessstage",
+          "relationship": "rfd_emailprocessevent_stageexecution",
+          "delete": "Restrict",
+          "merge": "NoCascade",
+          "navigation_property": "rfd_stageexecution"
+        },
+        {
+          "logical_name": "rfd_eventtype",
+          "type": "string",
+          "required": true,
+          "max_length": 80
+        },
+        {
+          "logical_name": "rfd_stagecode",
+          "type": "string",
+          "required": false,
+          "max_length": 80
+        },
+        {
+          "logical_name": "rfd_outcome",
+          "type": "string",
+          "required": false,
+          "max_length": 80
+        },
+        {
+          "logical_name": "rfd_sourceexecutionid",
+          "type": "string",
+          "required": false,
+          "max_length": 200
+        },
+        {
+          "logical_name": "rfd_sourceversion",
+          "type": "string",
+          "required": false,
+          "max_length": 80
+        },
+        {
+          "logical_name": "rfd_occurredat",
+          "type": "datetime",
+          "required": true
+        },
+        {
+          "logical_name": "rfd_recordedat",
+          "type": "datetime",
+          "required": true
+        },
+        {
+          "logical_name": "rfd_revision",
+          "type": "integer",
+          "required": true
+        },
+        {
+          "logical_name": "rfd_schemaversion",
+          "type": "integer",
+          "required": true
+        },
+        {
+          "logical_name": "rfd_payloaddigest",
+          "type": "string",
+          "required": true,
+          "max_length": 64
+        },
+        {
+          "logical_name": "rfd_producerid",
+          "type": "string",
+          "required": false,
+          "max_length": 80
+        },
+        {
+          "logical_name": "rfd_actor",
+          "type": "lookup",
+          "required": true,
+          "target": "systemuser",
+          "relationship": "rfd_emailprocessevent_actor",
+          "delete": "RemoveLink",
+          "merge": "NoCascade",
+          "navigation_property": "rfd_actor"
+        },
+        {
+          "logical_name": "rfd_errorcode",
+          "type": "string",
+          "required": false,
+          "max_length": 80
+        },
+        {
+          "logical_name": "rfd_durationms",
+          "type": "decimal",
+          "required": false
+        },
+        {
+          "logical_name": "rfd_usage",
+          "type": "integer",
+          "required": false
+        },
+        {
+          "logical_name": "rfd_payloadjson",
+          "type": "memo",
+          "required": false,
+          "max_length": 16000
+        },
+        {
+          "logical_name": "rfd_case",
+          "type": "lookup",
+          "required": false,
+          "target": "incident",
+          "relationship": "rfd_emailprocessevent_case",
+          "delete": "RemoveLink",
+          "merge": "NoCascade",
+          "navigation_property": "rfd_case"
+        },
+        {
+          "logical_name": "rfd_contact",
+          "type": "lookup",
+          "required": false,
+          "target": "contact",
+          "relationship": "rfd_emailprocessevent_contact",
+          "delete": "RemoveLink",
+          "merge": "Cascade",
+          "navigation_property": "rfd_contact"
+        },
+        {
+          "logical_name": "rfd_task",
+          "type": "lookup",
+          "required": false,
+          "target": "task",
+          "relationship": "rfd_emailprocessevent_task",
+          "delete": "RemoveLink",
+          "merge": "NoCascade",
+          "navigation_property": "rfd_task"
+        },
+        {
+          "logical_name": "rfd_noteid",
+          "type": "string",
+          "required": false,
+          "max_length": 36,
+          "reference_target": "annotation",
+          "reference_kind": "non-relational-guid"
+        },
+        {
+          "logical_name": "rfd_holding",
+          "type": "lookup",
+          "required": false,
+          "target": "rfd_financialaccount",
+          "relationship": "rfd_emailprocessevent_holding",
+          "delete": "RemoveLink",
+          "merge": "NoCascade",
+          "navigation_property": "rfd_holding"
+        },
+        {
+          "logical_name": "rfd_workflow",
+          "type": "lookup",
+          "required": false,
+          "target": "workflow",
+          "relationship": "rfd_emailprocessevent_workflow",
+          "delete": "RemoveLink",
+          "merge": "NoCascade",
+          "navigation_property": "rfd_workflow"
+        },
+        {
+          "logical_name": "rfd_email",
+          "type": "lookup",
+          "required": false,
+          "target": "email",
+          "relationship": "rfd_emailprocessevent_email",
+          "delete": "RemoveLink",
+          "merge": "NoCascade",
+          "navigation_property": "rfd_email"
+        }
+      ],
+      "keys": [
+        {
+          "name": "rfd_sourceeventkey",
+          "columns": [
+            "rfd_sourceeventkey"
+          ]
+        }
+      ]
+    },
+    {
+      "logical_name": "rfd_emailprocesscase",
+      "label": "Email process case",
+      "collection_label": "Email process cases",
+      "entity_set": "rfd_emailprocesscases",
+      "primary_id": "rfd_emailprocesscaseid",
+      "primary_name": "rfd_name",
+      "ownership": "UserOwned",
+      "table_type": "Standard",
+      "optimistic_concurrency": true,
+      "columns": [
+        {
+          "logical_name": "rfd_name",
+          "type": "string",
+          "required": true,
+          "max_length": 200
+        },
+        {
+          "logical_name": "rfd_process",
+          "type": "lookup",
+          "required": true,
+          "target": "rfd_emailprocess",
+          "relationship": "rfd_emailprocesscase_process",
+          "delete": "Restrict",
+          "merge": "NoCascade",
+          "navigation_property": "rfd_process"
+        },
+        {
+          "logical_name": "rfd_case",
+          "type": "lookup",
+          "required": true,
+          "target": "incident",
+          "relationship": "rfd_emailprocesscase_case",
+          "delete": "RemoveLink",
+          "merge": "NoCascade",
+          "navigation_property": "rfd_case"
+        },
+        {
+          "logical_name": "rfd_role",
+          "type": "string",
+          "required": false,
+          "max_length": 80
+        },
+        {
+          "logical_name": "rfd_blockscompletion",
+          "type": "boolean",
+          "required": false
+        },
+        {
+          "logical_name": "rfd_linkedat",
+          "type": "datetime",
+          "required": false
+        },
+        {
+          "logical_name": "rfd_sourceevent",
+          "type": "lookup",
+          "required": false,
+          "target": "rfd_emailprocessevent",
+          "relationship": "rfd_emailprocesscase_sourceevent",
+          "delete": "RemoveLink",
+          "merge": "NoCascade",
+          "navigation_property": "rfd_sourceevent"
+        },
+        {
+          "logical_name": "rfd_casestate",
+          "type": "integer",
+          "required": false
+        },
+        {
+          "logical_name": "rfd_casestatus",
+          "type": "integer",
+          "required": false
+        },
+        {
+          "logical_name": "rfd_caseversion",
+          "type": "string",
+          "required": false,
+          "max_length": 80
+        },
+        {
+          "logical_name": "rfd_merged",
+          "type": "boolean",
+          "required": false
+        },
+        {
+          "logical_name": "rfd_reconciliationrequired",
+          "type": "boolean",
+          "required": false
+        }
+      ],
+      "keys": [
+        {
+          "name": "rfd_processcase",
+          "columns": [
+            "rfd_process",
+            "rfd_case"
+          ]
+        }
+      ]
+    }
+  ],
+  "seed": {
+    "definition_code": "help-email",
+    "version": 1,
+    "name": "Help email - observed classification and Card Servicing routing",
+    "coverage_version": "help-observed-v1-uninstrumented",
+    "entry_stage": "intake",
+    "allow_case_free_completion": false,
+    "completion_note": "Current Card and default branches explicitly Terminate(Failed). Successful host calls cannot imply end-to-end/no-case success. No-case completion stays disabled; card servicing requires a case, and host-call success is not financial success.",
+    "publication": "published",
+    "stages": [
+      {
+        "code": "intake",
+        "label": "Help email received",
+        "phase": "intake",
+        "lane": "help-flow",
+        "kind": "start",
+        "order": 0,
+        "required": true,
+        "coverage": "uninstrumented",
+        "completion_authority": "intake",
+        "allow_case_free_completion": false,
+        "requires_case": false
+      },
+      {
+        "code": "classify",
+        "label": "Classify_Email",
+        "phase": "classify",
+        "lane": "help-flow",
+        "kind": "task",
+        "order": 10,
+        "required": true,
+        "coverage": "uninstrumented",
+        "completion_authority": "workflow",
+        "allow_case_free_completion": false,
+        "requires_case": false
+      },
+      {
+        "code": "route",
+        "label": "Switch on classification",
+        "phase": "route",
+        "lane": "help-flow",
+        "kind": "gateway",
+        "order": 20,
+        "required": true,
+        "coverage": "uninstrumented",
+        "completion_authority": "workflow",
+        "allow_case_free_completion": false,
+        "requires_case": false
+      },
+      {
+        "code": "card-servicing",
+        "label": "Card Servicing saved agent - host invocation only",
+        "phase": "act",
+        "lane": "saved-agent",
+        "kind": "subprocess",
+        "order": 30,
+        "required": false,
+        "coverage": "opaque",
+        "completion_authority": "workflow",
+        "allow_case_free_completion": false,
+        "requires_case": true
+      },
+      {
+        "code": "contact-lookup",
+        "label": "Customer resolution - planned tool-observation overlay",
+        "phase": "identify",
+        "lane": "instrumentation-overlay",
+        "kind": "task",
+        "order": 35,
+        "required": false,
+        "coverage": "unknown",
+        "completion_authority": "tool",
+        "allow_case_free_completion": false,
+        "requires_case": false
+      },
+      {
+        "code": "spam",
+        "label": "SPAM / default",
+        "phase": "route",
+        "lane": "help-flow",
+        "kind": "task",
+        "order": 40,
+        "required": false,
+        "coverage": "uninstrumented",
+        "completion_authority": "workflow",
+        "allow_case_free_completion": false,
+        "requires_case": false
+      },
+      {
+        "code": "mock-response",
+        "label": "Mock_Response_Agent",
+        "phase": "act",
+        "lane": "help-flow",
+        "kind": "subprocess",
+        "order": 45,
+        "required": false,
+        "coverage": "opaque",
+        "completion_authority": "workflow",
+        "allow_case_free_completion": false,
+        "requires_case": false
+      },
+      {
+        "code": "reviewcase",
+        "label": "Case review and lifecycle",
+        "phase": "review",
+        "lane": "case-management",
+        "kind": "wait",
+        "order": 50,
+        "required": false,
+        "coverage": "unknown",
+        "completion_authority": "case-observer",
+        "allow_case_free_completion": false,
+        "requires_case": false
+      }
+    ],
+    "transitions": [
+      {
+        "code": "received",
+        "from": "intake",
+        "to": "classify",
+        "label": "Received for classification",
+        "branch": "",
+        "event": "received",
+        "order": 0,
+        "required": true
+      },
+      {
+        "code": "classified",
+        "from": "classify",
+        "to": "route",
+        "label": "Classification observed",
+        "branch": "",
+        "event": "completed",
+        "order": 10,
+        "required": true
+      },
+      {
+        "code": "card-route",
+        "from": "route",
+        "to": "card-servicing",
+        "label": "Card Servicing",
+        "branch": "card-servicing",
+        "event": "completed",
+        "order": 20,
+        "required": true
+      },
+      {
+        "code": "default-spam",
+        "from": "route",
+        "to": "spam",
+        "label": "SPAM / default",
+        "branch": "spam",
+        "event": "completed",
+        "order": 30,
+        "required": true
+      },
+      {
+        "code": "payment-direct-debits-route",
+        "from": "route",
+        "to": "mock-response",
+        "label": "Payment & direct debits - empty case reaches mock response",
+        "branch": "payment-direct-debits",
+        "event": "completed",
+        "order": 31,
+        "required": true
+      },
+      {
+        "code": "disputes-fraud-route",
+        "from": "route",
+        "to": "mock-response",
+        "label": "Disputes & fraud - empty case reaches mock response",
+        "branch": "disputes-fraud",
+        "event": "completed",
+        "order": 32,
+        "required": true
+      },
+      {
+        "code": "details-documents-route",
+        "from": "route",
+        "to": "mock-response",
+        "label": "Details & Documents - empty case reaches mock response",
+        "branch": "details-documents",
+        "event": "completed",
+        "order": 33,
+        "required": true
+      },
+      {
+        "code": "complaints-route",
+        "from": "route",
+        "to": "mock-response",
+        "label": "Complaints - empty case reaches mock response",
+        "branch": "complaints",
+        "event": "completed",
+        "order": 34,
+        "required": true
+      },
+      {
+        "code": "explicit-case-link",
+        "from": "card-servicing",
+        "to": "reviewcase",
+        "label": "Only if an actual blocking case is explicitly linked",
+        "branch": "case-linked",
+        "event": "case-linked",
+        "order": 40,
+        "required": false
+      }
+    ]
+  },
+  "retention": {
+    "proposed_event_days": 90,
+    "approved": false,
+    "policy": "No automated deletion. Preserve open summaries and case links. Mark truncated histories.",
+    "relationships": "Never Cascade delete events. Source CRM deletes RemoveLink, tracking parents Restrict."
+  },
+  "deployment_gates": [
+    "Only metadata and definition seeds are provisioned; no runtime/business/email rows are written.",
+    "Require Active alternate-key indexes before definition publication or producer enablement.",
+    "Install and verify trusted API mutation guards, definition immutability and append-only event guards.",
+    "Provision reviewed reader/producer/reviewer/retention-admin roles and identity field-security profiles.",
+    "Prove two-user/team visibility and actual producer privileges; table links do not grant record access.",
+    "Approve operations-team ownership and owner propagation for all runtime rows.",
+    "Test live transaction/concurrency, duplicate replay, case lifecycle and schema round trips.",
+    "Preserve observed Failed terminations; do not enable no-case completion from host success.",
+    "Verify exact Help seed/profile/current-source delta hashes before definition publication.",
+    "Export/unpack generated solution metadata after separately authorized live apply."
+  ]
+}

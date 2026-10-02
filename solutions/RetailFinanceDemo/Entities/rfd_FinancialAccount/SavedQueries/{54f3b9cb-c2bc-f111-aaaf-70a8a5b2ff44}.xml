@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<savedqueries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <savedquery>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>1</CanBeDeleted>
+    <isquickfindquery>0</isquickfindquery>
+    <isprivate>0</isprivate>
+    <isdefault>0</isdefault>
+    <savedqueryid>{54f3b9cb-c2bc-f111-aaaf-70a8a5b2ff44}</savedqueryid>
+    <layoutxml>
+      <grid name="resultset" jump="rfd_name" select="1" icon="1" preview="1">
+        <row name="result" id="rfd_financialaccountid">
+          <cell name="rfd_name" width="220" />
+          <cell name="rfd_holdingnumber" width="150" />
+          <cell name="rfd_customerid" width="220" />
+          <cell name="rfd_cardlastfour" width="150" />
+          <cell name="rfd_cardnetwork" width="150" />
+          <cell name="rfd_cardstatus" width="150" />
+          <cell name="rfd_cardexpirymonth" width="150" />
+          <cell name="rfd_cardexpiryyear" width="150" />
+          <cell name="rfd_linkedfinancialaccountid" width="150" />
+        </row>
+      </grid>
+    </layoutxml>
+    <querytype>0</querytype>
+    <fetchxml>
+      <fetch version="1.0" mapping="logical">
+        <entity name="rfd_financialaccount">
+          <attribute name="rfd_financialaccountid" />
+          <attribute name="rfd_name" />
+          <attribute name="rfd_holdingnumber" />
+          <attribute name="rfd_customerid" />
+          <attribute name="rfd_cardlastfour" />
+          <attribute name="rfd_cardnetwork" />
+          <attribute name="rfd_cardstatus" />
+          <attribute name="rfd_cardexpirymonth" />
+          <attribute name="rfd_cardexpiryyear" />
+          <attribute name="rfd_linkedfinancialaccountid" />
+          <order attribute="rfd_name" descending="false" />
+          <filter type="and">
+            <condition attribute="statecode" operator="eq" value="0" />
+            <filter type="or">
+              <condition attribute="rfd_lifecyclestatus" operator="null" />
+              <condition attribute="rfd_lifecyclestatus" operator="ne" value="100000006" />
+            </filter>
+            <condition attribute="rfd_producttype" operator="in">
+              <value>100000006</value>
+              <value>100000007</value>
+            </condition>
+          </filter>
+        </entity>
+      </fetch>
+    </fetchxml>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <LocalizedNames>
+      <LocalizedName description="Cards" languagecode="1033" />
+    </LocalizedNames>
+  </savedquery>
+</savedqueries>

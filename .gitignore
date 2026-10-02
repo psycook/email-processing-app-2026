@@ -14,6 +14,18 @@ coverage/
 .vite/
 *.tsbuildinfo
 *.local
+*.local.json
+/config/process-metadata-request-*.json
+
+# Dataverse plug-in build outputs and local signing material
+**/bin/
+**/obj/
+TestResults/
+.vs/
+*.snk
+*.nupkg
+*.snupkg
+/solutions/*.zip
 
 # Local configuration and credentials
 .env
@@ -77,5 +89,4 @@ Desktop.ini
 *.suo
 *.ntvs*
 *.njsproj
-*.sln
 *.sw?

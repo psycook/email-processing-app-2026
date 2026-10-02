@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<savedqueries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <savedquery>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>1</CanBeDeleted>
+    <isquickfindquery>0</isquickfindquery>
+    <isprivate>0</isprivate>
+    <isdefault>0</isdefault>
+    <savedqueryid>{64f3b9cb-c2bc-f111-aaaf-70a8a5b2ff44}</savedqueryid>
+    <layoutxml>
+      <grid name="resultset" jump="rfd_name" select="1" icon="1" preview="1">
+        <row name="result" id="rfd_financialaccountid">
+          <cell name="rfd_name" width="220" />
+          <cell name="rfd_holdingnumber" width="150" />
+          <cell name="rfd_customerid" width="220" />
+          <cell name="rfd_isatype" width="150" />
+          <cell name="rfd_isataxyear" width="150" />
+          <cell name="rfd_isasubscriptionsytd" width="150" />
+          <cell name="rfd_isaremainingallowance" width="150" />
+          <cell name="rfd_isatransferstatus" width="150" />
+          <cell name="transactioncurrencyid" width="150" />
+        </row>
+      </grid>
+    </layoutxml>
+    <querytype>0</querytype>
+    <fetchxml>
+      <fetch version="1.0" mapping="logical">
+        <entity name="rfd_financialaccount">
+          <attribute name="rfd_financialaccountid" />
+          <attribute name="rfd_name" />
+          <attribute name="rfd_holdingnumber" />
+          <attribute name="rfd_customerid" />
+          <attribute name="rfd_isatype" />
+          <attribute name="rfd_isataxyear" />
+          <attribute name="rfd_isasubscriptionsytd" />
+          <attribute name="rfd_isaremainingallowance" />
+          <attribute name="rfd_isatransferstatus" />
+          <attribute name="transactioncurrencyid" />
+          <order attribute="rfd_name" descending="false" />
+          <filter type="and">
+            <condition attribute="statecode" operator="eq" value="0" />
+            <filter type="or">
+              <condition attribute="rfd_lifecyclestatus" operator="null" />
+              <condition attribute="rfd_lifecyclestatus" operator="ne" value="100000006" />
+            </filter>
+            <condition attribute="rfd_producttype" operator="in">
+              <value>100000002</value>
+            </condition>
+          </filter>
+        </entity>
+      </fetch>
+    </fetchxml>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <LocalizedNames>
+      <LocalizedName description="ISA Holdings" languagecode="1033" />
+    </LocalizedNames>
+  </savedquery>
+</savedqueries>

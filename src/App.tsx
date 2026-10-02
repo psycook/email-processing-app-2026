@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import type { Page } from './types'
+import type { DataMode, Page } from './types'
 import { APP_VERSION } from './types'
 import { useStudio } from './hooks/useStudio'
 import { AppContext } from './ui/studioContext'
@@ -15,6 +15,7 @@ import { cx } from './ui/util'
 import { Orbit, Sparkles, ShieldCheck, Eye } from './ui/icons'
 import { OverviewPage } from './pages/Overview'
 import { ProcessPage } from './pages/Process'
+import { processReadGateway } from './services/processReadGateway'
 import { CommunicationsPage } from './pages/Communications'
 import { EvaluationPage } from './pages/Evaluation'
 import { CampaignsPage } from './pages/Campaigns'
@@ -40,12 +41,12 @@ function readOnboarded(): boolean {
   }
 }
 
-function PageView({ page }: { page: Page }) {
+function PageView({ page, mode }: { page: Page; mode: DataMode }) {
   switch (page) {
     case 'overview':
       return <OverviewPage />
     case 'process':
-      return <ProcessPage />
+      return <ProcessPage gateway={mode === 'live' ? processReadGateway : undefined} />
     case 'mailbox':
       return <CommunicationsPage />
     case 'evaluation':
@@ -182,7 +183,7 @@ function App() {
                 <p>Loading the latest snapshot…</p>
               </div>
             ) : (
-              <PageView key={state.settings.mode} page={state.page} />
+              <PageView key={state.settings.mode} page={state.page} mode={state.settings.mode} />
             )}
           </main>
         </div>

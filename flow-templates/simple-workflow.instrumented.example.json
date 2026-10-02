@@ -1,0 +1,293 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "contentVersion": "1.0.0.0",
+  "triggers": {
+    "Validated_intake": {
+      "type": "Request",
+      "kind": "Http",
+      "inputs": {
+        "schema": {
+          "type": "object",
+          "required": [
+            "internetMessageId",
+            "actualFrom"
+          ],
+          "properties": {
+            "internetMessageId": {
+              "type": "string"
+            },
+            "actualFrom": {
+              "type": "string"
+            },
+            "replyTo": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "actions": {
+    "Prepare_business": {
+      "type": "Compose",
+      "inputs": "@triggerBody()",
+      "runAfter": {}
+    },
+    "Business_action": {
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_example",
+          "connectionName": "example_business_connection",
+          "operationId": "ExampleOriginalOperation"
+        },
+        "parameters": {
+          "original": "@outputs('Prepare_business')"
+        },
+        "retryPolicy": {
+          "type": "none"
+        }
+      },
+      "runAfter": {
+        "Prepare_business": [
+          "Succeeded"
+        ]
+      },
+      "metadata": {
+        "businessMetadataPreserved": true
+      }
+    },
+    "Original_followup": {
+      "type": "Compose",
+      "inputs": "business finished",
+      "runAfter": {
+        "Business_action": [
+          "Succeeded"
+        ]
+      }
+    },
+    "EP_Intake": {
+      "type": "Scope",
+      "actions": {
+        "EP_Intake_Identity": {
+          "type": "Compose",
+          "inputs": {
+            "eventId": "@guid()",
+            "spanId": "@guid()",
+            "occurredAtUtc": "@utcNow()"
+          },
+          "runAfter": {},
+          "runtimeConfiguration": {
+            "secureData": {
+              "properties": [
+                "inputs",
+                "outputs"
+              ]
+            }
+          }
+        },
+        "EP_Intake_Payload": {
+          "type": "Compose",
+          "inputs": {
+            "schemaVersion": 1,
+            "eventId": "@outputs('EP_Intake_Identity')?['eventId']",
+            "producerId": "reviewed-workflow-producer",
+            "workflowId": "00000000-0000-4000-8000-000000000001",
+            "sourceExecutionId": "@workflow()?['run']?['name']",
+            "operation": "937a5b31f49e3200085996328c53dfff63d59cf6cc67723937ff2ccd6155380b",
+            "branch": "root",
+            "attempt": 1,
+            "eventType": "received",
+            "occurredAtUtc": "@outputs('EP_Intake_Identity')?['occurredAtUtc']",
+            "definitionId": "00000000-0000-4000-8000-000000000002",
+            "internetMessageId": "@triggerBody()?['internetMessageId']",
+            "actualFrom": "@triggerBody()?['actualFrom']",
+            "replyTo": "@triggerBody()?['replyTo']"
+          },
+          "runAfter": {
+            "EP_Intake_Identity": [
+              "Succeeded"
+            ]
+          },
+          "runtimeConfiguration": {
+            "secureData": {
+              "properties": [
+                "inputs",
+                "outputs"
+              ]
+            }
+          }
+        },
+        "EP_Intake_Write": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "connectionName": "rfd_process_dataverse",
+              "operationId": "PerformUnboundAction"
+            },
+            "parameters": {
+              "actionName": "rfd_RecordEmailProcessEvent",
+              "item/RequestJson": "@string(outputs('EP_Intake_Payload'))"
+            },
+            "retryPolicy": {
+              "type": "fixed",
+              "count": 2,
+              "interval": "PT5S"
+            }
+          },
+          "runAfter": {
+            "EP_Intake_Payload": [
+              "Succeeded"
+            ]
+          },
+          "runtimeConfiguration": {
+            "secureData": {
+              "properties": [
+                "inputs",
+                "outputs"
+              ]
+            }
+          }
+        },
+        "EP_Intake_Settled": {
+          "type": "Compose",
+          "inputs": {
+            "observationOnly": true
+          },
+          "runAfter": {
+            "EP_Intake_Write": [
+              "Succeeded",
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ]
+          }
+        }
+      },
+      "runAfter": {},
+      "metadata": {
+        "rfdEmailProcessAdapter": {
+          "version": 1,
+          "sourceDefinitionSha256": "5f8fb98c8ec94eaf1585ce3244f26135f0205e03f7670e0e77ff395af654c07c",
+          "profileSha256": "b2e069d267b125fde4742fc3a86edcfc665c11ea2d82e4bbe14bb41718cb9094"
+        }
+      }
+    },
+    "EP_Business_action": {
+      "type": "Scope",
+      "actions": {
+        "EP_Business_action_Identity": {
+          "type": "Compose",
+          "inputs": {
+            "eventId": "@guid()",
+            "spanId": "@guid()",
+            "occurredAtUtc": "@utcNow()"
+          },
+          "runAfter": {},
+          "runtimeConfiguration": {
+            "secureData": {
+              "properties": [
+                "inputs",
+                "outputs"
+              ]
+            }
+          }
+        },
+        "EP_Business_action_Payload": {
+          "type": "Compose",
+          "inputs": {
+            "schemaVersion": 1,
+            "eventId": "@outputs('EP_Business_action_Identity')?['eventId']",
+            "producerId": "reviewed-workflow-producer",
+            "workflowId": "00000000-0000-4000-8000-000000000001",
+            "sourceExecutionId": "@workflow()?['run']?['name']",
+            "operation": "8f6315a2919827d485277410dc43dc510c027c1a28acd507555ffacbc1ae2e55",
+            "branch": "root",
+            "attempt": 1,
+            "eventType": "completed",
+            "occurredAtUtc": "@actions('Business_action')?['endTime']",
+            "stageCode": "connector-call",
+            "stageExecutionId": "@outputs('EP_Business_action_Identity')?['spanId']",
+            "processId": "@json(body('EP_Intake_Write')?['ResponseJson'])?['processId']"
+          },
+          "runAfter": {
+            "EP_Business_action_Identity": [
+              "Succeeded"
+            ]
+          },
+          "runtimeConfiguration": {
+            "secureData": {
+              "properties": [
+                "inputs",
+                "outputs"
+              ]
+            }
+          }
+        },
+        "EP_Business_action_Write": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "connectionName": "rfd_process_dataverse",
+              "operationId": "PerformUnboundAction"
+            },
+            "parameters": {
+              "actionName": "rfd_RecordEmailProcessEvent",
+              "item/RequestJson": "@string(outputs('EP_Business_action_Payload'))"
+            },
+            "retryPolicy": {
+              "type": "fixed",
+              "count": 2,
+              "interval": "PT5S"
+            }
+          },
+          "runAfter": {
+            "EP_Business_action_Payload": [
+              "Succeeded"
+            ]
+          },
+          "runtimeConfiguration": {
+            "secureData": {
+              "properties": [
+                "inputs",
+                "outputs"
+              ]
+            }
+          }
+        },
+        "EP_Business_action_Settled": {
+          "type": "Compose",
+          "inputs": {
+            "observationOnly": true
+          },
+          "runAfter": {
+            "EP_Business_action_Write": [
+              "Succeeded",
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ]
+          }
+        }
+      },
+      "runAfter": {
+        "Business_action": [
+          "Succeeded"
+        ],
+        "EP_Intake": [
+          "Succeeded"
+        ]
+      },
+      "metadata": {
+        "rfdEmailProcessAdapter": {
+          "version": 1,
+          "sourceDefinitionSha256": "5f8fb98c8ec94eaf1585ce3244f26135f0205e03f7670e0e77ff395af654c07c",
+          "profileSha256": "b2e069d267b125fde4742fc3a86edcfc665c11ea2d82e4bbe14bb41718cb9094"
+        }
+      }
+    }
+  },
+  "outputs": {}
+}

@@ -1,0 +1,71 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "contentVersion": "1.0.0.0",
+  "triggers": {
+    "Validated_intake": {
+      "type": "Request",
+      "kind": "Http",
+      "inputs": {
+        "schema": {
+          "type": "object",
+          "required": [
+            "internetMessageId",
+            "actualFrom"
+          ],
+          "properties": {
+            "internetMessageId": {
+              "type": "string"
+            },
+            "actualFrom": {
+              "type": "string"
+            },
+            "replyTo": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "actions": {
+    "Prepare_business": {
+      "type": "Compose",
+      "inputs": "@triggerBody()",
+      "runAfter": {}
+    },
+    "Business_action": {
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_example",
+          "connectionName": "example_business_connection",
+          "operationId": "ExampleOriginalOperation"
+        },
+        "parameters": {
+          "original": "@outputs('Prepare_business')"
+        },
+        "retryPolicy": {
+          "type": "none"
+        }
+      },
+      "runAfter": {
+        "Prepare_business": [
+          "Succeeded"
+        ]
+      },
+      "metadata": {
+        "businessMetadataPreserved": true
+      }
+    },
+    "Original_followup": {
+      "type": "Compose",
+      "inputs": "business finished",
+      "runAfter": {
+        "Business_action": [
+          "Succeeded"
+        ]
+      }
+    }
+  },
+  "outputs": {}
+}

@@ -1,0 +1,549 @@
+STAGE 3 WORKFLOW ADAPTER - OFFLINE PREPARATION ONLY
+2 October 2026
+
+READY
+
+scripts\instrument_email_flow.py implements a reusable add-only definition
+transform AND a strictly matched Help controlled-runAfter transform, exact-source
+guards, private backup/package preparation and subsequent
+verification. It contains no live mutation, publish, activate, token, raw HTTP or
+Graph path. Python standard-library unittest covers synthetic definitions only.
+flow-templates contains generated synthetic examples and the actual Help review
+profile. These are NOT imported/deployed flows or evidence of live execution.
+
+NOT READY FOR LIVE CUTOVER
+
+The active Help workflow f1875d78-ffe5-64c8-d7bf-76a7f7a6b63f now has a
+specifically validated offline designer-review candidate. This is NOT a claim
+of live safety or permission to publish. Authorized SDK inspection confirmed
+ismanaged=false: InvokeDefinition/InvokeAgent names do not imply managed ownership.
+Its actual source is:
+SharedMailboxOnNewEmailV2 -> Classify_Email (InvokeDefinition) ->
+Classify_Email_Switch -> Card Servicing InvokeAgent + Terminate(Failed) OR default
+SPAM_Response InvokeDefinition + Terminate(Failed). Four other named cases are
+EMPTY: Payment & direct debits, Disputes & fraud, Details & Documents, Complaints.
+Mock_Response_Agent is configured after successful switch completion and is
+reachable through those empty cases; it does not run after a terminating branch.
+Existing source contains Reply-To and no trace reference. Saved agent/tool
+configuration was subsequently inspected as documented below; actual internal
+tool executions were not observed and must not be represented as measured.
+
+After the parent loaded dv-query, the authorized SDK retrieved the definition
+read-only and kept it in memory. Record.etag supplies the service ETag; the SDK
+dictionary intentionally omits it. Source guard:
+  ETag W/"12218136"
+  SHA256 c32630b30d4026e21881e9ca2268365ccc2661afdbc2f243c3abeb4260fdc2b7
+The current source was prepared AND verified in memory. Only generated telemetry
+actions, reviewed dependency changes and structural guard evidence were saved in
+flow-templates\help-flow.current-source.review-delta.json. No original definition,
+prompt, message body or customer payload was exported. No source backup was
+exported in this read-only inspection; a private backup is still a release gate.
+No active custom Case Management Workflow has been identified. Do not activate,
+edit, replace or instrument the inactive managed "Invoke case management agent".
+
+HELP-V1 CONTROLLED MUTATION (PARENT REVIEW AND LIVE PILOT REQUIRED)
+
+Use flow-templates\help-workflow.profile.example.json with adapter=help-v1.
+Replace example definitionId, producerId and connectionReference privately.
+The profile's workflowId and four observations must match the fixed Help mapping.
+The actual user/unmanaged status, trigger API/operation/splitOn, three root
+actions, classifier expression, all five named cases, four empty cases, both
+branch invocations, both Failed termination inputs and original success-only
+dependencies are validated. Any mismatch produces an explicit unsupported error.
+
+The candidate adds fifteen telemetry scopes and makes SEVEN explicit runAfter edits:
+- Classify_Email additionally waits for its start scope, which follows settled
+  intake. Card_Servicing_Agent and SPAM_Response wait for their branch start scopes,
+  which follow the selected route-completed telemetry scope.
+- Mock_Response_Agent keeps its original switch-success prerequisite and also
+  waits for its own start scope, itself gated by that same original prerequisite.
+- The switch keeps classifier-success and additionally waits for classifier's
+  successful-host completion telemetry to settle.
+- Both Terminate actions keep their original handler-success prerequisite and
+  additionally wait for the corresponding completion telemetry scope to settle.
+
+Each actual switch branch also gains one route-completed scope at its entry.
+This reports the real choice before its handler starts or its otherwise empty
+branch exits. It is not a prediction outside the switch. Stable branch codes:
+Card Servicing -> card-servicing; default -> spam; Payment & direct debits ->
+payment-direct-debits; Disputes & fraud -> disputes-fraud; Details & Documents ->
+details-documents; Complaints -> complaints. Each route event has an immutable
+full GUID eventId/spanId allocated once outside connector retries. Only the
+selected branch executes its route scope; the other choices are not fabricated.
+
+Host stages align with config\process-tracking-schema.json: classify, route,
+card-servicing, spam, mock-response. Six required conditional route edges lead
+to the corresponding handler or mock-response, with the same branch codes.
+The original four business-empty branches remain business-empty, containing only
+route telemetry. Mock's start/completion carries the same selected empty-branch
+code, derived from the switch's unchanged classifier expression. Thus the required
+classify->route edge is observed rather than left permanently missing.
+Preparation validates these stage authorities and required edges against the
+local seed, and pins its definition code/version/SHA256 in the package. A changed
+seed requires a new review. Runtime DefinitionId/version agreement remains a
+release gate; the local manifest alone is not proof of deployed definitions.
+If a future seed permits case-free completion from any host-only node, the
+package explicitly includes
+CASEFREE_HOST_COMPLETION_POLICY_REQUIRES_REVIEW and lists the affected codes.
+Do not release that policy merely because an outer agent invocation returned:
+prove an actual terminal disposition or keep case-free completion disabled.
+This adapter does not silently edit the shared definition policy to resolve it.
+The finalized seed disables case-free completion; the refreshed review delta
+pins seed SHA256 975b3c02f7c9ccb1cce44bd382d343fe67c0d08ddeef74f6a5d770e6a4f71800.
+
+Original names, inputs (including prompts), metadata, retry policy, trigger and
+termination status/runError are byte-for-byte equivalent as JSON values.
+Existing prerequisite names and acceptable statuses are retained, not replaced.
+Original absent runAfter versus explicit {} is retained in the reversible review
+diff. No original business action is wrapped in a new scope. Controlled mutation
+is NOT described as add-only.
+
+Start scopes allocate a full GUID EventId and SpanId once before connector retry.
+Completion scopes allocate another full GUID EventId but reuse the start SpanId
+as stageExecutionId. Thus telemetry transport retries cannot mint new attempts.
+The operation source hash includes the REAL original branch/action path; branch
+codes match the schema choices above (root only for classifier). Native workflow run name
+is used as sourceExecutionId. Start denotes the observed workflow-host attempt,
+not a measured internal financial tool duration. Completion uses native endTime.
+
+Payloads and API writes fail inside telemetry scopes; their constant final Compose
+handles all local statuses, so ordinary telemetry outages do not skip successful
+business or cause a business retry. Completed-host scopes execute ONLY following
+business success. Original business failure/skipped prerequisites remain unhandled
+by telemetry: no successful external catcher masks them. A failed business call
+therefore leaves an OPEN span requiring native monitoring/reconciliation, rather
+than falsely recording completion or swallowing run failure. Both original
+Terminate(Failed) outcomes remain Failed, even after a successful agent invocation.
+
+Waiting for start/completion telemetry adds bounded retry work and native connector
+latency. Run cancellation, engine-level scope abortion, timeout limits and exact
+native failure aggregation REQUIRE fault-injection proof; this is an offline
+candidate, not a live-safe adapter certification. No telemetry event is guaranteed
+committed just because its settlement scope succeeds. Lossless capture is not claimed.
+The post-switch mock-response stage must exist and be authorized in the real
+definition before pilot; do not silently treat empty branch cases as servicing.
+
+Trigger expressions select body/internetMessageId, body/from and body/replyTo
+after the existing splitOn. Original business Reply-To use is untouched. Validate
+those connector field shapes in the controlled pilot without exporting customer
+content. No identity fallback from Reply-To to From, nor customer authentication,
+is inferred. Intake API failure leaves telemetry gaps, never a made-up ProcessId.
+
+flow-templates\help-workflow.source.synthetic.json and
+help-workflow.candidate.synthetic.json demonstrate the same shape with synthetic
+business inputs, not an exported live source. The current-source review delta
+contains actual source guards but intentionally unbound deployment parameters.
+
+WHY THE GENERIC ADD-ONLY SUBSET IS NARROW
+
+The automatic transform accepts exactly one verified Request/Http trigger with
+an explicit string schema for internetMessageId, actualFrom and replyTo.
+internetMessageId and actualFrom must be required. This is a synthetic normalized
+adapter boundary, NOT an assumption about Outlook shared mailbox trigger fields.
+Only top-level acyclic Compose and OpenApiConnection original actions with
+explicit success-only runAfter are supported. Only named connector completions
+are observed. All original inputs, names, metadata, retries and runAfter mappings
+are unchanged; only new top-level EP_ telemetry scopes are added.
+
+Outside the exact Help-v1 adapter, scopes, If/Switch, Terminate, foreach/until,
+response actions and unverified
+InvokeDefinition/InvokeAgent, missing/unknown predecessors, failure/skipped/
+timeout-dependent business actions and unverified trigger mappings are refused.
+Rewriting any of these requires separate runtime proof, not a looser validator.
+The profile cannot inject arbitrary expressions, event fields or business edits.
+
+Generic add-only fail-open design (the Help-specific gating differs as above):
+- Intake telemetry is an independent root branch. Business never waits for it.
+- Each completion telemetry scope waits only for original action success and
+  intake scope settlement. Original successors never wait for telemetry.
+- Identity, payload and connector live inside the telemetry scope. A final
+  constant Compose handles Succeeded/Failed/Skipped/TimedOut of the write there.
+  A failed identity/payload makes the write skipped; the final Compose still
+  settles that telemetry branch. The terminal node has no fragile output read.
+- Do NOT add an all-status catcher outside a scope that itself follows a
+  business prerequisite. A Skipped scope caused by an original business failure
+  must remain skipped; an external successful catcher could mask that failure.
+- If intake failed or ResponseJson is unavailable/invalid, only later telemetry
+  payloads fail. No fallback ProcessId is invented. Business still executes.
+- Scope settlement means "telemetry attempt settled", NOT "event persisted".
+  Native telemetry Write status/error monitoring and reconciliation are needed.
+- No retry or resubmission of a business workflow repairs telemetry. Only the
+  immutable telemetry request may be replayed in an authorized external worker.
+
+The native workflow engine is not simulated completely by unit tests. The
+success/skipped/failed terminal-branch aggregation, scope settlement, connector
+configuration, cancellation behavior and timing require fault-injection pilot
+verification before any release. Even a supported package is publishable=false.
+Parallel telemetry may add duration and runs cannot promise lossless capture.
+No financial servicing outcome is inferred merely from connector/agent success.
+Definition completion authority must distinguish workflow invocation success
+from independently proven tool/business success.
+
+API AND IDENTITY CONTRACT
+
+Authoritative API: server\process-contract.json, server\api-contract.txt and
+server\EmailProcess.Plugin\Contracts.cs. Deployment/authority prerequisites are
+in server\runtime-prerequisites.txt. Unit tests compare generated envelope keys
+and API names directly against the finalized server DTO/manifest.
+Dataverse unbound Actions use one STRING RequestJson and STRING ResponseJson.
+Generated connector examples use PerformUnboundAction with actionName and
+item/RequestJson. Confirm these discovered connector signatures in the target
+designer; do not assume these example connection references already exist.
+The connector RequestJson is @string(outputs('<prefix>_Payload')).
+Read-only PAC inventory subsequently confirmed an existing connected Dataverse
+connector. Its physical connection ID is deliberately absent from public fixtures.
+deployment-bindings.example.json describes the logical connection/environment
+reference; a private deployment setting may supply its physical ID after the
+parent releasegate. A connected ID does not prove the workflow is authorized,
+bound or published. No maker browser sign-in or flow update was performed.
+Producer policy must authorize BOTH the initiating user AND at least one allowed
+effective role, plus the exact stageCodes. The Help producer needs canReceive=true
+and workflow authority matching these host-stage completion authorities; an
+intake-only producer cannot automatically assert workflow/tool completion.
+No browser producer or email-header identity grants authority.
+
+Envelope keys are camelCase:
+schemaVersion, eventId, producerId, sourceExecutionId, operation, branch,
+attempt, eventType, occurredAtUtc; plus stageCode/stageExecutionId/processId
+for a measured stage. Each Identity Compose allocates @guid() eventId AND
+@guid() spanId once for each new host attempt; Help completion reuses that span.
+spanId maps to the API's stageExecutionId, not an extra
+unknown "spanId" request field. The IDs are full GUIDs, never shortened. The
+connector consumes the immutable precomposed payload across its bounded
+fixed two-retry policy. It contains no guid()/utcNow() allocation.
+
+sourceExecutionId = @workflow()?['run']?['name'] is the native run identifier.
+workflowId is the optional real Dataverse workflow GUID from the guarded profile,
+identical for start/completion. It is never a cloud run identifier. The API's
+optional holdingId is omitted because this adapter has no verified holding.
+operation is a full 64-character SHA256 of [version, actual workflow GUID,
+stable action/branch path], not a truncated random ID. Package sourceOperations
+documents the path mapping. branch=root for the supported flat shape. Each
+new native run is a new source execution; do not resubmit business to repair
+logging. A genuinely new business attempt requires a new span/source attempt.
+The wire attempt is NATIVE-run-local: this adapter sends attempt=1 on each new
+native workflow run. The server assigns its own increasing stored/read execution
+ordinal within process/stage/branch/case under the process RowVersion transaction.
+Do not copy that projection ordinal back into the producer request. Exact
+transport retries retain the original run/span/event/attempt and stored ordinal.
+A real repeat business attempt INSIDE the same native run must explicitly
+increase native attempt and allocate a new span; Help-v1 has no such retry loop.
+Two actual native deliveries with the same InternetMessageId retain the shared
+ProcessId but have separate native-run source identities, not a fabricated
+global producer attempt counter.
+Case lifecycle source versions are observer facts, never wall-clock timestamps
+or an invented workflow revision.
+
+received sends definitionId, original internetMessageId, actualFrom and replyTo.
+The writer derives the shared ProcessId from organization + help-inbox +
+InternetMessageId digest and returns it in ResponseJson. Later telemetry uses
+@json(body('EP_Intake_Write')?['ResponseJson'])?['processId'].
+No producer hashes subjects, email addresses or conversation IDs for correlation.
+No client-side substitute ProcessId on a failed intake. Missing IDs are a
+visible reconciliation gap, not permission to correlate by customer address.
+
+actualFrom and replyTo are distinct, unmodified original transport identities.
+Do not replace actualFrom with Reply-To. Neither header authenticates a customer.
+Do not pass inferred userAuth, ContactId, customerEmail, subject, body, prompt,
+agent prose or complete connector input/output/error objects. The service stores
+the allowed identity metadata in its secured process fields, not event payload.
+Generated identity/payload/write actions use secure inputs and outputs to limit
+run-history disclosure. Review native original-action history policies separately.
+
+CASE MANAGEMENT EXAMPLE
+
+flow-templates\case-workflow.actions.example.json is an action FRAGMENT, not a
+workflow. It deliberately contains no business connector that creates/closes a
+case. Its required original Create_case, Case_progress and Close_case actions
+stand for an owner's independently identified, reviewed custom workflow.
+Do not create these operations or retry a real closure just to fit the example.
+
+1. Pass the explicit ProcessId returned by original intake to the case workflow.
+2. Link the actual Create_case output incidentid using rfd_LinkEmailProcessCase.
+   An existing case may instead come from an explicit, authorized case reference;
+   review and replace that expression and guard the actual workflow source.
+   Never find a process from customer email, Reply-To or most-recent case.
+3. Report case-workflow-progress after the original progress connector succeeds.
+4. Report case-closure-attempt after the original Close_case connector succeeds.
+   "completed" here means the CALL returned successfully. It is NOT case-resolved
+   and is not sufficient evidence to complete the process or close a blocking link.
+5. The independent authorized async observer records actual resolved, cancelled,
+   merged or reopened states from the case transition, including changes made
+   outside this workflow. The fragment never submits state/status/version claims
+   or uses RecordCaseLifecycle to invent an observer fact.
+
+Register authorized workflow-only stage definitions for these two distinct
+progress/attempt stage codes and producer privileges before a pilot. If the
+definition does not contain them, requests should fail, not silently expand
+business completion authority. Neither stage replaces the observer stage.
+Link races/outages must be reconciled; progress requests carrying an unlinked
+case should be denied by the service. A successful telemetry-settled scope is
+not proof that the link exists. Failed closure attempts need a separately proved
+native failure observer; no success-swallowing error branch is auto-generated.
+No subject, case title, email body, agent prompt or customer address is included.
+
+DETERMINISTIC CUSTOMER-LOOKUP WRAPPER (SEPARATE FROM HELP HOST INSTRUMENTATION)
+
+The backend now implements the authorized identify-phase Contact binding path
+in the existing rfd_RecordEmailProcessEvent API. Canonical wrapper protocol and
+request examples: server\customer-resolution-example.json. First-case linking
+still validates process ContactId against the actual
+incident customer. The intended wrapper must run only around the real customer
+lookup/identity-verification tool, once its owner and supported invocation are
+identified. The configuration discovery below located the instruction/MCP binding,
+but not a deterministic executable lookup wrapper; no actual tool was invoked.
+
+The wrapper accepts the explicit ProcessId and native invocation context, runs
+the original deterministic lookup exactly once, and records its actual result
+through a registered identify-phase stage using the backend-authorized contactId
+binding path. Emit started/completed with immutable EventId and shared SpanId
+outside telemetry retries; the exact verified Contact GUID must come from tool
+output/evidence, never from an LLM answer or an email-header-to-contact guess.
+The server's illustrative example uses identify-customer. The finalized Help
+seed instead reserves contact-lookup, phase=identify, completionAuthority=tool,
+coverage=unknown, optional and without execution edges. For that Help definition,
+the real future wrapper MUST use contact-lookup consistently in its request and
+both policy lists; do not copy the illustrative code into this definition.
+Producer policy must include canResolveCustomer=true
+AND contact-lookup in customerResolutionStageCodes, in addition to ordinary
+authority=tool, stageCodes, approved userIds AND approved roleIds. The example
+policy has empty identities and intentionally grants nobody access. Register
+this node only with the actual deterministic tool wrapper; do not falsely mark
+opaque Help internals instrumented. The exact stage code/version, producer and
+evidence checks must agree with the finalized server contract.
+Only an explicitly successful
+identification may bind Contact; ambiguity, no match, failed identity checks,
+missing evidence or telemetry outage leave the process unbound/reconcilable.
+Started telemetry omits contactId. A successful completed event may bind once or
+confirm the same actual readable Contact; a different replacement, stale or
+unfinished result is rejected. Intake must omit contactId entirely. Case linking
+waits for the successful binding API receipt, not merely a settled telemetry scope.
+
+From/Reply-To may be candidate search input where authorized, but searching by an
+address is NOT authentication or authorization. Preserve both original headers
+unchanged. Never copy a caller-supplied contact assertion into intake. Do not
+retry customer servicing, modify a financial holding, or repeat case creation to
+repair this telemetry. Only after confirmed server binding should a first
+actual CaseId be linked; never circumvent the server via direct table writes.
+This wrapper is an integration specification, NOT a newly located/deployed case
+workflow. Bind the exact identify stage code/version and approved tool before
+claiming the case fragment works end-to-end.
+
+ACTUAL SAVED CARD AGENT DISCOVERY - READ-ONLY STRUCTURAL EVIDENCE
+
+The customer/case tool location is no longer an unspecified unknown. Authorized
+SDK inspection followed the guarded Help InvokeAgent body/agentId to:
+  schema name cr27f_cardservingagent_yqTNld
+  bot ID 81e99072-f1e0-4d51-8f1a-c477008a864a
+  name Card Servicing Agent; ismanaged=false; publishedOn 2026-09-30T17:08:06Z
+  owner ID 0a61bb38-ef8b-f111-8076-7ced8d3c0da2
+
+Six directly attached components were inventoried. Four active tool components:
+- email-response: InlineAgentSkill (model instructions, not a workflow).
+- extract-email-entities: InlineAgentSkill.
+- query-or-update-card: InlineAgentSkill, component
+  4cda87d1-e42d-4cac-a890-a946bd18ca2c. Its instruction content references
+  read_query/contact/contactid/emailaddress1 for customer lookup, and
+  create_record/update_record/incident/incidentid/customerid for case writing.
+  It also references rfd_financialaccount. These are instruction references,
+  NOT proof of tool execution or deterministic executable lookup logic.
+- Microsoft Dataverse MCP Server: McpTool, component
+  b3fd18c9-91a2-43c7-9270-d08cef89f785. It uses the Dataverse connector's
+  InvokeMCP, authMode=Invoker, toolPermissionMode=AlwaysApprove. Configured tools:
+  read_query, invoke_api, create_table, update_table, create_record, update_record,
+  search and describe. No approvals, allowed tools or connections were changed.
+
+The remaining components are a policy file and bot settings, not dedicated
+customer lookup/case-writing workflow definitions. No Case Management user
+workflow reference or deterministic InvokeFlowAction/InvokeConnectorAction
+wrapper was found in this bounded tool configuration. This does not prove that
+no separately owned workflow exists elsewhere; do not activate managed flows.
+
+flow-templates\card-servicing-agent.structural-inventory.json contains only
+structural facts, component ETags/hashes, field names and allowlisted machine
+symbols. No skill content, bot instructions, original definition, prompts,
+customer data or physical connection identifier is included. Raw JSON/YAML was
+parsed only in memory with the already-installed js-yaml dependency; no new
+dependency was installed. inspect_saved_agent uses only bounded records.list/
+records.retrieve calls after exact source guards. Unknown extensions/kinds fail
+explicitly instead of being silently treated as an understood tool shape.
+
+APPROVED DETERMINISTIC FLOW ORCHESTRATION ROUTE
+
+The user approved the deterministic orchestration approach for completing Stage
+3. That means the Card Servicing branch must move customer lookup, case mutation
+and process linkage into reviewed flow-owned or approved tool-service actions
+that call the plug-in Custom APIs directly. The saved agent can still interpret
+the request and return recommendations, but its instruction-driven Dataverse MCP
+calls must not be process-authoritative for Contact binding, Case creation/update,
+Case linkage or process completion.
+
+The concrete flow boundary is:
+- carry ProcessId from the intake API receipt on the branch;
+- resolve the Contact through deterministic Dataverse query/action logic and
+  record contact-lookup started/completed using rfd_RecordEmailProcessEvent;
+- create or update the Incident through deterministic connector/domain actions,
+  then call rfd_LinkEmailProcessCase with the explicit ProcessId and IncidentId;
+- record case workflow progress and closure attempts only after their original
+  connector actions succeed; and
+- rely on the registered case lifecycle observer, or explicit current-state
+  reconciliation, for actual resolved/cancelled/merged/reopened facts.
+
+server\customer-resolution-example.json and
+flow-templates\case-workflow.actions.example.json are the checked-in fragments for
+this boundary. They are still designer-review fragments, not imported flows. The
+intended custom Case Management flow remains unidentified; if there is no suitable
+owned flow, create a new approved deterministic orchestration instead of editing
+or activating the inactive managed "Invoke case management agent" by name.
+
+WHY AN AUTOMATIC SAVED-AGENT/MCP PATCH REMAINS BLOCKED
+
+The located "tools" are three InlineAgentSkill instruction documents plus a
+generic first-party MCP connection, not separate editable flow action bodies.
+Adding "log this event" instructions would leave telemetry at the model's
+discretion and would not enforce capture around actual tool results. The existing
+McpTool configuration exposes allowedTools, auth and connection metadata, but
+does not configure a per-operation middleware hook. No supported rewrite of this
+binding into such a hook was established. A direct botcomponent.data update is
+not evidence of a valid or published runtime wrapper.
+
+prepare_saved_agent_tool_patch therefore produces the exact explicit error:
+  UNSUPPORTED_INLINE_SKILL_MCP_DETERMINISTIC_INTERCEPTION
+No fake connector call, unverified patch or LLM-prompt-based trace propagation
+is generated. The concrete capability/owner handoff is:
+  flow-templates\card-servicing-tool-wrapper.capability-request.json
+
+TRACE/PROCESS CONTEXT OUTSIDE LLM TEXT
+
+The actual configured InvokeAgent action has only body/agentId and body/prompt.
+The inspected skill documents contain no TraceId/ProcessId context symbols.
+No typed context/global-variable input is configured in this saved binding.
+That is a fact about the inspected configuration, NOT proof the entire platform
+has no such capability. The InvokeAgent runtime owner must provide its supported
+versioned request/context contract before adding any parameter.
+
+Required trusted context is ProcessId from the intake API receipt, actual
+workflow GUID, native run ID and real tool-call identity, injected by the host
+outside model-generated arguments. TraceId may be a host alias of ProcessId;
+never derive it from customer email or invent another process correlation key.
+An authenticated typed invocation context, or a supported runtime correlation
+hook consumed by a deterministic tool wrapper, could supply it. Neither path
+has been verified for this shared_agentnode runtime. Do NOT invent body/context,
+put IDs into prompts, or assume session-wide variables safely isolate concurrent
+emails. Bind producer identity at the trusted wrapper, not the generative MCP
+invoker, so the model cannot self-assert tool-authority customer resolution.
+
+Copilot Studio documentation describes external global variables and custom MCP
+servers for the STANDARD harness. Those are options for the product/agent owners
+to validate, not proof this InlineAgentSkill/InvokeAgent runtime supports them.
+The relevant owners are the saved agent owner above, the shared_agentnode
+connector/runtime team, and the Dataverse MCP owner (or an approved explicit
+wrapper-service owner). They must establish the typed context channel and
+supported middleware/tool replacement plus publication path. Only then can the
+deterministic wrapper protocol above be bound to the actual lookup/case operation.
+
+Documentation consulted:
+https://learn.microsoft.com/en-us/microsoft-copilot-studio/agent-extend-action-mcp
+https://learn.microsoft.com/en-us/microsoft-copilot-studio/mcp-add-existing-server-to-agent
+https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-variables-bot
+
+PRIVATE INPUT / BACKUP WORKFLOW
+
+Never export a live clientdata payload into this repository, a committed fixture
+or console output. Definitions can contain prompts and embedded customer data.
+Prepare a user-specific, access-restricted directory OUTSIDE any Git checkout;
+it must already exist with a .gitignore file containing a line consisting of *.
+The adapter does not create private directories or weaken their permissions.
+It refuses repository paths even when ignored. Protect/retain/delete private
+snapshots under the organization's access and retention policy.
+
+After loading the dv-query skill, use the initialized
+C:\Users\simoncook\OneDrive - Microsoft\Documents\Microsoft Scout\scripts\auth.py
+to obtain client = get_client("dv-query"), after verifying initialized environment
+https://smc-diamond-service.crm.dynamics.com. Do not use raw requests, credentials
+or Graph. retrieve_snapshot(client, environmentUrl, workflowId) performs only
+client.records.retrieve("workflow", ..., select=[workflowid, clientdata,
+statecode, versionnumber, ismanaged]); preserve Record.etag as @odata.etag in the
+snapshot. It does not substitute versionnumber for a missing ETag.
+No live read CLI is provided.
+If the skill, ETag, correct environment, permissions or SDK read is unavailable,
+STOP. Do not work around the prerequisite or invent a concurrency guard.
+
+A private snapshot envelope contains:
+environmentUrl, workflowid, @odata.etag, statecode, and clientdata as the EXACT
+retrieved string. Its SHA256 covers that string's UTF-8 bytes, including spacing.
+Do not reserialize before hashing. Source snapshots/backups never enter Git.
+
+From the project directory (replace paths with real private reviewed files):
+  python scripts\instrument_email_flow.py inspect --snapshot C:\PrivateReview\source.json
+The output contains only environment/flow/ETag, exact-source SHA256 and structural
+operation identifiers. Its status is INVENTORY_ONLY_NOT_A_PREPARATION and
+automaticPatchSupported=null; a successful inspection does not claim a safe
+transform. Independently review this inventory; do not call automatic
+discovery an approval. Save the approved guard privately. Its properties are
+environmentUrl, workflowId, etag, sourceSha256, knownOperations. The operation
+inventory is exact, including trigger/action type and connector operationId.
+
+  python scripts\instrument_email_flow.py prepare --snapshot C:\PrivateReview\source.json --guard C:\PrivateReview\guard.json --profile C:\PrivateReview\profile.json --private-directory C:\PrivateReview
+
+For supported sources this writes <workflow>-<fullhash>.source-backup.json FIRST,
+then <workflow>-<fullhash>.dry-run-package.json, both exclusive-create and verified
+by readback. Existing artifacts are never overwritten. If the second write fails,
+retain the first backup; no deployable package is claimed. Unsupported shapes fail
+before any backup/package output. Errors contain only diagnostic codes, not source.
+The package includes original/candidate hashes, approved guard, profile, source
+operation mapping and the unchanged clientdata envelope. Generic mode adds actions
+only; Help mode also lists the seven approved runAfter changes in structuralDiff.
+Both remain publishable=false with explicit unresolved release blockers.
+
+Before a human prepares ANY designer change, read a FRESH snapshot and run:
+  python scripts\instrument_email_flow.py verify --snapshot C:\PrivateReview\fresh.json --package C:\PrivateReview\<workflow>-<fullhash>.dry-run-package.json
+
+Verification rejects changed ETag, source hash, environment, flow, operation
+inventory, candidate hash, business input/action edits, envelope changes or
+non-reproducible generated actions. ETag/hash checks are preparation checks,
+NOT atomic concurrency protection for a future publishing operation.
+
+RELEASE / ROLLBACK GATES (UNPERFORMED)
+
+1. Identify the owner and supported authoring/publish surface for the Help user
+   runtime and separately locate the intended active custom Case Management flow.
+   A workflow clientdata update is NOT proof that managed runtime was published.
+   No release instructions here authorize such an update or activating a flow.
+2. Confirm service APIs, schema, narrow producer authorization, stage definitions,
+   connection references and actual connector request/response shapes in a test
+   environment. Resolve all example GUIDs, producer IDs and connection names.
+3. For Help, review the exact seven structural edits and generated scopes against
+   a fresh unchanged source. Stop on any unsupported shape. Validate the candidate
+   through the supported designer and a native runtime pilot. No telemetry is
+   inserted after Terminate. Do not extend its supported shapes or reroute other
+   dependencies without reviewed native runtime equivalence evidence.
+4. Preserve an out-of-repo exact backup. Recheck source ETag/hash immediately
+   before the authorized supported publication, with its own concurrency control.
+5. Pilot: successful business+API outage/timeout; identity/payload parse failure;
+   original failed and skipped prerequisites; parallel branches; actual Terminate
+   reachability; duplicate transport retries with SAME IDs/payload; missing
+   InternetMessageId; link/close race; close/reopen/close; closure in the app;
+   verify identical business operation counts and original native run outcomes.
+6. Demonstrate actual Help ingestion -> classifier -> real handler/tool -> actual
+   linked case -> observer closure without inventing internal stage measurements.
+   Confirm no body/prompt data in event records and no inferred user authentication.
+7. Release only using the verified product-specific designer/solution/publish
+   path. Compare actual runtime version AND run results; do not stop at saving
+   a Dataverse row. Packages in this repository cannot perform that release.
+8. Monitor telemetry connector errors and native async jobs. Reconcile missing
+   observations without reissuing financial/email/case business operations.
+
+Rollback is an owner-reviewed removal of ONLY adapter-owned additions plus reversal
+of the recorded Help runAfter edits, via the supported authoring surface after
+checking current source and user edits.
+Do not overwrite later user edits with an old backup. Preserve process/event
+history, cases and business records. No automated reverse patch is provided.
+
+VALIDATION
+  python -m unittest discover -s scripts -p test_instrument_email_flow.py -v
+All fixtures are synthetic. No new test runner, live write, deployment or Git
+operation is used. Unit tests do not constitute a native Power Automate pilot.
+
+Runtime status semantics reference:
+https://learn.microsoft.com/en-us/azure/logic-apps/error-exception-handling

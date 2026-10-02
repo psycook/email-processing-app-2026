@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "live_seed": false,
+  "purpose": "Offline cardinality fixture only; never create demo emails, cases or runtime records.",
+  "processes": [
+    {"key": "message-a", "process_id": "e13cba8e-9792-53c1-ae72-c8375658b0a1"},
+    {"key": "message-b", "process_id": "e13cba8e-9792-53c1-ae72-c8375658b0b2"}
+  ],
+  "cases": [
+    {"key": "case-a", "case_id": "7013cdee-021d-57e5-820a-1d1a25f177a1"},
+    {"key": "case-b", "case_id": "7013cdee-021d-57e5-820a-1d1a25f177b2"}
+  ],
+  "process_case_links": [
+    {"process": "message-a", "case": "case-a", "blocks_completion": true},
+    {"process": "message-a", "case": "case-b", "blocks_completion": true},
+    {"process": "message-b", "case": "case-a", "blocks_completion": true}
+  ],
+  "expectations": [
+    "Closing case-a does not prove message-a complete while blocking case-b remains open.",
+    "Case-a lifecycle reconciliation finds both message-a and message-b by explicit links.",
+    "Reopening case-a reevaluates both processes without deleting old events.",
+    "The unique process/case key rejects repeating the same pair."
+  ]
+}

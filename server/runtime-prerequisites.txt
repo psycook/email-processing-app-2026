@@ -1,0 +1,260 @@
+EMAIL PROCESS SERVICE - LOCAL STAGE 3 IMPLEMENTATION
+
+Scope
+-----
+This directory contains source, an unsigned local build/package and unit tests.
+No tenant was accessed, registered, deployed, modified or messaged. No live
+producer/flow was edited. Stage 4 notification/outbox is intentionally absent.
+The build is NOT a certified tenant-ready deployment.
+
+Canonical schema and API names: server\process-contract.json.
+Request DTOs: EmailProcess.Plugin\Contracts.cs (schemaVersion 1, camelCase).
+All seven global/unbound Custom APIs use required RequestJson:String input and
+ResponseJson:String output; IsFunction=false, IsPrivate=false,
+AllowedCustomProcessingStepType=None. The API main plug-in type is
+EmailProcess.Plugin.ProcessApi. Set PluginTypeId rather than registering an
+ordinary stage-30 SDK message step. Set managed IsCustomizable=false for each
+API/parameter/response in the released solution.
+
+Build and test, from repository root on Windows
+----------------------------------------------
+dotnet build server\EmailProcess.Plugin\EmailProcess.Plugin.csproj -c Release
+dotnet test server\EmailProcess.Plugin.Tests\EmailProcess.Plugin.Tests.csproj -c Release
+
+PAC scaffolding actually used:
+pac plugin init --outputDirectory server\EmailProcess.Plugin --skip-signing
+
+PAC's initial net462 target was explicitly corrected to net48. SDK9/10 can
+compile with Microsoft.NETFramework.ReferenceAssemblies 1.0.3. Running tests
+requires .NET Framework 4.8 on Windows. Production source uses the official
+Microsoft.CrmSdk.CoreAssemblies 9.0.2.60 and Microsoft.PowerApps.MSBuild.Plugin
+1.52.1; Newtonsoft.Json 13.0.3 is packaged as a dependent assembly. No ILMerge.
+New test-only dependencies: Microsoft.NET.Test.Sdk, xUnit and Moq.
+
+Output:
+server\EmailProcess.Plugin\bin\Release\net48\EmailProcess.Plugin.dll
+server\EmailProcess.Plugin\bin\Release\EmailProcess.Plugin.1.0.0.nupkg
+
+Register the generated dependent-assembly PLUG-IN PACKAGE via supported PAC/PRT
+tooling, not just the DLL without Newtonsoft.Json. A separate deployment
+approval, solution export/unpack and verified registration are still required.
+No hand-authored solution XML is represented as an exported solution.
+
+Signing and configuration
+-------------------------
+No signing key or cursor secret is included. server\.gitignore excludes *.snk,
+*.local.json, bin, obj and test outputs. Never check in keys or production policy.
+The default embedded policy.json deliberately denies EVERY producer/definition
+administrator and has no cursor signing key.
+
+Provide an environment-specific policy file (local ignored path) and a local
+strong-name key when producing an approved deployment build, for example:
+dotnet build server\EmailProcess.Plugin\EmailProcess.Plugin.csproj -c Release -p:ProducerPolicyPath=C:\path\producer-policy.local.json -p:SigningKeyPath=C:\path\plugin.snk
+
+Policy JSON shape:
+{
+  "producers": [{
+    "producerId": "help-flow",
+    "authority": "intake",
+    "userIds": ["<approved initiating application/system user GUID>"],
+    "roleIds": ["<approved narrow Dataverse role GUID>"],
+    "stageCodes": ["<approved stage code>"],
+    "errorCodes": ["<approved sanitized machine code>"],
+    "canReceive": true,
+    "canLinkCases": false,
+    "canResolveCustomer": false,
+    "customerResolutionStageCodes": []
+  }],
+  "observerStepIds": ["<registered asynchronous observer step GUID>"],
+  "definitionAdministratorUserIds": ["<approved administrator GUID>"],
+  "cursorSigningKey": "<base64 random secret of at least 32 bytes>"
+}
+
+Authority vocabulary: intake, workflow, tool. Browser identities are never
+approved producers. case-observer authority is derived exclusively from the
+trusted registered asynchronous incident Update parent context, not JSON.
+Both initiating user AND at least one allowed effective role are required.
+Role memberships include direct roles and teamroles/teammembership. Use actual
+business-unit-specific role IDs. Table/record rights remain necessary and are
+never bypassed with SYSTEM. Role membership lookup rights must be verified.
+
+Custom API PluginTypeId does not expose ordinary step configuration. The default
+constructor therefore uses an environment-specific embedded policy. This is a
+deliberate packaging requirement, NOT a fictitious Custom API secure-config
+field. Ordinary observer/guard steps support secure constructor configuration;
+ensure all policy copies agree. An environment-variable-backed policy resolver
+could be separately designed; it is not implemented. The cursor secret must
+be kept out of frontend assets and extracted public build artifacts. Rotation
+invalidates cursors. Only readers of approved assembly/package artifacts may
+access the embedded policy; use your secured ALM artifact store.
+
+Exact registration targets
+--------------------------
+1. All seven API PluginTypeId references: EmailProcess.Plugin.ProcessApi.
+   Select an EXISTING appropriate ExecutePrivilegeName, discovered from the
+   intended environment (typically the relevant process Read/Create privilege).
+   No guessed/new custom privilege names are supplied. Grant narrowly through
+   reader/producer roles and test cumulative roles.
+
+2. EmailProcess.Plugin.TableGuard:
+   synchronous PreOperation (20), Calling User, all seven manifest tables:
+   Create, Update, Delete. Register no Update filtering attributes.
+   For runtime tables additionally guard supported Assign/Upsert and bulk
+   CreateMultiple/UpdateMultiple/UpsertMultiple messages where available.
+   Guard rejects unsupported mutation messages, never silently accepts them.
+   Confirm standard bulk operations invoke guards; do not enable unsupported
+   bypass routes. Ordinary users must not have bypass-custom-plugin privileges,
+   direct share/assign/delete, retention administration or definition write
+   privileges. API producer roles need Create/Read/Write/Append/AppendTo on
+   the minimum ledger tables, not event Update/Delete. Event updates/deletes
+   are always denied by code. No retention bypass is implemented.
+
+   Runtime guard trusts an ancestor stage-30 transactional allowlisted API
+   message and its internal SharedVariables scope. Browser request parameters
+   cannot create that marker. AllowedCustomProcessingStepType=None prevents
+   extension steps injecting a trusted scope. It deliberately does not guess
+   OwningExtension's undocumented Custom API main-operation entity type.
+   Registered server plug-ins and deployment administrators are trusted code,
+   not a security boundary against malicious tenant administrators.
+
+   Definition writes require explicitly allowed administrator IDs PLUS table
+   rights. Create drafts, create all nodes/edges, then publish. Published/used
+   rows cannot be edited/deleted/reparented. Publication validates authorities
+   and lookup graph scope. Create a new version instead; retirement/migration
+   APIs are not implemented.
+
+3. EmailProcess.Plugin.CaseLifecycleObserver:
+   incident Update, asynchronous PostOperation (40), Calling User.
+   Filtering attributes: statecode,statuscode,merged.
+   PreImage alias/name "PreImage": statecode,statuscode,merged,versionnumber.
+   PostImage alias/name "PostImage": statecode,statuscode,merged,versionnumber.
+   Include the actual registered step GUID in approved policies. Do not
+   impersonate SYSTEM or a broad service administrator. The initiating case
+   changer needs narrow ledger read/write rights and visibility to ALL relevant
+   explicit links; normal case access alone does not grant telemetry access.
+
+   Verify CloseIncident/cancel/merge/reopen actually trigger this Update
+   registration and supply committed post-image versionnumber in the tenant.
+   Do not claim CloseIncident supports the same images or that every platform
+   version has been tested. Captured pre/post values and source version are
+   compared to the trusted parent by the API. Missing images/version produce
+   explicitly labelled current-state reconciliation plus a marker, not invented
+   historical transitions. If current state cannot be read, native async retry
+   and a RECONCILIATION_REQUIRED trace identify the gap.
+
+   Work is capped at 50 linked processes. >50 sets reconciliation markers on
+   the processed subset, logs case/version and fails the ASYNC job for native
+   retry/monitoring. A paged external reconciliation worker for the remainder
+   is NOT implemented. Alert on this job and reconcile all remaining links
+   before asserting complete coverage. Do not confuse this with lossless capture.
+   Original case transactions are already committed and cannot be rolled back
+   by asynchronous telemetry failures. Fault/timeout handling stops immediately;
+   no Dataverse fault is caught then followed by calls in an aborted transaction.
+
+Storage and permissions prerequisites
+------------------------------------
+Use exactly seven standard manifest tables, active unique alternate-key indexes,
+optimistic concurrency on process/stage/case-link rows and restricted field
+security for message/identity metadata. Secured columns must be readable to the
+authorized ingestion identity or correlation checks fail closed. Direct table
+reads must not bypass field-security privacy. Public API selects omit raw
+InternetMessageId, locator, actualFrom, replyTo and canonical private payload.
+Sanitized replay payload never includes those message fields.
+
+Runtime ownership follows the intake caller; child rows explicitly copy process
+ownership. The flow/reviewer/app readers need an approved consistent operational
+team/BU ownership/visibility model and AppendTo rights. This code never implicitly
+shares a process because a case is visible. Assigning child ownership may require
+Assign privilege for the authorized producer; runtime guard does not expose a
+general Assign route. Validate two-user visibility and producer ownership in
+the pilot. Avoid sharing only some child rows of one process: the service cannot
+truthfully reduce or present an aggregate when its caller cannot read all rows.
+
+First case link requires process.contactId == incident.customerid (contact).
+Contact binding occurs only after intake: an actual completed identify-phase
+tool-authority lookup must have producer canResolveCustomer=true and an exact
+customerResolutionStageCodes allowlist entry, in addition to ordinary identity,
+role and stageCodes authorization. It can bind once or confirm the same ID;
+unreadable Contact, conflicting replacement, other phase/stage or unfinished
+execution fails. Intake cannot bind a Contact merely by supplying a GUID.
+It does not authenticate sender or authorize financial servicing.
+Account-customer or no-contact relationships fail closed pending a separately
+approved linkage policy. Existing explicit links remain valid across customer
+changes. Link role/blocksCompletion are immutable. Linking reads actual current
+case state/version to cover link-after-close; one message/many cases and one
+case/many messages are supported.
+
+No arbitrary user-supplied table names, executable rule expressions or URLs.
+No subject/body, prompts, reasoning, attachments, tokens inferred from text or
+financial account/card data. Actual tool outcomes require a producer with the
+stage's completionauthority. The service trusts configured producers' tool
+boundary attestations, not LLM prose. It cannot independently prove an external
+operation happened merely from a caller-supplied outcome.
+
+Concurrency / retry / completeness gates
+----------------------------------------
+Writer refuses IsInTransaction=false. Event/projections share synchronous API
+transaction; every process/stage/link update uses IfRowVersionMatches and a
+nonempty RowVersion. Concurrent create races rely on active unique keys; caller
+must retry the complete request outside the failed transaction with bounded
+backoff, preserving EventId/execution/source identity. No nested batch or
+ExecuteTransaction. No business-operation retry to repair telemetry.
+
+Request attempt is native-run-scoped; every new real workflow run can start at
+1. rfd_attempt on the stage projection is instead a server-owned ordinal within
+process/stage/branch/case. Atomic process RowVersion serialization prevents
+parallel allocations from committing the same ordinal. SourceOperationKey still
+hashes the original producer/run/operation/stage/branch/case/native-attempt, so a
+same-run new-GUID replay conflicts instead of masquerading as a business retry.
+Existing execution late notifications never allocate a new ordinal. First-seen
+ordinal is record ordering, not an inferred chronological native-run ordering.
+
+Integration proof remains mandatory: transaction rollback on event/projection
+failure, simultaneous duplicate intakes, rowversion conflicts, API round trips,
+role/bypass checks, record sharing, actual case messages and observer retries.
+Unit fakes throw on unsupported operations; they do not prove Dataverse isolation,
+security roles, image availability, SDK context ancestry or connector behavior.
+
+Intentional current limits / unimplemented deliverables
+------------------------------------------------------
+- No tenant deployment, generated exported solution, role creation or live flow
+  wiring (Help/Classify_Email/agents/tools/Case Management) was performed.
+- Read-only adapter discovery located Card Servicing's actual customer/case
+  operations inside an InlineAgentSkill using generic Dataverse MCP tools.
+  The inspected InvokeAgent exposes no verified typed ProcessId context or
+  deterministic per-tool interception hook. The approved Stage 3 route is to
+  move customer lookup, case mutation and process linkage into reviewed
+  deterministic flow/tool actions that call the plug-in APIs directly, while
+  the saved agent returns recommendations only. The automatic saved-agent/MCP
+  patch remains refused; generic MCP writes must not become process-authoritative
+  evidence. See flow-templates\card-servicing-agent.structural-inventory.json
+  and flow-templates\card-servicing-tool-wrapper.capability-request.json.
+- No >50-case-link fan-out worker or automatic reconciliation-marker clearing.
+  Markers are sticky. Repair protocol must verify retained ledger completeness
+  before clearing, not simply observe a current state.
+- Optional holding references use rfd_financialaccount, verified against the
+  existing generated Rfd_financialaccountsModel.ts and incident lookup model.
+  Optional workflow references use the real workflow table; native run IDs
+  remain strings, not fake Dataverse lookups. Tenant availability still requires
+  metadata preflight before deploying these relationships.
+- Annotation metadata does not permit a custom lookup parent in the inspected
+  tenant. noteId is validated against an actual caller-readable annotation but
+  stored in rfd_noteid String(36), with fixed annotation target semantics.
+  annotation.objectid must reference the exact request Case; no unrelated note
+  association or arbitrary regarding target is accepted.
+  It is deliberately not a fake custom lookup, and has no referential cascade.
+- No transport pre-send header spike or draft/send identity guarantee.
+- No global as-of projection snapshot/count service. List counts exactly match
+  returned page; process projections are explicitly live. Event paging has an
+  upper per-process revision and opaque authenticated continuation.
+- Full database rebuild/repair replay runner is not provided. Append-only
+  sanitized facts support retained-history replay and reducer tests verify it;
+  truncated/partial coverage is never labelled complete.
+- Retention/definition retirement/migration and Stage 4 outbox are not included.
+
+Reference documentation used
+-----------------------------
+https://learn.microsoft.com/en-us/power-apps/developer/data-platform/custom-api
+https://learn.microsoft.com/en-us/power-platform/developer/cli/reference/plugin
+https://learn.microsoft.com/en-us/power-apps/developer/data-platform/build-and-package
+https://learn.microsoft.com/en-us/dotnet/api/microsoft.xrm.sdk.iexecutioncontext.owningextension

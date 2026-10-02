@@ -1,0 +1,1958 @@
+{
+  "mode": "CONTROLLED_HELP_REVIEW_DELTA_ONLY",
+  "publishable": false,
+  "sourceGuard": {
+    "environmentUrl": "https://smc-diamond-service.crm.dynamics.com",
+    "workflowId": "f1875d78-ffe5-64c8-d7bf-76a7f7a6b63f",
+    "etag": "W/\"12218136\"",
+    "sourceSha256": "c32630b30d4026e21881e9ca2268365ccc2661afdbc2f243c3abeb4260fdc2b7",
+    "knownOperations": [
+      {
+        "path": "triggers/Email_Arrives_in_Help_Share_Mailbox",
+        "type": "OpenApiConnection",
+        "operationId": "SharedMailboxOnNewEmailV2"
+      },
+      {
+        "path": "actions/Classify_Email",
+        "type": "OpenApiConnection",
+        "operationId": "InvokeDefinition"
+      },
+      {
+        "path": "actions/Classify_Email_Switch",
+        "type": "Switch",
+        "operationId": null
+      },
+      {
+        "path": "actions/Classify_Email_Switch/cases/Card Servicing/Card_Servicing_Agent",
+        "type": "OpenApiConnection",
+        "operationId": "InvokeAgent"
+      },
+      {
+        "path": "actions/Classify_Email_Switch/cases/Card Servicing/Classify_Email_Switch_Terminate_category_5912ba73_a6ba_4d3d_b6f5_26711927d2fa",
+        "type": "Terminate",
+        "operationId": null
+      },
+      {
+        "path": "actions/Classify_Email_Switch/default/Classify_Email_Switch_Terminate_default",
+        "type": "Terminate",
+        "operationId": null
+      },
+      {
+        "path": "actions/Classify_Email_Switch/default/SPAM_Response",
+        "type": "OpenApiConnection",
+        "operationId": "InvokeDefinition"
+      },
+      {
+        "path": "actions/Mock_Response_Agent",
+        "type": "OpenApiConnection",
+        "operationId": "InvokeDefinition"
+      }
+    ]
+  },
+  "sourceBackupExported": false,
+  "status": "DESIGNER_REVIEW_REQUIRED_NOT_LIVE_SAFE",
+  "releaseBlockers": [
+    "PARENT_RELEASEGATE_NOT_GRANTED",
+    "NATIVE_SCOPE_FAILURE_AND_TERMINATION_PILOT_REQUIRED",
+    "CONNECTION_REFERENCE_AND_API_BINDING_NOT_VALIDATED",
+    "TRIGGER_IDENTITY_FIELDS_REQUIRE_PILOT_VALIDATION",
+    "STAGE_DEFINITIONS_AND_PRODUCER_AUTHORIZATION_REQUIRE_VALIDATION"
+  ],
+  "unboundParameters": [
+    "definitionId",
+    "producerId",
+    "connectionReference"
+  ],
+  "profile": {
+    "schemaVersion": 1,
+    "workflowId": "f1875d78-ffe5-64c8-d7bf-76a7f7a6b63f",
+    "definitionId": "00000000-0000-4000-8000-000000000002",
+    "producerId": "reviewed-workflow-producer",
+    "connectionReference": "rfd_process_dataverse",
+    "observations": [
+      {
+        "action": "Classify_Email",
+        "stageCode": "classify"
+      },
+      {
+        "action": "Classify_Email_Switch",
+        "stageCode": "route"
+      },
+      {
+        "action": "Card_Servicing_Agent",
+        "stageCode": "card-servicing"
+      },
+      {
+        "action": "SPAM_Response",
+        "stageCode": "spam"
+      },
+      {
+        "action": "Mock_Response_Agent",
+        "stageCode": "mock-response"
+      }
+    ],
+    "adapter": "help-v1"
+  },
+  "definitionSeed": {
+    "definitionCode": "help-email",
+    "definitionVersion": 1,
+    "seedSha256": "975b3c02f7c9ccb1cce44bd382d343fe67c0d08ddeef74f6a5d770e6a4f71800",
+    "caseFreeHostCompletionRequiresReview": []
+  },
+  "candidateDefinitionSha256": "c481edf024c7865ece4014e609588eb4690549cf92fde25c467892c39cf4788c",
+  "sourceOperations": [
+    {
+      "path": "actions/Classify_Email",
+      "operation": "1d228e25a0a674159f0f30315b8dfdd8cab6c286ffbc9aae08dff69d7b304d5e"
+    },
+    {
+      "path": "actions/Classify_Email_Switch/cases/Card Servicing/actions/Card_Servicing_Agent",
+      "operation": "4a03850354e54a3e6d997b4c2b339ac62eab2a673804f124221dc2c01836387c"
+    },
+    {
+      "path": "actions/Classify_Email_Switch/default/actions/SPAM_Response",
+      "operation": "6756ef083f82130d05271bbc8170ed0f9fd21ff9423d1f423eb333af4676d09b"
+    },
+    {
+      "path": "actions/Mock_Response_Agent",
+      "operation": "6310749486c2ab76ebb28f1a539d23b3e02233ae376691e57439744b55c5bfa6"
+    },
+    {
+      "path": "actions/Classify_Email_Switch/cases/Card Servicing/actions/route",
+      "operation": "e565929cc93eff16ca3ebbe30c1e5233ce8fc3f3176a4d43125e7cc119ed4ac7"
+    },
+    {
+      "path": "actions/Classify_Email_Switch/cases/Payment & direct debits/actions/route",
+      "operation": "a2c68bd8f7a64ba5ff45d5628cd2566ef6791d59dbcf3e5ccd9c51931cfb42da"
+    },
+    {
+      "path": "actions/Classify_Email_Switch/cases/Disputes & fraud/actions/route",
+      "operation": "210116f7776212893a4d661d90c5f461461137bacf0ba3fc9f9673664615586f"
+    },
+    {
+      "path": "actions/Classify_Email_Switch/cases/Details & Documents/actions/route",
+      "operation": "a399bde847ac40c58cc776855046ee986aeea6f9d16c8851687c65c0ca900a8c"
+    },
+    {
+      "path": "actions/Classify_Email_Switch/cases/Complaints/actions/route",
+      "operation": "9f8bc02d7c1f351b315c25695dabcca87eac7a55831cd1aeb3d969147397b775"
+    },
+    {
+      "path": "actions/Classify_Email_Switch/default/actions/route",
+      "operation": "9ea542567564bca11cc27a57f96741ae0a40e1e4712bc49c84c58e6c59d5009f"
+    }
+  ],
+  "rewiredRunAfter": [
+    {
+      "parent": "actions",
+      "action": "Classify_Email",
+      "beforePresent": false,
+      "before": {},
+      "after": {
+        "EP_Classify_Email_Start": [
+          "Succeeded"
+        ]
+      }
+    },
+    {
+      "parent": "actions/Classify_Email_Switch/cases/Card Servicing/actions",
+      "action": "Card_Servicing_Agent",
+      "beforePresent": false,
+      "before": {},
+      "after": {
+        "EP_Card_Servicing_Agent_Start": [
+          "Succeeded"
+        ]
+      }
+    },
+    {
+      "parent": "actions/Classify_Email_Switch/default/actions",
+      "action": "SPAM_Response",
+      "beforePresent": false,
+      "before": {},
+      "after": {
+        "EP_SPAM_Response_Start": [
+          "Succeeded"
+        ]
+      }
+    },
+    {
+      "parent": "actions",
+      "action": "Mock_Response_Agent",
+      "beforePresent": true,
+      "before": {
+        "Classify_Email_Switch": [
+          "Succeeded"
+        ]
+      },
+      "after": {
+        "Classify_Email_Switch": [
+          "Succeeded"
+        ],
+        "EP_Mock_Response_Agent_Start": [
+          "Succeeded"
+        ]
+      }
+    },
+    {
+      "parent": "actions",
+      "action": "Classify_Email_Switch",
+      "beforePresent": true,
+      "before": {
+        "Classify_Email": [
+          "Succeeded"
+        ]
+      },
+      "after": {
+        "Classify_Email": [
+          "Succeeded"
+        ],
+        "EP_Classify_Email_Settled": [
+          "Succeeded"
+        ]
+      }
+    },
+    {
+      "parent": "actions/Classify_Email_Switch/cases/Card Servicing/actions",
+      "action": "Classify_Email_Switch_Terminate_category_5912ba73_a6ba_4d3d_b6f5_26711927d2fa",
+      "beforePresent": true,
+      "before": {
+        "Card_Servicing_Agent": [
+          "Succeeded"
+        ]
+      },
+      "after": {
+        "Card_Servicing_Agent": [
+          "Succeeded"
+        ],
+        "EP_Card_Servicing_Agent_Settled": [
+          "Succeeded"
+        ]
+      }
+    },
+    {
+      "parent": "actions/Classify_Email_Switch/default/actions",
+      "action": "Classify_Email_Switch_Terminate_default",
+      "beforePresent": true,
+      "before": {
+        "SPAM_Response": [
+          "Succeeded"
+        ]
+      },
+      "after": {
+        "SPAM_Response": [
+          "Succeeded"
+        ],
+        "EP_SPAM_Response_Settled": [
+          "Succeeded"
+        ]
+      }
+    }
+  ],
+  "generatedActions": [
+    {
+      "parent": "actions",
+      "action": "EP_Intake",
+      "definition": {
+        "type": "Scope",
+        "actions": {
+          "EP_Intake_Identity": {
+            "type": "Compose",
+            "inputs": {
+              "eventId": "@guid()",
+              "spanId": "@guid()",
+              "occurredAtUtc": "@utcNow()"
+            },
+            "runAfter": {},
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Intake_Payload": {
+            "type": "Compose",
+            "inputs": {
+              "schemaVersion": 1,
+              "eventId": "@outputs('EP_Intake_Identity')?['eventId']",
+              "producerId": "reviewed-workflow-producer",
+              "workflowId": "f1875d78-ffe5-64c8-d7bf-76a7f7a6b63f",
+              "sourceExecutionId": "@workflow()?['run']?['name']",
+              "operation": "cf3a4e261c7c06d6407135a58e3c52465212c880a3add92f7d8a8cfaeda790c5",
+              "branch": "root",
+              "attempt": 1,
+              "eventType": "received",
+              "occurredAtUtc": "@outputs('EP_Intake_Identity')?['occurredAtUtc']",
+              "definitionId": "00000000-0000-4000-8000-000000000002",
+              "internetMessageId": "@triggerOutputs()?['body/internetMessageId']",
+              "actualFrom": "@triggerOutputs()?['body/from']",
+              "replyTo": "@triggerOutputs()?['body/replyTo']"
+            },
+            "runAfter": {
+              "EP_Intake_Identity": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Intake_Write": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "connectionName": "rfd_process_dataverse",
+                "operationId": "PerformUnboundAction"
+              },
+              "parameters": {
+                "actionName": "rfd_RecordEmailProcessEvent",
+                "item/RequestJson": "@string(outputs('EP_Intake_Payload'))"
+              },
+              "retryPolicy": {
+                "type": "fixed",
+                "count": 2,
+                "interval": "PT5S"
+              }
+            },
+            "runAfter": {
+              "EP_Intake_Payload": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Intake_Settled": {
+            "type": "Compose",
+            "inputs": {
+              "observationOnly": true
+            },
+            "runAfter": {
+              "EP_Intake_Write": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            }
+          }
+        },
+        "runAfter": {},
+        "metadata": {
+          "rfdHelpAdapter": {
+            "version": 1,
+            "originalDefinitionSha256": "cc46c2115a1f3b7be44cbe6c8ccf66c5eab62ab825af2d260ea6cb8a73952317",
+            "profileSha256": "4d516baad2088951b64c95e4a32ccfe87f32025a39403d7d571da5cefa6d4eb5",
+            "rewired": [
+              {
+                "parent": "actions",
+                "action": "Classify_Email",
+                "beforePresent": false,
+                "before": {},
+                "after": {
+                  "EP_Classify_Email_Start": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              {
+                "parent": "actions/Classify_Email_Switch/cases/Card Servicing/actions",
+                "action": "Card_Servicing_Agent",
+                "beforePresent": false,
+                "before": {},
+                "after": {
+                  "EP_Card_Servicing_Agent_Start": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              {
+                "parent": "actions/Classify_Email_Switch/default/actions",
+                "action": "SPAM_Response",
+                "beforePresent": false,
+                "before": {},
+                "after": {
+                  "EP_SPAM_Response_Start": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              {
+                "parent": "actions",
+                "action": "Mock_Response_Agent",
+                "beforePresent": true,
+                "before": {
+                  "Classify_Email_Switch": [
+                    "Succeeded"
+                  ]
+                },
+                "after": {
+                  "Classify_Email_Switch": [
+                    "Succeeded"
+                  ],
+                  "EP_Mock_Response_Agent_Start": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              {
+                "parent": "actions",
+                "action": "Classify_Email_Switch",
+                "beforePresent": true,
+                "before": {
+                  "Classify_Email": [
+                    "Succeeded"
+                  ]
+                },
+                "after": {
+                  "Classify_Email": [
+                    "Succeeded"
+                  ],
+                  "EP_Classify_Email_Settled": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              {
+                "parent": "actions/Classify_Email_Switch/cases/Card Servicing/actions",
+                "action": "Classify_Email_Switch_Terminate_category_5912ba73_a6ba_4d3d_b6f5_26711927d2fa",
+                "beforePresent": true,
+                "before": {
+                  "Card_Servicing_Agent": [
+                    "Succeeded"
+                  ]
+                },
+                "after": {
+                  "Card_Servicing_Agent": [
+                    "Succeeded"
+                  ],
+                  "EP_Card_Servicing_Agent_Settled": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              {
+                "parent": "actions/Classify_Email_Switch/default/actions",
+                "action": "Classify_Email_Switch_Terminate_default",
+                "beforePresent": true,
+                "before": {
+                  "SPAM_Response": [
+                    "Succeeded"
+                  ]
+                },
+                "after": {
+                  "SPAM_Response": [
+                    "Succeeded"
+                  ],
+                  "EP_SPAM_Response_Settled": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "parent": "actions",
+      "action": "EP_Classify_Email_Start",
+      "definition": {
+        "type": "Scope",
+        "actions": {
+          "EP_Classify_Email_Start_Identity": {
+            "type": "Compose",
+            "inputs": {
+              "eventId": "@guid()",
+              "spanId": "@guid()",
+              "occurredAtUtc": "@utcNow()"
+            },
+            "runAfter": {},
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Classify_Email_Start_Payload": {
+            "type": "Compose",
+            "inputs": {
+              "schemaVersion": 1,
+              "eventId": "@outputs('EP_Classify_Email_Start_Identity')?['eventId']",
+              "producerId": "reviewed-workflow-producer",
+              "workflowId": "f1875d78-ffe5-64c8-d7bf-76a7f7a6b63f",
+              "sourceExecutionId": "@workflow()?['run']?['name']",
+              "operation": "1d228e25a0a674159f0f30315b8dfdd8cab6c286ffbc9aae08dff69d7b304d5e",
+              "branch": "root",
+              "attempt": 1,
+              "eventType": "started",
+              "occurredAtUtc": "@outputs('EP_Classify_Email_Start_Identity')?['occurredAtUtc']",
+              "stageCode": "classify",
+              "stageExecutionId": "@outputs('EP_Classify_Email_Start_Identity')?['spanId']",
+              "processId": "@json(body('EP_Intake_Write')?['ResponseJson'])?['processId']"
+            },
+            "runAfter": {
+              "EP_Classify_Email_Start_Identity": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Classify_Email_Start_Write": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "connectionName": "rfd_process_dataverse",
+                "operationId": "PerformUnboundAction"
+              },
+              "parameters": {
+                "actionName": "rfd_RecordEmailProcessEvent",
+                "item/RequestJson": "@string(outputs('EP_Classify_Email_Start_Payload'))"
+              },
+              "retryPolicy": {
+                "type": "fixed",
+                "count": 2,
+                "interval": "PT5S"
+              }
+            },
+            "runAfter": {
+              "EP_Classify_Email_Start_Payload": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Classify_Email_Start_Settled": {
+            "type": "Compose",
+            "inputs": {
+              "observationOnly": true
+            },
+            "runAfter": {
+              "EP_Classify_Email_Start_Write": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "EP_Intake": [
+            "Succeeded"
+          ]
+        }
+      }
+    },
+    {
+      "parent": "actions",
+      "action": "EP_Classify_Email_Settled",
+      "definition": {
+        "type": "Scope",
+        "actions": {
+          "EP_Classify_Email_Settled_Identity": {
+            "type": "Compose",
+            "inputs": {
+              "eventId": "@guid()",
+              "occurredAtUtc": "@utcNow()"
+            },
+            "runAfter": {},
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Classify_Email_Settled_Payload": {
+            "type": "Compose",
+            "inputs": {
+              "schemaVersion": 1,
+              "eventId": "@outputs('EP_Classify_Email_Settled_Identity')?['eventId']",
+              "producerId": "reviewed-workflow-producer",
+              "workflowId": "f1875d78-ffe5-64c8-d7bf-76a7f7a6b63f",
+              "sourceExecutionId": "@workflow()?['run']?['name']",
+              "operation": "1d228e25a0a674159f0f30315b8dfdd8cab6c286ffbc9aae08dff69d7b304d5e",
+              "branch": "root",
+              "attempt": 1,
+              "eventType": "completed",
+              "occurredAtUtc": "@actions('Classify_Email')?['endTime']",
+              "stageCode": "classify",
+              "stageExecutionId": "@outputs('EP_Classify_Email_Start_Identity')?['spanId']",
+              "processId": "@json(body('EP_Intake_Write')?['ResponseJson'])?['processId']"
+            },
+            "runAfter": {
+              "EP_Classify_Email_Settled_Identity": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Classify_Email_Settled_Write": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "connectionName": "rfd_process_dataverse",
+                "operationId": "PerformUnboundAction"
+              },
+              "parameters": {
+                "actionName": "rfd_RecordEmailProcessEvent",
+                "item/RequestJson": "@string(outputs('EP_Classify_Email_Settled_Payload'))"
+              },
+              "retryPolicy": {
+                "type": "fixed",
+                "count": 2,
+                "interval": "PT5S"
+              }
+            },
+            "runAfter": {
+              "EP_Classify_Email_Settled_Payload": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Classify_Email_Settled_Settled": {
+            "type": "Compose",
+            "inputs": {
+              "observationOnly": true
+            },
+            "runAfter": {
+              "EP_Classify_Email_Settled_Write": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Classify_Email": [
+            "Succeeded"
+          ]
+        }
+      }
+    },
+    {
+      "parent": "actions",
+      "action": "EP_Mock_Response_Agent_Start",
+      "definition": {
+        "type": "Scope",
+        "actions": {
+          "EP_Mock_Response_Agent_Start_Identity": {
+            "type": "Compose",
+            "inputs": {
+              "eventId": "@guid()",
+              "spanId": "@guid()",
+              "occurredAtUtc": "@utcNow()"
+            },
+            "runAfter": {},
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Mock_Response_Agent_Start_Payload": {
+            "type": "Compose",
+            "inputs": {
+              "schemaVersion": 1,
+              "eventId": "@outputs('EP_Mock_Response_Agent_Start_Identity')?['eventId']",
+              "producerId": "reviewed-workflow-producer",
+              "workflowId": "f1875d78-ffe5-64c8-d7bf-76a7f7a6b63f",
+              "sourceExecutionId": "@workflow()?['run']?['name']",
+              "operation": "6310749486c2ab76ebb28f1a539d23b3e02233ae376691e57439744b55c5bfa6",
+              "branch": "@if(equals(outputs('Classify_Email')?['body']?['structuredOutput']?['predictedCategory'],'Payment & direct debits'),'payment-direct-debits',if(equals(outputs('Classify_Email')?['body']?['structuredOutput']?['predictedCategory'],'Disputes & fraud'),'disputes-fraud',if(equals(outputs('Classify_Email')?['body']?['structuredOutput']?['predictedCategory'],'Details & Documents'),'details-documents',if(equals(outputs('Classify_Email')?['body']?['structuredOutput']?['predictedCategory'],'Complaints'),'complaints','unsupported'))))",
+              "attempt": 1,
+              "eventType": "started",
+              "occurredAtUtc": "@outputs('EP_Mock_Response_Agent_Start_Identity')?['occurredAtUtc']",
+              "stageCode": "mock-response",
+              "stageExecutionId": "@outputs('EP_Mock_Response_Agent_Start_Identity')?['spanId']",
+              "processId": "@json(body('EP_Intake_Write')?['ResponseJson'])?['processId']"
+            },
+            "runAfter": {
+              "EP_Mock_Response_Agent_Start_Identity": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Mock_Response_Agent_Start_Write": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "connectionName": "rfd_process_dataverse",
+                "operationId": "PerformUnboundAction"
+              },
+              "parameters": {
+                "actionName": "rfd_RecordEmailProcessEvent",
+                "item/RequestJson": "@string(outputs('EP_Mock_Response_Agent_Start_Payload'))"
+              },
+              "retryPolicy": {
+                "type": "fixed",
+                "count": 2,
+                "interval": "PT5S"
+              }
+            },
+            "runAfter": {
+              "EP_Mock_Response_Agent_Start_Payload": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Mock_Response_Agent_Start_Settled": {
+            "type": "Compose",
+            "inputs": {
+              "observationOnly": true
+            },
+            "runAfter": {
+              "EP_Mock_Response_Agent_Start_Write": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Classify_Email_Switch": [
+            "Succeeded"
+          ]
+        }
+      }
+    },
+    {
+      "parent": "actions",
+      "action": "EP_Mock_Response_Agent_Settled",
+      "definition": {
+        "type": "Scope",
+        "actions": {
+          "EP_Mock_Response_Agent_Settled_Identity": {
+            "type": "Compose",
+            "inputs": {
+              "eventId": "@guid()",
+              "occurredAtUtc": "@utcNow()"
+            },
+            "runAfter": {},
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Mock_Response_Agent_Settled_Payload": {
+            "type": "Compose",
+            "inputs": {
+              "schemaVersion": 1,
+              "eventId": "@outputs('EP_Mock_Response_Agent_Settled_Identity')?['eventId']",
+              "producerId": "reviewed-workflow-producer",
+              "workflowId": "f1875d78-ffe5-64c8-d7bf-76a7f7a6b63f",
+              "sourceExecutionId": "@workflow()?['run']?['name']",
+              "operation": "6310749486c2ab76ebb28f1a539d23b3e02233ae376691e57439744b55c5bfa6",
+              "branch": "@if(equals(outputs('Classify_Email')?['body']?['structuredOutput']?['predictedCategory'],'Payment & direct debits'),'payment-direct-debits',if(equals(outputs('Classify_Email')?['body']?['structuredOutput']?['predictedCategory'],'Disputes & fraud'),'disputes-fraud',if(equals(outputs('Classify_Email')?['body']?['structuredOutput']?['predictedCategory'],'Details & Documents'),'details-documents',if(equals(outputs('Classify_Email')?['body']?['structuredOutput']?['predictedCategory'],'Complaints'),'complaints','unsupported'))))",
+              "attempt": 1,
+              "eventType": "completed",
+              "occurredAtUtc": "@actions('Mock_Response_Agent')?['endTime']",
+              "stageCode": "mock-response",
+              "stageExecutionId": "@outputs('EP_Mock_Response_Agent_Start_Identity')?['spanId']",
+              "processId": "@json(body('EP_Intake_Write')?['ResponseJson'])?['processId']"
+            },
+            "runAfter": {
+              "EP_Mock_Response_Agent_Settled_Identity": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Mock_Response_Agent_Settled_Write": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "connectionName": "rfd_process_dataverse",
+                "operationId": "PerformUnboundAction"
+              },
+              "parameters": {
+                "actionName": "rfd_RecordEmailProcessEvent",
+                "item/RequestJson": "@string(outputs('EP_Mock_Response_Agent_Settled_Payload'))"
+              },
+              "retryPolicy": {
+                "type": "fixed",
+                "count": 2,
+                "interval": "PT5S"
+              }
+            },
+            "runAfter": {
+              "EP_Mock_Response_Agent_Settled_Payload": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Mock_Response_Agent_Settled_Settled": {
+            "type": "Compose",
+            "inputs": {
+              "observationOnly": true
+            },
+            "runAfter": {
+              "EP_Mock_Response_Agent_Settled_Write": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Mock_Response_Agent": [
+            "Succeeded"
+          ]
+        }
+      }
+    },
+    {
+      "parent": "actions/Classify_Email_Switch/cases/Card Servicing/actions",
+      "action": "EP_Route_card_servicing",
+      "definition": {
+        "type": "Scope",
+        "actions": {
+          "EP_Route_card_servicing_Identity": {
+            "type": "Compose",
+            "inputs": {
+              "eventId": "@guid()",
+              "spanId": "@guid()",
+              "occurredAtUtc": "@utcNow()"
+            },
+            "runAfter": {},
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Route_card_servicing_Payload": {
+            "type": "Compose",
+            "inputs": {
+              "schemaVersion": 1,
+              "eventId": "@outputs('EP_Route_card_servicing_Identity')?['eventId']",
+              "producerId": "reviewed-workflow-producer",
+              "workflowId": "f1875d78-ffe5-64c8-d7bf-76a7f7a6b63f",
+              "sourceExecutionId": "@workflow()?['run']?['name']",
+              "operation": "e565929cc93eff16ca3ebbe30c1e5233ce8fc3f3176a4d43125e7cc119ed4ac7",
+              "branch": "card-servicing",
+              "attempt": 1,
+              "eventType": "completed",
+              "occurredAtUtc": "@outputs('EP_Route_card_servicing_Identity')?['occurredAtUtc']",
+              "stageCode": "route",
+              "stageExecutionId": "@outputs('EP_Route_card_servicing_Identity')?['spanId']",
+              "processId": "@json(body('EP_Intake_Write')?['ResponseJson'])?['processId']"
+            },
+            "runAfter": {
+              "EP_Route_card_servicing_Identity": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Route_card_servicing_Write": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "connectionName": "rfd_process_dataverse",
+                "operationId": "PerformUnboundAction"
+              },
+              "parameters": {
+                "actionName": "rfd_RecordEmailProcessEvent",
+                "item/RequestJson": "@string(outputs('EP_Route_card_servicing_Payload'))"
+              },
+              "retryPolicy": {
+                "type": "fixed",
+                "count": 2,
+                "interval": "PT5S"
+              }
+            },
+            "runAfter": {
+              "EP_Route_card_servicing_Payload": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Route_card_servicing_Settled": {
+            "type": "Compose",
+            "inputs": {
+              "observationOnly": true
+            },
+            "runAfter": {
+              "EP_Route_card_servicing_Write": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            }
+          }
+        },
+        "runAfter": {}
+      }
+    },
+    {
+      "parent": "actions/Classify_Email_Switch/cases/Card Servicing/actions",
+      "action": "EP_Card_Servicing_Agent_Start",
+      "definition": {
+        "type": "Scope",
+        "actions": {
+          "EP_Card_Servicing_Agent_Start_Identity": {
+            "type": "Compose",
+            "inputs": {
+              "eventId": "@guid()",
+              "spanId": "@guid()",
+              "occurredAtUtc": "@utcNow()"
+            },
+            "runAfter": {},
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Card_Servicing_Agent_Start_Payload": {
+            "type": "Compose",
+            "inputs": {
+              "schemaVersion": 1,
+              "eventId": "@outputs('EP_Card_Servicing_Agent_Start_Identity')?['eventId']",
+              "producerId": "reviewed-workflow-producer",
+              "workflowId": "f1875d78-ffe5-64c8-d7bf-76a7f7a6b63f",
+              "sourceExecutionId": "@workflow()?['run']?['name']",
+              "operation": "4a03850354e54a3e6d997b4c2b339ac62eab2a673804f124221dc2c01836387c",
+              "branch": "card-servicing",
+              "attempt": 1,
+              "eventType": "started",
+              "occurredAtUtc": "@outputs('EP_Card_Servicing_Agent_Start_Identity')?['occurredAtUtc']",
+              "stageCode": "card-servicing",
+              "stageExecutionId": "@outputs('EP_Card_Servicing_Agent_Start_Identity')?['spanId']",
+              "processId": "@json(body('EP_Intake_Write')?['ResponseJson'])?['processId']"
+            },
+            "runAfter": {
+              "EP_Card_Servicing_Agent_Start_Identity": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Card_Servicing_Agent_Start_Write": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "connectionName": "rfd_process_dataverse",
+                "operationId": "PerformUnboundAction"
+              },
+              "parameters": {
+                "actionName": "rfd_RecordEmailProcessEvent",
+                "item/RequestJson": "@string(outputs('EP_Card_Servicing_Agent_Start_Payload'))"
+              },
+              "retryPolicy": {
+                "type": "fixed",
+                "count": 2,
+                "interval": "PT5S"
+              }
+            },
+            "runAfter": {
+              "EP_Card_Servicing_Agent_Start_Payload": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Card_Servicing_Agent_Start_Settled": {
+            "type": "Compose",
+            "inputs": {
+              "observationOnly": true
+            },
+            "runAfter": {
+              "EP_Card_Servicing_Agent_Start_Write": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "EP_Route_card_servicing": [
+            "Succeeded"
+          ]
+        }
+      }
+    },
+    {
+      "parent": "actions/Classify_Email_Switch/cases/Card Servicing/actions",
+      "action": "EP_Card_Servicing_Agent_Settled",
+      "definition": {
+        "type": "Scope",
+        "actions": {
+          "EP_Card_Servicing_Agent_Settled_Identity": {
+            "type": "Compose",
+            "inputs": {
+              "eventId": "@guid()",
+              "occurredAtUtc": "@utcNow()"
+            },
+            "runAfter": {},
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Card_Servicing_Agent_Settled_Payload": {
+            "type": "Compose",
+            "inputs": {
+              "schemaVersion": 1,
+              "eventId": "@outputs('EP_Card_Servicing_Agent_Settled_Identity')?['eventId']",
+              "producerId": "reviewed-workflow-producer",
+              "workflowId": "f1875d78-ffe5-64c8-d7bf-76a7f7a6b63f",
+              "sourceExecutionId": "@workflow()?['run']?['name']",
+              "operation": "4a03850354e54a3e6d997b4c2b339ac62eab2a673804f124221dc2c01836387c",
+              "branch": "card-servicing",
+              "attempt": 1,
+              "eventType": "completed",
+              "occurredAtUtc": "@actions('Card_Servicing_Agent')?['endTime']",
+              "stageCode": "card-servicing",
+              "stageExecutionId": "@outputs('EP_Card_Servicing_Agent_Start_Identity')?['spanId']",
+              "processId": "@json(body('EP_Intake_Write')?['ResponseJson'])?['processId']"
+            },
+            "runAfter": {
+              "EP_Card_Servicing_Agent_Settled_Identity": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Card_Servicing_Agent_Settled_Write": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "connectionName": "rfd_process_dataverse",
+                "operationId": "PerformUnboundAction"
+              },
+              "parameters": {
+                "actionName": "rfd_RecordEmailProcessEvent",
+                "item/RequestJson": "@string(outputs('EP_Card_Servicing_Agent_Settled_Payload'))"
+              },
+              "retryPolicy": {
+                "type": "fixed",
+                "count": 2,
+                "interval": "PT5S"
+              }
+            },
+            "runAfter": {
+              "EP_Card_Servicing_Agent_Settled_Payload": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Card_Servicing_Agent_Settled_Settled": {
+            "type": "Compose",
+            "inputs": {
+              "observationOnly": true
+            },
+            "runAfter": {
+              "EP_Card_Servicing_Agent_Settled_Write": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "Card_Servicing_Agent": [
+            "Succeeded"
+          ]
+        }
+      }
+    },
+    {
+      "parent": "actions/Classify_Email_Switch/cases/Payment & direct debits/actions",
+      "action": "EP_Route_payment_direct_debits",
+      "definition": {
+        "type": "Scope",
+        "actions": {
+          "EP_Route_payment_direct_debits_Identity": {
+            "type": "Compose",
+            "inputs": {
+              "eventId": "@guid()",
+              "spanId": "@guid()",
+              "occurredAtUtc": "@utcNow()"
+            },
+            "runAfter": {},
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Route_payment_direct_debits_Payload": {
+            "type": "Compose",
+            "inputs": {
+              "schemaVersion": 1,
+              "eventId": "@outputs('EP_Route_payment_direct_debits_Identity')?['eventId']",
+              "producerId": "reviewed-workflow-producer",
+              "workflowId": "f1875d78-ffe5-64c8-d7bf-76a7f7a6b63f",
+              "sourceExecutionId": "@workflow()?['run']?['name']",
+              "operation": "a2c68bd8f7a64ba5ff45d5628cd2566ef6791d59dbcf3e5ccd9c51931cfb42da",
+              "branch": "payment-direct-debits",
+              "attempt": 1,
+              "eventType": "completed",
+              "occurredAtUtc": "@outputs('EP_Route_payment_direct_debits_Identity')?['occurredAtUtc']",
+              "stageCode": "route",
+              "stageExecutionId": "@outputs('EP_Route_payment_direct_debits_Identity')?['spanId']",
+              "processId": "@json(body('EP_Intake_Write')?['ResponseJson'])?['processId']"
+            },
+            "runAfter": {
+              "EP_Route_payment_direct_debits_Identity": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Route_payment_direct_debits_Write": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "connectionName": "rfd_process_dataverse",
+                "operationId": "PerformUnboundAction"
+              },
+              "parameters": {
+                "actionName": "rfd_RecordEmailProcessEvent",
+                "item/RequestJson": "@string(outputs('EP_Route_payment_direct_debits_Payload'))"
+              },
+              "retryPolicy": {
+                "type": "fixed",
+                "count": 2,
+                "interval": "PT5S"
+              }
+            },
+            "runAfter": {
+              "EP_Route_payment_direct_debits_Payload": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Route_payment_direct_debits_Settled": {
+            "type": "Compose",
+            "inputs": {
+              "observationOnly": true
+            },
+            "runAfter": {
+              "EP_Route_payment_direct_debits_Write": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            }
+          }
+        },
+        "runAfter": {}
+      }
+    },
+    {
+      "parent": "actions/Classify_Email_Switch/cases/Disputes & fraud/actions",
+      "action": "EP_Route_disputes_fraud",
+      "definition": {
+        "type": "Scope",
+        "actions": {
+          "EP_Route_disputes_fraud_Identity": {
+            "type": "Compose",
+            "inputs": {
+              "eventId": "@guid()",
+              "spanId": "@guid()",
+              "occurredAtUtc": "@utcNow()"
+            },
+            "runAfter": {},
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Route_disputes_fraud_Payload": {
+            "type": "Compose",
+            "inputs": {
+              "schemaVersion": 1,
+              "eventId": "@outputs('EP_Route_disputes_fraud_Identity')?['eventId']",
+              "producerId": "reviewed-workflow-producer",
+              "workflowId": "f1875d78-ffe5-64c8-d7bf-76a7f7a6b63f",
+              "sourceExecutionId": "@workflow()?['run']?['name']",
+              "operation": "210116f7776212893a4d661d90c5f461461137bacf0ba3fc9f9673664615586f",
+              "branch": "disputes-fraud",
+              "attempt": 1,
+              "eventType": "completed",
+              "occurredAtUtc": "@outputs('EP_Route_disputes_fraud_Identity')?['occurredAtUtc']",
+              "stageCode": "route",
+              "stageExecutionId": "@outputs('EP_Route_disputes_fraud_Identity')?['spanId']",
+              "processId": "@json(body('EP_Intake_Write')?['ResponseJson'])?['processId']"
+            },
+            "runAfter": {
+              "EP_Route_disputes_fraud_Identity": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Route_disputes_fraud_Write": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "connectionName": "rfd_process_dataverse",
+                "operationId": "PerformUnboundAction"
+              },
+              "parameters": {
+                "actionName": "rfd_RecordEmailProcessEvent",
+                "item/RequestJson": "@string(outputs('EP_Route_disputes_fraud_Payload'))"
+              },
+              "retryPolicy": {
+                "type": "fixed",
+                "count": 2,
+                "interval": "PT5S"
+              }
+            },
+            "runAfter": {
+              "EP_Route_disputes_fraud_Payload": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Route_disputes_fraud_Settled": {
+            "type": "Compose",
+            "inputs": {
+              "observationOnly": true
+            },
+            "runAfter": {
+              "EP_Route_disputes_fraud_Write": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            }
+          }
+        },
+        "runAfter": {}
+      }
+    },
+    {
+      "parent": "actions/Classify_Email_Switch/cases/Details & Documents/actions",
+      "action": "EP_Route_details_documents",
+      "definition": {
+        "type": "Scope",
+        "actions": {
+          "EP_Route_details_documents_Identity": {
+            "type": "Compose",
+            "inputs": {
+              "eventId": "@guid()",
+              "spanId": "@guid()",
+              "occurredAtUtc": "@utcNow()"
+            },
+            "runAfter": {},
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Route_details_documents_Payload": {
+            "type": "Compose",
+            "inputs": {
+              "schemaVersion": 1,
+              "eventId": "@outputs('EP_Route_details_documents_Identity')?['eventId']",
+              "producerId": "reviewed-workflow-producer",
+              "workflowId": "f1875d78-ffe5-64c8-d7bf-76a7f7a6b63f",
+              "sourceExecutionId": "@workflow()?['run']?['name']",
+              "operation": "a399bde847ac40c58cc776855046ee986aeea6f9d16c8851687c65c0ca900a8c",
+              "branch": "details-documents",
+              "attempt": 1,
+              "eventType": "completed",
+              "occurredAtUtc": "@outputs('EP_Route_details_documents_Identity')?['occurredAtUtc']",
+              "stageCode": "route",
+              "stageExecutionId": "@outputs('EP_Route_details_documents_Identity')?['spanId']",
+              "processId": "@json(body('EP_Intake_Write')?['ResponseJson'])?['processId']"
+            },
+            "runAfter": {
+              "EP_Route_details_documents_Identity": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Route_details_documents_Write": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "connectionName": "rfd_process_dataverse",
+                "operationId": "PerformUnboundAction"
+              },
+              "parameters": {
+                "actionName": "rfd_RecordEmailProcessEvent",
+                "item/RequestJson": "@string(outputs('EP_Route_details_documents_Payload'))"
+              },
+              "retryPolicy": {
+                "type": "fixed",
+                "count": 2,
+                "interval": "PT5S"
+              }
+            },
+            "runAfter": {
+              "EP_Route_details_documents_Payload": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Route_details_documents_Settled": {
+            "type": "Compose",
+            "inputs": {
+              "observationOnly": true
+            },
+            "runAfter": {
+              "EP_Route_details_documents_Write": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            }
+          }
+        },
+        "runAfter": {}
+      }
+    },
+    {
+      "parent": "actions/Classify_Email_Switch/cases/Complaints/actions",
+      "action": "EP_Route_complaints",
+      "definition": {
+        "type": "Scope",
+        "actions": {
+          "EP_Route_complaints_Identity": {
+            "type": "Compose",
+            "inputs": {
+              "eventId": "@guid()",
+              "spanId": "@guid()",
+              "occurredAtUtc": "@utcNow()"
+            },
+            "runAfter": {},
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Route_complaints_Payload": {
+            "type": "Compose",
+            "inputs": {
+              "schemaVersion": 1,
+              "eventId": "@outputs('EP_Route_complaints_Identity')?['eventId']",
+              "producerId": "reviewed-workflow-producer",
+              "workflowId": "f1875d78-ffe5-64c8-d7bf-76a7f7a6b63f",
+              "sourceExecutionId": "@workflow()?['run']?['name']",
+              "operation": "9f8bc02d7c1f351b315c25695dabcca87eac7a55831cd1aeb3d969147397b775",
+              "branch": "complaints",
+              "attempt": 1,
+              "eventType": "completed",
+              "occurredAtUtc": "@outputs('EP_Route_complaints_Identity')?['occurredAtUtc']",
+              "stageCode": "route",
+              "stageExecutionId": "@outputs('EP_Route_complaints_Identity')?['spanId']",
+              "processId": "@json(body('EP_Intake_Write')?['ResponseJson'])?['processId']"
+            },
+            "runAfter": {
+              "EP_Route_complaints_Identity": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Route_complaints_Write": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "connectionName": "rfd_process_dataverse",
+                "operationId": "PerformUnboundAction"
+              },
+              "parameters": {
+                "actionName": "rfd_RecordEmailProcessEvent",
+                "item/RequestJson": "@string(outputs('EP_Route_complaints_Payload'))"
+              },
+              "retryPolicy": {
+                "type": "fixed",
+                "count": 2,
+                "interval": "PT5S"
+              }
+            },
+            "runAfter": {
+              "EP_Route_complaints_Payload": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Route_complaints_Settled": {
+            "type": "Compose",
+            "inputs": {
+              "observationOnly": true
+            },
+            "runAfter": {
+              "EP_Route_complaints_Write": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            }
+          }
+        },
+        "runAfter": {}
+      }
+    },
+    {
+      "parent": "actions/Classify_Email_Switch/default/actions",
+      "action": "EP_Route_spam",
+      "definition": {
+        "type": "Scope",
+        "actions": {
+          "EP_Route_spam_Identity": {
+            "type": "Compose",
+            "inputs": {
+              "eventId": "@guid()",
+              "spanId": "@guid()",
+              "occurredAtUtc": "@utcNow()"
+            },
+            "runAfter": {},
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Route_spam_Payload": {
+            "type": "Compose",
+            "inputs": {
+              "schemaVersion": 1,
+              "eventId": "@outputs('EP_Route_spam_Identity')?['eventId']",
+              "producerId": "reviewed-workflow-producer",
+              "workflowId": "f1875d78-ffe5-64c8-d7bf-76a7f7a6b63f",
+              "sourceExecutionId": "@workflow()?['run']?['name']",
+              "operation": "9ea542567564bca11cc27a57f96741ae0a40e1e4712bc49c84c58e6c59d5009f",
+              "branch": "spam",
+              "attempt": 1,
+              "eventType": "completed",
+              "occurredAtUtc": "@outputs('EP_Route_spam_Identity')?['occurredAtUtc']",
+              "stageCode": "route",
+              "stageExecutionId": "@outputs('EP_Route_spam_Identity')?['spanId']",
+              "processId": "@json(body('EP_Intake_Write')?['ResponseJson'])?['processId']"
+            },
+            "runAfter": {
+              "EP_Route_spam_Identity": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Route_spam_Write": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "connectionName": "rfd_process_dataverse",
+                "operationId": "PerformUnboundAction"
+              },
+              "parameters": {
+                "actionName": "rfd_RecordEmailProcessEvent",
+                "item/RequestJson": "@string(outputs('EP_Route_spam_Payload'))"
+              },
+              "retryPolicy": {
+                "type": "fixed",
+                "count": 2,
+                "interval": "PT5S"
+              }
+            },
+            "runAfter": {
+              "EP_Route_spam_Payload": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_Route_spam_Settled": {
+            "type": "Compose",
+            "inputs": {
+              "observationOnly": true
+            },
+            "runAfter": {
+              "EP_Route_spam_Write": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            }
+          }
+        },
+        "runAfter": {}
+      }
+    },
+    {
+      "parent": "actions/Classify_Email_Switch/default/actions",
+      "action": "EP_SPAM_Response_Start",
+      "definition": {
+        "type": "Scope",
+        "actions": {
+          "EP_SPAM_Response_Start_Identity": {
+            "type": "Compose",
+            "inputs": {
+              "eventId": "@guid()",
+              "spanId": "@guid()",
+              "occurredAtUtc": "@utcNow()"
+            },
+            "runAfter": {},
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_SPAM_Response_Start_Payload": {
+            "type": "Compose",
+            "inputs": {
+              "schemaVersion": 1,
+              "eventId": "@outputs('EP_SPAM_Response_Start_Identity')?['eventId']",
+              "producerId": "reviewed-workflow-producer",
+              "workflowId": "f1875d78-ffe5-64c8-d7bf-76a7f7a6b63f",
+              "sourceExecutionId": "@workflow()?['run']?['name']",
+              "operation": "6756ef083f82130d05271bbc8170ed0f9fd21ff9423d1f423eb333af4676d09b",
+              "branch": "spam",
+              "attempt": 1,
+              "eventType": "started",
+              "occurredAtUtc": "@outputs('EP_SPAM_Response_Start_Identity')?['occurredAtUtc']",
+              "stageCode": "spam",
+              "stageExecutionId": "@outputs('EP_SPAM_Response_Start_Identity')?['spanId']",
+              "processId": "@json(body('EP_Intake_Write')?['ResponseJson'])?['processId']"
+            },
+            "runAfter": {
+              "EP_SPAM_Response_Start_Identity": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_SPAM_Response_Start_Write": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "connectionName": "rfd_process_dataverse",
+                "operationId": "PerformUnboundAction"
+              },
+              "parameters": {
+                "actionName": "rfd_RecordEmailProcessEvent",
+                "item/RequestJson": "@string(outputs('EP_SPAM_Response_Start_Payload'))"
+              },
+              "retryPolicy": {
+                "type": "fixed",
+                "count": 2,
+                "interval": "PT5S"
+              }
+            },
+            "runAfter": {
+              "EP_SPAM_Response_Start_Payload": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_SPAM_Response_Start_Settled": {
+            "type": "Compose",
+            "inputs": {
+              "observationOnly": true
+            },
+            "runAfter": {
+              "EP_SPAM_Response_Start_Write": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "EP_Route_spam": [
+            "Succeeded"
+          ]
+        }
+      }
+    },
+    {
+      "parent": "actions/Classify_Email_Switch/default/actions",
+      "action": "EP_SPAM_Response_Settled",
+      "definition": {
+        "type": "Scope",
+        "actions": {
+          "EP_SPAM_Response_Settled_Identity": {
+            "type": "Compose",
+            "inputs": {
+              "eventId": "@guid()",
+              "occurredAtUtc": "@utcNow()"
+            },
+            "runAfter": {},
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_SPAM_Response_Settled_Payload": {
+            "type": "Compose",
+            "inputs": {
+              "schemaVersion": 1,
+              "eventId": "@outputs('EP_SPAM_Response_Settled_Identity')?['eventId']",
+              "producerId": "reviewed-workflow-producer",
+              "workflowId": "f1875d78-ffe5-64c8-d7bf-76a7f7a6b63f",
+              "sourceExecutionId": "@workflow()?['run']?['name']",
+              "operation": "6756ef083f82130d05271bbc8170ed0f9fd21ff9423d1f423eb333af4676d09b",
+              "branch": "spam",
+              "attempt": 1,
+              "eventType": "completed",
+              "occurredAtUtc": "@actions('SPAM_Response')?['endTime']",
+              "stageCode": "spam",
+              "stageExecutionId": "@outputs('EP_SPAM_Response_Start_Identity')?['spanId']",
+              "processId": "@json(body('EP_Intake_Write')?['ResponseJson'])?['processId']"
+            },
+            "runAfter": {
+              "EP_SPAM_Response_Settled_Identity": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_SPAM_Response_Settled_Write": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "connectionName": "rfd_process_dataverse",
+                "operationId": "PerformUnboundAction"
+              },
+              "parameters": {
+                "actionName": "rfd_RecordEmailProcessEvent",
+                "item/RequestJson": "@string(outputs('EP_SPAM_Response_Settled_Payload'))"
+              },
+              "retryPolicy": {
+                "type": "fixed",
+                "count": 2,
+                "interval": "PT5S"
+              }
+            },
+            "runAfter": {
+              "EP_SPAM_Response_Settled_Payload": [
+                "Succeeded"
+              ]
+            },
+            "runtimeConfiguration": {
+              "secureData": {
+                "properties": [
+                  "inputs",
+                  "outputs"
+                ]
+              }
+            }
+          },
+          "EP_SPAM_Response_Settled_Settled": {
+            "type": "Compose",
+            "inputs": {
+              "observationOnly": true
+            },
+            "runAfter": {
+              "EP_SPAM_Response_Settled_Write": [
+                "Succeeded",
+                "Failed",
+                "Skipped",
+                "TimedOut"
+              ]
+            }
+          }
+        },
+        "runAfter": {
+          "SPAM_Response": [
+            "Succeeded"
+          ]
+        }
+      }
+    }
+  ],
+  "originalInputsOrCustomerPayloadsIncluded": false
+}

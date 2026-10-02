@@ -1,0 +1,146 @@
+{
+  "triggers": {
+    "Email_Arrives_in_Help_Share_Mailbox": {
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "operationId": "SharedMailboxOnNewEmailV2",
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+          "connectionName": "shared_office365-1"
+        },
+        "parameters": {
+          "mailboxAddress": "synthetic@example.invalid"
+        }
+      },
+      "splitOn": "@triggerOutputs()?['body/value']"
+    }
+  },
+  "actions": {
+    "Classify_Email": {
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "operationId": "InvokeDefinition",
+          "connectionName": "shared_agentnode"
+        },
+        "parameters": {
+          "syntheticOnly": "No live prompts or customer data."
+        }
+      },
+      "metadata": {
+        "syntheticOnly": true
+      }
+    },
+    "Classify_Email_Switch": {
+      "type": "Switch",
+      "expression": "@outputs('Classify_Email')?['body']?['structuredOutput']?['predictedCategory']",
+      "runAfter": {
+        "Classify_Email": [
+          "Succeeded"
+        ]
+      },
+      "cases": {
+        "Card Servicing": {
+          "case": "Card Servicing",
+          "actions": {
+            "Card_Servicing_Agent": {
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "operationId": "InvokeAgent",
+                  "connectionName": "shared_agentnode"
+                },
+                "parameters": {
+                  "syntheticOnly": "No live prompts or customer data."
+                }
+              },
+              "metadata": {
+                "syntheticOnly": true
+              }
+            },
+            "Classify_Email_Switch_Terminate_category_5912ba73_a6ba_4d3d_b6f5_26711927d2fa": {
+              "type": "Terminate",
+              "inputs": {
+                "runStatus": "Failed",
+                "runError": {}
+              },
+              "runAfter": {
+                "Card_Servicing_Agent": [
+                  "Succeeded"
+                ]
+              }
+            }
+          }
+        },
+        "Payment & direct debits": {
+          "case": "Payment & direct debits",
+          "actions": {}
+        },
+        "Disputes & fraud": {
+          "case": "Disputes & fraud",
+          "actions": {}
+        },
+        "Details & Documents": {
+          "case": "Details & Documents",
+          "actions": {}
+        },
+        "Complaints": {
+          "case": "Complaints",
+          "actions": {}
+        }
+      },
+      "default": {
+        "actions": {
+          "SPAM_Response": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "operationId": "InvokeDefinition",
+                "connectionName": "shared_agentnode"
+              },
+              "parameters": {
+                "syntheticOnly": "No live prompts or customer data."
+              }
+            },
+            "metadata": {
+              "syntheticOnly": true
+            }
+          },
+          "Classify_Email_Switch_Terminate_default": {
+            "type": "Terminate",
+            "inputs": {
+              "runStatus": "Failed",
+              "runError": {}
+            },
+            "runAfter": {
+              "SPAM_Response": [
+                "Succeeded"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "Mock_Response_Agent": {
+      "type": "OpenApiConnection",
+      "inputs": {
+        "host": {
+          "operationId": "InvokeDefinition",
+          "connectionName": "shared_agentnode"
+        },
+        "parameters": {
+          "syntheticOnly": "No live prompts or customer data."
+        }
+      },
+      "metadata": {
+        "syntheticOnly": true
+      },
+      "runAfter": {
+        "Classify_Email_Switch": [
+          "Succeeded"
+        ]
+      }
+    }
+  },
+  "outputs": {}
+}

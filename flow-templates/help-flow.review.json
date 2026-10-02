@@ -1,0 +1,45 @@
+{
+  "mode": "CONTROLLED_HELP_CANDIDATE_REQUIRES_PARENT_RELEASEGATE",
+  "publishable": false,
+  "environmentUrl": "https://smc-diamond-service.crm.dynamics.com",
+  "workflowId": "f1875d78-ffe5-64c8-d7bf-76a7f7a6b63f",
+  "expectedState": "active",
+  "ismanaged": false,
+  "sourceSha256": "c32630b30d4026e21881e9ca2268365ccc2661afdbc2f243c3abeb4260fdc2b7",
+  "etag": "W/\"12218136\"",
+  "sourceEvidence": "Authorized Dataverse SDK read-only inspection; source prepared and verified in memory; no original clientdata exported.",
+  "candidateDelta": "help-flow.current-source.review-delta.json",
+  "observedStructure": [
+    "SharedMailboxOnNewEmailV2",
+    "Classify_Email: InvokeDefinition",
+    "Classify_Email_Switch: card branch InvokeAgent then Terminate(Failed)",
+    "Classify_Email_Switch: default SPAM_Response InvokeDefinition then Terminate(Failed)",
+    "Four empty cases: Payment & direct debits, Disputes & fraud, Details & Documents, Complaints",
+    "Mock_Response_Agent after successful switch: reachable through empty cases, not terminated branches"
+  ],
+  "preserve": [
+    "All original action names, inputs, prompts, From and Reply-To mapping",
+    "Every original runAfter prerequisite/status array, with seven explicitly reviewed additional gates",
+    "Original native failure, skipped-prerequisite, scope and run outcomes",
+    "Original business retry policies"
+  ],
+  "releaseBlockers": [
+    "Parent releasegate has not authorized any live mutation or publication",
+    "Fifteen telemetry scopes and seven dependency edits require designer review and native fault-injection pilot",
+    "The supported user-workflow authoring/publish path must be established independently of clientdata updates",
+    "Original Failed terminations are retained; failed business calls leave open telemetry spans",
+    "Trigger identity shapes, actual definition/producer IDs and logical connector binding require validation"
+  ],
+  "identity": {
+    "correlation": "Server writer digest of organization + help-inbox + original InternetMessageId",
+    "actualFrom": "Original sender address only; not Reply-To and not inferred customer identity",
+    "replyTo": "Original Reply-To independently retained",
+    "userAuthentication": "Never inferred from email headers"
+  },
+  "caseWorkflow": {
+    "activeCustomWorkflowIdentified": false,
+    "doNotActivateOrModify": "Inactive managed Invoke case management agent",
+    "exampleOnly": "case-workflow.actions.example.json",
+    "correlation": "Explicit ProcessId from intake API receipt and actual CaseId"
+  }
+}

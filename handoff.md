@@ -7,14 +7,34 @@ Last updated: 2 October 2026.
 This is an existing, published Power Apps Code App, not a new scaffold.
 Read this file, `README.md`, `package.json`, `power.config.json` and the files
 relevant to the requested change before editing. Preserve existing behaviour
-unless the user explicitly asks to change it. Do not automatically implement
-the instrumentation proposal.
+unless the user explicitly asks to change it. Stages 1-3 of process tracking
+were approved for implementation; respect the remaining gates below. Stage 4
+is not approved and must not be provisioned.
 
-The published app is **v0.1.6**, deployed on 2 October 2026 with both From and
-Reply-To set to the selected Contact email. This source revision contains the
-v0.1.6 implementation and handoff; `c2ef997` was v0.1.5 and the initial import
-`f0a1d05` was v0.1.4. Workflow updates are owned by the user, not this deployment.
-Check Git status before assuming a later working tree is published.
+The published app is **v0.2.3**, deployed on 2 October 2026 with the simplified
+six-node React Flow process view, execution-aware node chips, expandable full-screen map, compact case-category panel/dismissible note
+and the earlier inbound email formatting fix. Stage 3 service activation is still not
+complete: plug-in/API registration, producer policy, flow cutover and pilot proof
+remain gated. GitHub remains at v0.1.6 (`8ce7531`); all later source changes are
+uncommitted. Both From and Reply-To still use the selected Contact email.
+`c2ef997` was v0.1.5 and the initial import `f0a1d05` was v0.1.4. Workflow updates
+are owned by the user. Check Git status before assuming a later working tree
+is published.
+
+**v0.2.1** simplifies the process view after user feedback: the dashboard
+and Process Studio diagram now show one readable React Flow business path
+`Shared Mailbox -> Classifier -> Agent -> Case Management -> Outcome -> Email
+Response`, with no swimlanes. The stage list and ledger details remain available
+for evidence/drill-down. v0.2.1 was deployed with `npx power-apps push`.
+
+**v0.2.2** adds execution-aware chips inside those six nodes. With a ledger
+snapshot, nodes show execution counts and latest activity; Classifier/Agent also
+show the selected route or handler. Configuration-only nodes explicitly say no
+live executions are present. v0.2.2 was deployed with `npx power-apps push`.
+
+**v0.2.3** adds an Expand map action to the process canvas. It opens the
+same six-node React Flow map in an almost full-screen closeable modal with a dark
+transparent blurred backdrop. v0.2.3 was deployed with `npx power-apps push`.
 
 - Repository: https://github.com/psycook/email-processing-app-2026
 - Original local folder:
@@ -284,21 +304,126 @@ candidate matching without rewriting the received sender. Preview checks cover
 single/batch approval addresses, HTML retention, JSON/EML exports, mobile
 wrapping, received Reply-To display and session-only readiness confirmation.
 
-## Instrumentation: proposed, not implemented
+### v0.1.7: latest inbound email formatting (published 2 October 2026)
 
-Read `docs\email-process-instrumentation-plan.txt` as a proposal, not completed
-work or permission to provision anything.
+Overview's `.comm-row` used flex `space-between` without a growing text column,
+which left sender/subject text floating at different horizontal positions.
+The row now uses a three-column grid with a shrinkable content column; metadata
+is inline-flex so timestamps and attachment icons remain together. Full sender
+and subject values are available in hover titles; received time uses a semantic
+time element. The recent-mail card can shrink and its header can wrap.
 
-It proposes two Dataverse tables (`rfd_emailprocess` and
-`rfd_emailprocessevent`), a shared Custom API writer, GUID trace/span identities,
-and adapters at real workflow, agent/tool and review boundaries. Application
-Insights is optional later. No tables, writer API, producer wiring, retention
-jobs or durable execution ledger have been implemented by this app work.
+The chart has spacing and a divider above it. No mail data, sorting, counts,
+sender identity, chart calculations or navigation behaviours changed. Preview
+layout checks covered 320/390/768/1100/1600px in both themes, long strings and
+attachment rows; each row's text starts 12px after its status dot without
+overlap or horizontal overflow.
 
-**Important design conflict:** the proposal predates the user's natural-subject
-decision and suggests a subject marker. Do not reintroduce that marker as an
-automatic "fix". Reconcile transport correlation with the current UX requirement
-and obtain an explicit implementation decision first.
+### v0.1.8: case-category layout and dismissible note (published 2 October 2026)
+
+`src\ui\CaseCategoryCard.tsx` now owns the Request mix panel and its note
+visibility. The card uses `align-self: start` to avoid matching the much taller
+email panel. Counts and category labels sit above thin bars; the summary
+explicitly describes loaded case records. Original labels (including "Not set"),
+counts, sorted order and maximum-relative bar scaling are preserved.
+
+The informational note is a compact footer. Its X dismisses it and returns
+keyboard focus to the header's About case categories button, which can reopen
+it. Local component state survives snapshot refreshes but resets on remount;
+nothing is written to browser storage or Dataverse. No system health/error
+warnings were made dismissible. The original seven-category display cap is
+unchanged, with an explicit notice when additional categories are omitted.
+
+Preview covered one "Not set" case, multiple/long category labels, an empty
+snapshot, and over-seven categories; keyboard dismissal/reopening and data
+refresh behaviour; and 320/390/768/1440px light/dark layouts. The previously
+published inbound email alignment fix remains intact in the working tree.
+
+## Process tracking implementation and release blockers
+
+Read `docs\process-implementation-status.txt` first, then the approved
+`docs\email-process-instrumentation-plan.txt`. Do not equate implemented source
+and provisioned schema with a released end-to-end telemetry system.
+
+The proposal was revised on 2 October into four independent approval stages:
+professional BPMN-inspired UI; seven-table Dataverse definition/runtime model;
+C# Custom APIs, producer adapters and case lifecycle observation; optional
+outbox/Service Bus/Web PubSub with a published-host CSP/auth feasibility gate.
+Each stage has scope, dependencies, acceptance and rollback. Stages 1-3 were
+approved for implementation at 13:30 on 2 October. Stage 4 remains unapproved.
+
+The primary ProcessId/TraceId is a full GUID allocated at Help intake, with a
+mailbox-scoped hash of InternetMessageId as the unique ingestion key. Reply-To
+is customer-routing metadata, never a process key or authenticated identity.
+The previous subject-marker recommendation is withdrawn. Exact pre-send linkage
+is a separately gated transport capability; current candidate matching is not
+promoted to exact correlation.
+
+Stage 1: src/process and ProcessCanvas implement the React Flow experience,
+nine synthetic walkthroughs, read-model adapter, native record links, accessible
+list/details and legacy rollback. App preview injects no live gateway. Stage
+snapshots do not invent recorded timestamps; immutable historical definitions
+are carried with selected process state. Incomplete/stale data remains labelled.
+
+Stage 2: all seven tables, 109 declared columns, 26 relationships and seven
+Active keys are provisioned in RetailFinanceDemo. Eighteen configuration rows
+publish help-email version 1, ID 49afef0f-20c9-51f8-b51e-78c0cc0c0b78. The four
+runtime tables remain empty. solutions/RetailFinanceDemo holds actual exported/
+unpacked metadata, not hand-authored XML. The unsupported annotation lookup
+was replaced by validated rfd_noteid String(36). Provisioning recovery used table
+shells plus columns; repeat apply is no-op. Role/FLS grants and user-visibility
+integration tests remain release gates.
+
+Stage 3: server/EmailProcess.Plugin contains the net48 writer/read APIs, reducer,
+guards and async case observer. Native workflow request attempts have separate
+source identity and server-owned canonical ordinals. Actual Contact binding
+requires an authorized identify-phase tool event with the explicit capability;
+headers or agent prose cannot bind it. Default producer policy denies everyone;
+the package/APIs/guards/observer have NOT been registered or activated.
+
+scripts/instrument_email_flow.py can prepare the exact current Help topology
+using ETag/hash guards, including six switch choices and mock-response. Both
+original Terminate(Failed) actions and business inputs remain unchanged. Current
+definition deliberately disables no-case completion: host invocation success
+does not prove a successful banking outcome. No live flow has been changed.
+
+Actual tool inventory located customer/case logic in query-or-update-card
+InlineAgentSkill using generic Dataverse MCP InvokeMCP. The inspected
+InvokeAgent binding has agentId/prompt only, with no verified typed process
+context or deterministic interception hook. The approved Stage 3 completion route
+is deterministic flow orchestration: move customer lookup, case mutation and
+process linkage into reviewed flow-owned or approved tool-service actions that
+call the plug-in APIs, while the saved agent returns recommendations only. Do
+not add prompt-based logging, invent a context parameter, correlate by customer/
+subject, or claim case linking is live. The automatic saved-agent/MCP patch
+remains refused. Structural inventory and the approved orchestration handoff are
+in flow-templates without raw instructions or customer payloads.
+
+The intended custom Case Management Workflow is still unidentified; either find
+that owned flow or create an approved deterministic orchestration. Do not activate
+the inactive managed case-management agent flow by name. No Azure resources, CSP
+relaxation, Git push or pilot sends occurred. The v0.2.0 app UI was deployed
+with `npx power-apps push`; the process APIs/plug-ins/flows were not activated.
+Preserve all existing v0.1.7/v0.1.8 UI changes in this working tree.
+
+Development commands:
+```powershell
+npm run test:studio
+npm run build
+npm run lint
+python scripts\generate_process_bindings.py
+python scripts\process_build_manifest.py --check
+python -m unittest discover -s scripts -p "process_*test.py"
+python -m unittest discover -s scripts -p "test_instrument_email_flow.py"
+python -m unittest discover -s scripts -p "test_register_process_apis.py"
+dotnet test server\EmailProcess.Plugin.Tests\EmailProcess.Plugin.Tests.csproj -c Release
+```
+
+Review fixed two read-model bugs: health=partial now maps to stale with explicit
+reconciliation diagnostics; refresh adopts a fresh event cursor even after an
+older paging session is exhausted. The process poll respects the app's
+polling/pollSeconds settings. Native runtime, privilege and end-to-end pilot
+proofs remain necessary before publication.
 
 ## Maintenance script: not a startup step
 

@@ -1,0 +1,283 @@
+{
+  "schemaVersion": 1,
+  "publisherPrefix": "rfd",
+  "logicalMailboxKey": "help-inbox",
+  "hashEncoding": "SHA-256 lowercase hex over each UTF-8 component preceded by a 4-byte unsigned big-endian byte count",
+  "ingestKeyComponents": ["v1", "organizationId lowercase GUID D", "help-inbox", "InternetMessageId.Trim() (case and brackets preserved)"],
+  "limits": { "requestJsonCharacters": 32768, "pageSize": 100, "processExecutions": 500, "processCases": 100, "observerFanOut": 50 },
+  "processStates": ["received", "processing", "waiting-review", "completed", "failed", "cancelled", "needs-reconciliation"],
+  "executionStates": ["running", "waiting", "succeeded", "failed", "skipped", "cancelled"],
+  "eventTypes": ["received", "started", "waiting", "completed", "failed", "skipped", "cancelled", "case-linked", "case-resolved", "case-cancelled", "case-merged", "case-reopened", "case-reconciled"],
+  "api": {
+    "isFunction": false, "isPrivate": false, "allowedCustomProcessingStepType": 0,
+    "input": { "name": "RequestJson", "type": "String" },
+    "output": { "name": "ResponseJson", "type": "String" },
+    "actions": ["rfd_RecordEmailProcessEvent", "rfd_LinkEmailProcessCase", "rfd_RecordCaseLifecycle", "rfd_GetEmailProcessState", "rfd_GetEmailProcessEvents", "rfd_ListEmailProcesses", "rfd_GetProcessDefinitions"]
+  },
+  "requestContract": {
+    "documentation": "api-contract.txt",
+    "jsonCasing": "camelCase",
+    "schemaVersion": 1,
+    "envelopeParameter": "RequestJson",
+    "readFields": ["schemaVersion", "processId", "definitionId", "state", "pageSize", "cursor"],
+    "writeCommonRequired": ["schemaVersion", "eventId", "producerId", "sourceExecutionId", "operation", "occurredAtUtc"],
+    "intake": {
+      "api": "rfd_RecordEmailProcessEvent",
+      "eventType": "received",
+      "requiredAdditional": ["definitionId"],
+      "strongIdentity": "internetMessageId (exact case/brackets; trim only outer whitespace)",
+      "weakIdentity": "When internetMessageId missing, sourceLocator is required; weak/reconciliation flags are server set",
+      "optional": ["processId", "internetMessageId", "sourceLocator", "actualFrom", "replyTo", "emailId", "parentProcessId", "batchId", "draftId", "workflowId", "holdingId"],
+      "forbidden": ["stageExecutionId", "parentExecutionId", "stageCode", "caseId", "contactId"]
+    },
+    "execution": {
+      "api": "rfd_RecordEmailProcessEvent",
+      "requiredAdditional": ["processId", "stageExecutionId", "stageCode", "attempt", "eventType"],
+      "eventTypes": ["started", "waiting", "completed", "failed", "skipped", "cancelled"],
+      "optional": ["branch", "sourceVersion", "outcome", "errorCode", "durationMs", "usage", "parentExecutionId", "caseId", "contactId", "emailId", "taskId", "noteId", "holdingId", "workflowId"],
+      "attempt": "Positive native source-attempt integer scoped to producer/run/operation/stage/branch/case; new native runs may start at 1. Preserve on transport retries. Stored/read stage attempt is a separately allocated server-owned first-seen ordinal under process RowVersion concurrency.",
+      "sourceVersion": "Nonnegative numeric string, not a JSON number",
+      "outcome": "If present matches event; completed maps to succeeded and started maps to running",
+      "stageAuthority": "Stage must exist in immutable definition and producer stageCodes; successful outcome requires exact completionAuthority",
+      "workflowAttemptStages": "case-workflow-progress/case-closure-attempt require explicit workflow-authority definition rows and producer policy entries; not hardcoded or implicitly trusted",
+      "contactResolution": "Only a completed identify-phase tool-authority execution in producer.customerResolutionStageCodes with producer.canResolveCustomer=true may bind contactId once or confirm the same ID; unreadable Contact, other stage, mismatched/rebound ID and header-only inference are rejected"
+    },
+    "caseLink": {
+      "api": "rfd_LinkEmailProcessCase",
+      "requiredAdditional": ["processId", "caseId", "relationshipRole"],
+      "optional": ["blocksCompletion"],
+      "blocksCompletionDefault": true,
+      "caseClaimsAllowed": false,
+      "relationshipValidation": "Actual incident.customerid equals established process Contact"
+    },
+    "caseLifecycleExternalReconciliation": {
+      "api": "rfd_RecordCaseLifecycle",
+      "required": ["schemaVersion", "processId", "caseId", "producerId", "occurredAtUtc"],
+      "serverDerived": ["eventId", "sourceExecutionId", "operation", "eventType", "sourceVersion", "caseState", "caseStatus", "merged"],
+      "historicalClaimsAllowed": false
+    },
+    "caseLifecycleTrustedObserver": {
+      "api": "rfd_RecordCaseLifecycle",
+      "required": ["schemaVersion", "processId", "caseId", "occurredAtUtc", "caseState", "caseStatus", "previousCaseState", "previousCaseStatus", "merged", "sourceVersion"],
+      "serverValidation": "Exact registered async incident Update parent pre/post image/version/time required; not a publicly assertable producer role"
+    },
+    "identityAliasesNotAccepted": ["SpanId", "RunId", "isBlocking", "customerEmailCorrelation"],
+    "unknownPropertiesRejected": true
+  },
+  "responseExamplesAreIllustrativeOnly": true,
+  "responseExamples": {
+    "rfd_RecordEmailProcessEvent": {
+      "schemaVersion": 1, "processId": "11111111-1111-4111-8111-111111111111",
+      "eventId": "22222222-2222-4222-8222-222222222222", "status": "Applied", "revision": 1
+    },
+    "rfd_LinkEmailProcessCase": {
+      "schemaVersion": 1, "processId": "11111111-1111-4111-8111-111111111111",
+      "eventId": "33333333-3333-4333-8333-333333333333", "status": "Applied", "revision": 2
+    },
+    "rfd_RecordCaseLifecycle": {
+      "schemaVersion": 1, "processId": "11111111-1111-4111-8111-111111111111",
+      "eventId": "44444444-4444-4444-8444-444444444444", "status": "AlreadyRecorded", "revision": 3
+    },
+    "rfd_GetEmailProcessState": {
+      "schemaVersion": 1,
+      "process": {
+        "processId": "11111111-1111-4111-8111-111111111111", "definitionId": "55555555-5555-4555-8555-555555555555",
+        "state": "waiting-review", "receivedAtUtc": "2026-10-02T12:00:00Z", "lastEventAtUtc": "2026-10-02T12:01:00Z",
+        "revision": 2, "coverage": "partial", "health": "current", "reconciliationRequired": false, "weakCorrelation": false
+      },
+      "revision": 2,
+      "stageExecutions": [{
+        "stageExecutionId": "66666666-6666-4666-8666-666666666666", "stageDefinitionId": "77777777-7777-4777-8777-777777777777",
+        "stageCode": "reviewcase", "attempt": 1, "state": "waiting", "startedAtUtc": "2026-10-02T12:01:00Z",
+        "caseId": "88888888-8888-4888-8888-888888888888", "sourceVersion": "100", "producerId": "case-observer"
+      }],
+      "caseLinks": [{
+        "caseId": "88888888-8888-4888-8888-888888888888", "relationshipRole": "created", "blocksCompletion": true,
+        "state": 0, "status": 1, "merged": false, "sourceVersion": "100", "reconciliationRequired": false
+      }]
+    },
+    "rfd_GetEmailProcessEvents": {
+      "schemaVersion": 1, "processId": "11111111-1111-4111-8111-111111111111", "upperRevision": 2, "coverage": "partial",
+      "events": [{
+        "eventId": "22222222-2222-4222-8222-222222222222", "processId": "11111111-1111-4111-8111-111111111111",
+        "eventType": "received", "occurredAtUtc": "2026-10-02T12:00:00Z", "recordedAtUtc": "2026-10-02T12:00:01Z",
+        "revision": 1, "producerId": "help-flow", "sourceExecutionId": "native-run-reference"
+      }]
+    },
+    "rfd_ListEmailProcesses": {
+      "schemaVersion": 1, "consistency": "live-projections", "counts": { "scope": "returned-page", "byState": { "received": 1 } },
+      "processes": [{
+        "processId": "11111111-1111-4111-8111-111111111111", "definitionId": "55555555-5555-4555-8555-555555555555",
+        "state": "received", "receivedAtUtc": "2026-10-02T12:00:00Z", "lastEventAtUtc": "2026-10-02T12:00:00Z",
+        "revision": 1, "coverage": "partial", "health": "current", "reconciliationRequired": false, "weakCorrelation": false
+      }]
+    },
+    "rfd_GetProcessDefinitions": {
+      "schemaVersion": 1,
+      "definitions": [{
+        "definitionId": "55555555-5555-4555-8555-555555555555", "code": "help-email", "name": "Help email",
+        "version": 1, "state": "published", "coverageVersion": "v1", "allowCaseFreeCompletion": false,
+        "stages": [{
+          "stageDefinitionId": "77777777-7777-4777-8777-777777777777", "code": "reviewcase", "label": "Case review",
+          "phase": "review", "lane": "employee", "nodeKind": "task", "displayOrder": 100,
+          "required": false, "coverage": "observed", "completionAuthority": "case-observer",
+          "allowCaseFreeCompletion": false, "requiresCase": false
+        }],
+        "transitions": []
+      }]
+    }
+  },
+  "tables": [
+    {
+      "logicalName": "rfd_processdefinition", "primaryId": "rfd_processdefinitionid", "primaryName": "rfd_name", "ownership": "OrganizationOwned",
+      "alternateKeys": [{ "name": "rfd_definitionversion", "columns": ["rfd_code", "rfd_version"] }],
+      "columns": [
+        { "name": "rfd_name", "type": "String", "maxLength": 200, "required": true },
+        { "name": "rfd_code", "type": "String", "maxLength": 80, "required": true },
+        { "name": "rfd_version", "type": "Integer", "required": true },
+        { "name": "rfd_state", "type": "String", "maxLength": 40, "required": true },
+        { "name": "rfd_coverageversion", "type": "String", "maxLength": 80 },
+        { "name": "rfd_allowcasefreecompletion", "type": "Boolean" }
+      ]
+    },
+    {
+      "logicalName": "rfd_processstagedefinition", "primaryId": "rfd_processstagedefinitionid", "primaryName": "rfd_name", "ownership": "OrganizationOwned",
+      "alternateKeys": [{ "name": "rfd_definitionstage", "columns": ["rfd_definition", "rfd_code"] }],
+      "columns": [
+        { "name": "rfd_name", "type": "String", "maxLength": 200, "required": true },
+        { "name": "rfd_definition", "type": "Lookup", "target": "rfd_processdefinition", "required": true },
+        { "name": "rfd_code", "type": "String", "maxLength": 80, "required": true },
+        { "name": "rfd_phase", "type": "String", "maxLength": 80 },
+        { "name": "rfd_lane", "type": "String", "maxLength": 80 },
+        { "name": "rfd_nodekind", "type": "String", "maxLength": 40 },
+        { "name": "rfd_displayorder", "type": "Integer" },
+        { "name": "rfd_required", "type": "Boolean" },
+        { "name": "rfd_coverage", "type": "String", "maxLength": 40 },
+        { "name": "rfd_allowcasefreecompletion", "type": "Boolean" },
+        { "name": "rfd_requirescase", "type": "Boolean" },
+        { "name": "rfd_completionauthority", "type": "String", "maxLength": 40 }
+      ]
+    },
+    {
+      "logicalName": "rfd_processtransition", "primaryId": "rfd_processtransitionid", "primaryName": "rfd_name", "ownership": "OrganizationOwned",
+      "alternateKeys": [{ "name": "rfd_definitiontransition", "columns": ["rfd_definition", "rfd_code"] }],
+      "columns": [
+        { "name": "rfd_name", "type": "String", "maxLength": 200, "required": true },
+        { "name": "rfd_definition", "type": "Lookup", "target": "rfd_processdefinition", "required": true },
+        { "name": "rfd_code", "type": "String", "maxLength": 80, "required": true },
+        { "name": "rfd_fromstage", "type": "Lookup", "target": "rfd_processstagedefinition", "required": true },
+        { "name": "rfd_tostage", "type": "Lookup", "target": "rfd_processstagedefinition", "required": true },
+        { "name": "rfd_branchcode", "type": "String", "maxLength": 80 },
+        { "name": "rfd_eventcode", "type": "String", "maxLength": 80 },
+        { "name": "rfd_displayorder", "type": "Integer" },
+        { "name": "rfd_required", "type": "Boolean" }
+      ]
+    },
+    {
+      "logicalName": "rfd_emailprocess", "primaryId": "rfd_emailprocessid", "primaryName": "rfd_name", "ownership": "UserOwned", "optimisticConcurrency": true,
+      "alternateKeys": [{ "name": "rfd_ingestkey", "columns": ["rfd_ingestkey"] }],
+      "columns": [
+        { "name": "rfd_name", "type": "String", "maxLength": 200, "required": true },
+        { "name": "rfd_ingestkey", "type": "String", "maxLength": 64, "required": true },
+        { "name": "rfd_definition", "type": "Lookup", "target": "rfd_processdefinition", "required": true },
+        { "name": "rfd_state", "type": "String", "maxLength": 40, "required": true },
+        { "name": "rfd_receivedat", "type": "DateTime", "required": true },
+        { "name": "rfd_lasteventat", "type": "DateTime" },
+        { "name": "rfd_revision", "type": "Integer", "required": true },
+        { "name": "rfd_coverage", "type": "String", "maxLength": 40 },
+        { "name": "rfd_health", "type": "String", "maxLength": 40 },
+        { "name": "rfd_parentprocess", "type": "Lookup", "target": "rfd_emailprocess" },
+        { "name": "rfd_batchid", "type": "String", "maxLength": 36 },
+        { "name": "rfd_draftid", "type": "String", "maxLength": 36 },
+        { "name": "rfd_weakcorrelation", "type": "Boolean" },
+        { "name": "rfd_correlationreason", "type": "String", "maxLength": 80 },
+        { "name": "rfd_internetmessageid", "type": "String", "maxLength": 2000, "secured": true },
+        { "name": "rfd_sourcelocator", "type": "String", "maxLength": 2000, "secured": true },
+        { "name": "rfd_actualfrom", "type": "String", "maxLength": 320, "secured": true },
+        { "name": "rfd_replyto", "type": "String", "maxLength": 320, "secured": true },
+        { "name": "rfd_customeremail", "type": "String", "maxLength": 320, "secured": true },
+        { "name": "rfd_identitysource", "type": "String", "maxLength": 80, "secured": true },
+        { "name": "rfd_contact", "type": "Lookup", "target": "contact" },
+        { "name": "rfd_email", "type": "Lookup", "target": "email" },
+        { "name": "rfd_primarycase", "type": "Lookup", "target": "incident" },
+        { "name": "rfd_reconciliationrequired", "type": "Boolean" }
+      ]
+    },
+    {
+      "logicalName": "rfd_emailprocessstage", "primaryId": "rfd_emailprocessstageid", "primaryName": "rfd_name", "ownership": "UserOwned", "optimisticConcurrency": true,
+      "alternateKeys": [{ "name": "rfd_sourceoperationkey", "columns": ["rfd_sourceoperationkey"] }],
+      "columns": [
+        { "name": "rfd_name", "type": "String", "maxLength": 200, "required": true },
+        { "name": "rfd_sourceoperationkey", "type": "String", "maxLength": 64, "required": true },
+        { "name": "rfd_process", "type": "Lookup", "target": "rfd_emailprocess", "required": true },
+        { "name": "rfd_stagedefinition", "type": "Lookup", "target": "rfd_processstagedefinition", "required": true },
+        { "name": "rfd_parentexecution", "type": "Lookup", "target": "rfd_emailprocessstage" },
+        { "name": "rfd_branch", "type": "String", "maxLength": 80 },
+        { "name": "rfd_attempt", "type": "Integer", "required": true },
+        { "name": "rfd_state", "type": "String", "maxLength": 40, "required": true },
+        { "name": "rfd_startedat", "type": "DateTime" },
+        { "name": "rfd_endedat", "type": "DateTime" },
+        { "name": "rfd_durationms", "type": "Decimal" },
+        { "name": "rfd_durationprovenance", "type": "String", "maxLength": 40 },
+        { "name": "rfd_sourceexecutionid", "type": "String", "maxLength": 200 },
+        { "name": "rfd_operation", "type": "String", "maxLength": 80 },
+        { "name": "rfd_producerid", "type": "String", "maxLength": 80 },
+        { "name": "rfd_workflowid", "type": "String", "maxLength": 200 },
+        { "name": "rfd_workflow", "type": "Lookup", "target": "workflow" },
+        { "name": "rfd_case", "type": "Lookup", "target": "incident" },
+        { "name": "rfd_sourceversion", "type": "String", "maxLength": 80 }
+      ]
+    },
+    {
+      "logicalName": "rfd_emailprocessevent", "primaryId": "rfd_emailprocesseventid", "primaryName": "rfd_name", "ownership": "UserOwned",
+      "alternateKeys": [{ "name": "rfd_sourceeventkey", "columns": ["rfd_sourceeventkey"] }],
+      "columns": [
+        { "name": "rfd_name", "type": "String", "maxLength": 200, "required": true },
+        { "name": "rfd_sourceeventkey", "type": "String", "maxLength": 64, "required": true },
+        { "name": "rfd_process", "type": "Lookup", "target": "rfd_emailprocess", "required": true },
+        { "name": "rfd_stageexecution", "type": "Lookup", "target": "rfd_emailprocessstage" },
+        { "name": "rfd_eventtype", "type": "String", "maxLength": 80, "required": true },
+        { "name": "rfd_stagecode", "type": "String", "maxLength": 80 },
+        { "name": "rfd_outcome", "type": "String", "maxLength": 80 },
+        { "name": "rfd_sourceexecutionid", "type": "String", "maxLength": 200 },
+        { "name": "rfd_sourceversion", "type": "String", "maxLength": 80 },
+        { "name": "rfd_occurredat", "type": "DateTime", "required": true },
+        { "name": "rfd_recordedat", "type": "DateTime", "required": true },
+        { "name": "rfd_revision", "type": "Integer", "required": true },
+        { "name": "rfd_schemaversion", "type": "Integer", "required": true },
+        { "name": "rfd_payloaddigest", "type": "String", "maxLength": 64, "required": true },
+        { "name": "rfd_producerid", "type": "String", "maxLength": 80 },
+        { "name": "rfd_actor", "type": "Lookup", "target": "systemuser", "required": true },
+        { "name": "rfd_errorcode", "type": "String", "maxLength": 80 },
+        { "name": "rfd_durationms", "type": "Decimal" },
+        { "name": "rfd_usage", "type": "Integer" },
+        { "name": "rfd_payloadjson", "type": "Memo", "maxLength": 16000 },
+        { "name": "rfd_case", "type": "Lookup", "target": "incident" },
+        { "name": "rfd_contact", "type": "Lookup", "target": "contact" },
+        { "name": "rfd_task", "type": "Lookup", "target": "task" },
+        { "name": "rfd_noteid", "type": "String", "maxLength": 36, "referenceTarget": "annotation", "referenceKind": "non-relational-guid" },
+        { "name": "rfd_holding", "type": "Lookup", "target": "rfd_financialaccount" },
+        { "name": "rfd_workflow", "type": "Lookup", "target": "workflow" },
+        { "name": "rfd_email", "type": "Lookup", "target": "email" }
+      ]
+    },
+    {
+      "logicalName": "rfd_emailprocesscase", "primaryId": "rfd_emailprocesscaseid", "primaryName": "rfd_name", "ownership": "UserOwned", "optimisticConcurrency": true,
+      "alternateKeys": [{ "name": "rfd_processcase", "columns": ["rfd_process", "rfd_case"] }],
+      "columns": [
+        { "name": "rfd_name", "type": "String", "maxLength": 200, "required": true },
+        { "name": "rfd_process", "type": "Lookup", "target": "rfd_emailprocess", "required": true },
+        { "name": "rfd_case", "type": "Lookup", "target": "incident", "required": true },
+        { "name": "rfd_role", "type": "String", "maxLength": 80 },
+        { "name": "rfd_blockscompletion", "type": "Boolean" },
+        { "name": "rfd_linkedat", "type": "DateTime" },
+        { "name": "rfd_sourceevent", "type": "Lookup", "target": "rfd_emailprocessevent" },
+        { "name": "rfd_casestate", "type": "Integer" },
+        { "name": "rfd_casestatus", "type": "Integer" },
+        { "name": "rfd_caseversion", "type": "String", "maxLength": 80 },
+        { "name": "rfd_merged", "type": "Boolean" },
+        { "name": "rfd_reconciliationrequired", "type": "Boolean" }
+      ]
+    }
+  ]
+}

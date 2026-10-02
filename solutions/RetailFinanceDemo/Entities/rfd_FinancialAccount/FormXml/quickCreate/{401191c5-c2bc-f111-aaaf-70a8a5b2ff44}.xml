@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <systemform>
+    <formid>{401191c5-c2bc-f111-aaaf-70a8a5b2ff44}</formid>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <FormPresentation>0</FormPresentation>
+    <FormActivationState>1</FormActivationState>
+    <form>
+      <tabs>
+        <tab id="{501330E5-AF6C-54CB-93D5-5596F9978CBE}" name="financial_quick" IsUserDefined="1" showlabel="true" expanded="true" verticallayout="true">
+          <labels>
+            <label description="Financial Account" languagecode="1033" />
+          </labels>
+          <columns>
+            <column width="100%">
+              <sections>
+                <section id="{EF9154CE-437F-56F8-A057-FE4563C4876D}" name="financial_quick_panel0" showlabel="true" showbar="true" IsUserDefined="1" layout="varwidth" columns="1" labelwidth="180">
+                  <labels>
+                    <label description="Account Details" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{009ED465-1407-5357-9157-256DA2C86275}" showlabel="true">
+                        <labels>
+                          <label description="Financial Account Name" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_name" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="rfd_name" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{FC1967BF-15AC-521E-BEC9-F9FDEB0F94E2}" showlabel="true">
+                        <labels>
+                          <label description="Holding Number" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_holdingnumber" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="rfd_holdingnumber" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{30C33341-B857-51CD-A7F6-35D381CC946E}" showlabel="true">
+                        <labels>
+                          <label description="Customer" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_customerid" classid="{270BD3DB-D9AF-4782-9025-509E298DEC0A}" datafieldname="rfd_customerid" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{31F25E53-6A6B-59B5-917A-72C1F7EDADF6}" showlabel="true">
+                        <labels>
+                          <label description="Product Type" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_producttype" classid="{3EF39988-22BB-4F0B-BBBE-64B5A3748AEE}" datafieldname="rfd_producttype" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{68F82509-759C-503B-8C85-5468D11A76BB}" showlabel="true">
+                        <labels>
+                          <label description="Lifecycle Status" languagecode="1033" />
+                        </labels>
+                        <control id="rfd_lifecyclestatus" classid="{3EF39988-22BB-4F0B-BBBE-64B5A3748AEE}" datafieldname="rfd_lifecyclestatus" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{1145EE19-DD8E-53B6-A80F-245EF9C6A509}" showlabel="true">
+                        <labels>
+                          <label description="Currency" languagecode="1033" />
+                        </labels>
+                        <control id="transactioncurrencyid" classid="{270BD3DB-D9AF-4782-9025-509E298DEC0A}" datafieldname="transactioncurrencyid" disabled="false" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+      </tabs>
+    </form>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>1</CanBeDeleted>
+    <LocalizedNames>
+      <LocalizedName description="Financial Account Quick Create" languagecode="1033" />
+    </LocalizedNames>
+  </systemform>
+</forms>

@@ -1,0 +1,116 @@
+PROCESS TRACKING IMPLEMENTATION - BUILT COMPONENTS AND RELEASE BLOCKERS
+2 October 2026
+
+APPROVED SCOPE
+Stages 1, 2 and 3 were approved for implementation. Stage 4 is not included.
+Existing published app is v0.2.3; the simplified app UI was deployed on 2 October 2026.
+No flow cutover, test email or Git push has been performed. The process
+APIs/plug-ins/flows were not activated.
+v0.2.1 simplifies the React Flow process diagram to a dashboard-friendly
+six-node business path.
+v0.2.2 adds execution counts, latest activity and selected route/handler chips
+to those nodes.
+v0.2.3 adds an almost full-screen closeable process-map modal with a dark
+transparent blurred backdrop.
+
+LOCAL SOURCE DELIVERABLES
+
+Stage 1
+- New @xyflow/react read-only ProcessCanvas with swimlanes, task/gateway shapes,
+  labelled edges, definition/instance selection, keyboard list, details and
+  event timeline. Legacy renderer remains behind ?legacyProcess=true.
+- Nine clearly synthetic walkthroughs, separate from the inspected graph.
+- src/generated/processInventory.ts is generated from the reviewed seed graph.
+  It does not pretend a successful host call completed a financial request.
+- Preview mode passes no live gateway. No process SDK requests occur in preview.
+- API-normalized historical definitions accompany their process snapshot;
+  unknown/partial/source-unavailable states are explicit.
+
+Stage 2
+- Canonical server/process-contract.json and config/process-tracking-schema.json.
+- Safe additive provisioning, deterministic graph seeds, Active-key checks,
+  environment/identity/solution validation, conflict detection and unit tests.
+- Metadata inspection identified annotation cannot be a lookup parent. Notes
+  use validated annotation GUID references, not unsupported relationships.
+- All seven tables are provisioned in RetailFinanceDemo with 109 declared columns,
+  26 relationships, seven Active keys and 18 published configuration rows.
+  Definition ID: 49afef0f-20c9-51f8-b51e-78c0cc0c0b78 (help-email v1).
+  A repeat apply performed zero writes; the four runtime tables are empty.
+- Server-generated solution XML is preserved in solutions\RetailFinanceDemo.
+- Reader/producer roles and field-security profiles have not been installed.
+
+Stage 3
+- server/EmailProcess.Plugin: net48 Custom API service, transactional event and
+  projection writes, idempotency/concurrency checks, read APIs, table guards,
+  asynchronous case lifecycle observer and test suite.
+- Explicit tool-only customer-resolution path before first case linkage.
+- src/services/processGateway.ts validates raw wire DTOs, bounds paging and maps
+  states/provenance/record links without inventing data.
+- src/services/processApiClient.ts uses the official Power Apps SDK customapi
+  operation and generated metadata. No embedded credentials or direct CRM HTTP.
+- scripts/generate_process_bindings.py generates SDK metadata and the offline
+  definition from shared contracts. Live CLI generation/signature comparison
+  remains a registration/release gate, not an already performed integration test.
+- scripts/register_process_apis.py prepares or applies versioned String
+  RequestJson/ResponseJson API definitions, only against the registered ProcessApi
+  plug-in type and after explicit release/guard/contract-hash gates.
+- scripts/instrument_email_flow.py prepares a source-hash/ETag guarded actual
+  Help-flow candidate. Original inputs and Terminate(Failed) branches are retained;
+  added telemetry scopes and reviewed dependency edits are recorded explicitly.
+  It does not publish or activate flows. Synthetic examples are not live flows.
+
+REMAINING RELEASE GATES
+
+1. Schema inspection, Active keys, seed publication and export/unpack are complete.
+   Reinspect before activation if metadata or the canonical contract changes.
+2. Approve operational ownership, narrow producer/reader roles and field-security
+   access. The default server policy intentionally authorizes nobody.
+3. Configure identities, observer step IDs, local signing/cursor material and
+   register the dependent-assembly plug-in package and guard steps before exposing
+   writers. Runtime API configuration is documented in server/runtime-prerequisites.txt.
+4. Prove actual Dataverse transaction rollback, concurrency, duplicate intake,
+   image availability and two-user visibility. Unit tests cannot establish these.
+5. The actual customer/case logic has been located in the Card Servicing agent's
+   query-or-update-card InlineAgentSkill and generic Dataverse MCP InvokeMCP
+   binding. These are not deterministic workflow actions. The inspected
+   InvokeAgent configuration exposes agentId/prompt, with no verified typed
+   process-context input or per-tool interception hook. The approved Stage 3
+   route is deterministic flow orchestration: move customer lookup, case mutation
+   and process linkage into reviewed flow/tool actions that call the plug-in APIs,
+   with the agent reduced to recommendation-only output. No Contact is inferred
+   from email headers and the opaque host event alone cannot safely associate a
+   Case. The automatic saved-agent/MCP patch remains refused.
+6. Identify the intended custom Case Management Workflow or create an approved
+   owned deterministic orchestration. Do not activate or edit
+   the inactive Microsoft-managed case-management agent flow by name.
+7. Review current Help source/ETag, API binding and node/producer policy, then
+   explicitly approve live cutover. Pilot fault/skip/termination behaviour in
+   native Power Automate before calling the candidate production-safe.
+8. Only after those gates, publish the new app. Pilot emails require exact
+   message previews and approval. Do not claim end-to-end tracking before a real
+   authorized email -> agent/tool -> case -> closure/reopen run is observed.
+
+KNOWN BOUNDED LIMITS
+
+- No outbox, Azure bus, browser WebSocket, CSP or Stage 4 resource changes.
+- Ingress-first identity; exact app-draft-to-intake correlation remains unproven.
+- Case observer fan-out is bounded; larger sets need a paged reconciliation
+  worker. Reconciliation markers are not automatically cleared.
+- No production retention/deletion or full database rebuild tool.
+- Generated read metadata is contract-derived until verified against registered
+  live API signatures. Missing APIs fail visibly, never return synthetic results.
+- Build currently reports a large process-renderer bundle warning; it still
+  type-checks and builds. A scoped code-split can be added before release.
+
+VALIDATION RECORDED
+
+- 33 Node tests covering existing app behavior and wire-contract/read-model
+  integration; build and lint pass.
+- 103 combined schema, workflow-adapter and API-registration tests pass.
+- 49 net48 plug-in tests pass.
+- Focused service review found partial-health decoding and exhausted event
+  cursor bugs; both are fixed and have regression coverage.
+- Browser preview confirms no live process calls, nine labelled walkthroughs,
+  desktop/mobile layouts and preserved existing email/case safeguards.
+- These are not proof of deployed plug-in security, transaction behavior,
+  authentic tool provenance or an end-to-end live workflow run.
