@@ -1,4 +1,5 @@
 import type { EmailDraft } from '../types'
+import { emailBodyHtml } from '../lib/emailBody.ts'
 
 function wrapBase64(value: string): string {
   return value.replace(/.{76}/g, '$&\r\n')
@@ -19,17 +20,34 @@ export function draftToEml(draft: EmailDraft): string {
     `X-Gravity-Source: ${draft.source}`,
   ]
 
+  const safeId = draft.id.replace(/[^a-z0-9]/gi, '')
+  const alternative = `=_gravity_alt_${safeId}`
+  const bodyParts = [
+    `--${alternative}`,
+    'Content-Type: text/plain; charset=utf-8',
+    'Content-Transfer-Encoding: 8bit',
+    '',
+    draft.body.replace(/\r\n?|\n/g, '\r\n'),
+    `--${alternative}`,
+    'Content-Type: text/html; charset=utf-8',
+    'Content-Transfer-Encoding: 8bit',
+    '',
+    emailBodyHtml(draft.body),
+    `--${alternative}--`,
+    '',
+  ]
+  const bodyType = `Content-Type: multipart/alternative; boundary="${alternative}"`
+
   if (draft.attachments.length === 0) {
-    return [...headerLines, 'Content-Type: text/plain; charset=utf-8', '', draft.body].join('\r\n')
+    return [...headerLines, bodyType, '', ...bodyParts].join('\r\n')
   }
 
-  const boundary = `=_gravity_${draft.id.replace(/[^a-z0-9]/gi, '')}`
+  const boundary = `=_gravity_${safeId}`
   const parts: string[] = []
   parts.push(`--${boundary}`)
-  parts.push('Content-Type: text/plain; charset=utf-8')
-  parts.push('Content-Transfer-Encoding: 8bit')
+  parts.push(bodyType)
   parts.push('')
-  parts.push(draft.body)
+  parts.push(...bodyParts)
   for (const attachment of draft.attachments) {
     parts.push(`--${boundary}`)
     parts.push(`Content-Type: ${attachment.mimeType}; name="${attachment.name}"`)
@@ -39,6 +57,7 @@ export function draftToEml(draft: EmailDraft): string {
     parts.push(wrapBase64(attachment.contentBytes))
   }
   parts.push(`--${boundary}--`)
+  parts.push('')
 
   return [...headerLines, `Content-Type: multipart/mixed; boundary="${boundary}"`, '', ...parts].join('\r\n')
 }

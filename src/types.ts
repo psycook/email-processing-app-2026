@@ -1,5 +1,5 @@
 export type DataMode = 'live' | 'preview'
-export const APP_VERSION = '0.1.4'
+export const APP_VERSION = '0.1.5'
 export type ThemeMode = 'light' | 'dark' | 'system'
 export type Page = 'overview' | 'process' | 'mailbox' | 'evaluation' | 'campaigns' | 'customers' | 'review' | 'value' | 'settings'
 export type Complexity = 'simple' | 'multi-intent' | 'ambiguous'

@@ -23,7 +23,7 @@ import { Tasksstatuscode } from '../generated/models/TasksModel'
 import type { Annotations, AnnotationsBase } from '../generated/models/AnnotationsModel'
 import type { Workflows } from '../generated/models/WorkflowsModel'
 import { Workflowscategory, Workflowsstatecode } from '../generated/models/WorkflowsModel'
-import type { GraphClientReceiveMessage, ClientSendHtmlMessage } from '../generated/models/Office365OutlookModel'
+import type { GraphClientReceiveMessage } from '../generated/models/Office365OutlookModel'
 import { ContactsService } from '../generated/services/ContactsService'
 import { ProductsService } from '../generated/services/ProductsService'
 import { Rfd_financialaccountsService } from '../generated/services/Rfd_financialaccountsService'
@@ -36,6 +36,7 @@ import { Office365OutlookService } from '../generated/services/Office365OutlookS
 import { AgentsService } from '../generated/services/AgentsService'
 import { runInlineAgent } from './inlineAgent'
 import { generationMessage } from '../lib/emailGeneration'
+import { outlookMessage } from '../lib/outlookMessage'
 import { ENVIRONMENT, REQUEST_CLASSES } from '../types'
 import type {
   Attachment, CaseItem, Customer, EmailDraft, GeneratorInput, GeneratorOutput, Holding,
@@ -411,10 +412,6 @@ function safeAlias(value: string): boolean {
     && value !== ENVIRONMENT.helpMailbox && value !== ENVIRONMENT.senderMailbox
 }
 
-function htmlText(value: string): string {
-  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')
-}
-
 function hasControlCharacters(value: string): boolean {
   return Array.from(value).some(character => character.charCodeAt(0) < 32 || character.charCodeAt(0) === 127)
 }
@@ -481,10 +478,7 @@ export async function sendEmail(draft: EmailDraft, settings: StudioSettings): Pr
     || contact.statecode !== 0 || !safeAlias(alias) || draft.from !== alias) {
     throw new Error('From must exactly match the selected active Contact’s live demo alias; the primary mailbox is never substituted.')
   }
-  const message: ClientSendHtmlMessage = {
-    From: alias, To: ENVIRONMENT.helpMailbox, Subject: draft.subject,
-    Body: `<div style="white-space:pre-wrap">${htmlText(draft.body)}</div>`, Attachments: attachments,
-  }
+  const message = outlookMessage(draft, attachments)
   // A connector error is not a non-delivery receipt; errors after submission are
   // deliberately held for reconciliation. Never auto-retry this non-idempotent operation.
   try {

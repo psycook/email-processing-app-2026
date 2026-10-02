@@ -1,6 +1,6 @@
 # Gravity Bank Email Automation Studio - coding-agent handoff
 
-Last updated: 1 October 2026.
+Last updated: 2 October 2026.
 
 ## Start here
 
@@ -10,9 +10,10 @@ relevant to the requested change before editing. Preserve existing behaviour
 unless the user explicitly asks to change it. Do not automatically implement
 the instrumentation proposal.
 
-The published baseline is **v0.1.4**. The local source and build were used for
-that deployment. The initial Git import was prepared after publication.
-No further app changes were requested as part of putting this project in Git.
+The published app is **v0.1.5**, deployed on 2 October 2026 with HTML email
+delivery. This source revision contains the v0.1.5 implementation and handoff;
+GitHub's initial import `f0a1d05` was v0.1.4. Check Git status and the latest
+deployment result before assuming a later working tree is published.
 
 - Repository: https://github.com/psycook/email-processing-app-2026
 - Original local folder:
@@ -93,6 +94,7 @@ handoff and the README; do not describe an unpushed change as live.
 | Labels and sorting | `src\lib\holdingLabels.ts`, `src\lib\customerOptions.ts` | Natural holding labels and non-mutating alphabetical options |
 | Evaluation evidence | `src\lib\evaluationEvidence.ts`, `src\ui\EvaluationResults.tsx` | Candidate/legacy matching, evidence presentation, manual verdicts and exports |
 | Email export/display | `src\ui\eml.ts`, `src\ui\mailRender.ts` | EML output and safe message rendering |
+| Outgoing HTML | `src\lib\emailBody.ts`, `src\lib\outlookMessage.ts`, `src\ui\OutgoingEmailBody.tsx` | Escaped paragraphs shared by Outlook payloads, previews and EML HTML alternatives |
 | Preview | `src\services\previewData.ts` | Explicitly synthetic, local fixtures |
 | Types/configuration | `src\types.ts`, `power.config.json` | Data contracts, defaults, environment/app/connector references |
 | Generated code | `src\generated`, `.power\schemas` | Power Platform models, services and SDK metadata |
@@ -207,6 +209,40 @@ Legacy subject tokens still support their original token-matching path.
 Neither a match nor a case proves business completion. Preview does not
 fabricate evidence that a test ran. Reports include source health and limits.
 
+### v0.1.5: HTML delivery and alias prerequisite (published 2 October 2026)
+
+The user reported "Demo Customer" as the Outlook sender label and collapsed
+paragraphs. The app was already submitting the Contact alias in `From`;
+it was wrapping escaped plain text in a `white-space: pre-wrap` div for delivery.
+
+The published app now renders explicit escaped paragraph/line-break HTML for
+connector sends, formatted draft preview, single/campaign send confirmation
+and campaign review. EML uses multipart/alternative (plain + HTML), nested
+inside multipart/mixed when there are attachments. The AI/editor contract stays
+plain text, and the AI prompt explicitly requests blank-line paragraph breaks.
+No untrusted HTML is interpreted as markup and no send permissions were relaxed.
+
+A read-only Exchange check confirmed `SendFromAliasEnabled=false` for the demo
+tenant and that Adam Linton's alias exists on Demo Customer (a shared mailbox
+with 101 addresses). Following explicit approval on 2 October, the setting was
+enabled and read back as `true` in tenant
+`fc547a7e-3617-4e9c-a506-83fa37eb5247`. It applies tenant-wide, not just to
+this app. No mailbox permissions were changed and no test emails were sent.
+See the linked Microsoft references in README for alias behaviour/limitations.
+
+The screenshot's display name is not proof of the actual delivered From address.
+The browser could not open the Help mailbox (MailboxUnavailable/access denied);
+the existing message's raw headers were not inspected. Shared/delegated alias
+support is client-dependent, so no end-to-end alias correction is claimed.
+Do not switch to an undocumented Graph/connector send route or use Reply-To
+as a substitute for a real alias From address. Any live diagnostic send needs
+an exact message preview and approval.
+
+The local 19-test regression set adds HTML newline/escaping cases, exact alias
+payload preservation for single and batch drafts, and MIME alternatives with
+and without attachments. Preview checks cover matching formatted HTML in
+draft/confirmation views, mobile wrapping and preserved preview send guards.
+
 ## Instrumentation: proposed, not implemented
 
 Read `docs\email-process-instrumentation-plan.txt` as a proposal, not completed
@@ -258,8 +294,9 @@ changes. For layout changes, inspect the preview at desktop and mobile widths.
 No real sends, case writes or financial-account changes should be used as
 casual smoke tests.
 
-There is no approved next feature beyond this baseline. Inspect the latest
-request and Git status before editing; preserve changes from other agents.
+HTML delivery is published and the approved alias prerequisite is enabled.
+Actual alias preservation in delivered mail still needs confirmation. Inspect
+the latest request and Git status before editing; preserve changes from other agents.
 Keep the README and this handoff current when actual behaviour or publication
 changes. Do not describe planned instrumentation or possible evidence as live
 measured capability.

@@ -190,6 +190,12 @@ export function SettingsPage() {
               This confirmation only affects whether this studio enables the send button. The tenant
               <span className="mono"> SendFromAliasEnabled</span> setting is not changed by this app.
             </p>
+            <p className="muted-note">
+              An Exchange administrator must enable sending from aliases for the demo tenant. Even then,
+              shared-mailbox alias support varies by client and connector. Inspect the email address in
+              the received message&apos;s From header, not just the &quot;Demo Customer&quot; display name.
+              Do not confirm this checkbox if that address is the shared mailbox&apos;s primary address.
+            </p>
           </div>
         </Card>
 

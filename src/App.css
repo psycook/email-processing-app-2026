@@ -2475,6 +2475,29 @@ button.comm-row:hover {
   gap: 14px;
 }
 
+.outgoing-email-body {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+  font-family: var(--cp-font);
+}
+
+.outgoing-email-preview {
+  padding: 12px;
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius-control);
+  background: var(--cp-surface-sunken);
+}
+
+.outgoing-email-preview summary {
+  cursor: pointer;
+  color: var(--cp-text-muted);
+}
+
+.outgoing-email-preview[open] > .outgoing-email-body {
+  margin-top: 16px;
+}
+
 .draft-meta {
   display: flex;
   flex-wrap: wrap;

@@ -20,6 +20,7 @@ import {
 import { InlineNote } from '../ui/Banners'
 import { Modal } from '../ui/Modal'
 import { AttachmentList } from '../ui/Attachments'
+import { OutgoingEmailBody } from '../ui/OutgoingEmailBody'
 import { COMPLEXITY_OPTIONS, classLabel } from '../ui/constants'
 import { draftToEml, emlFilename } from '../ui/eml'
 import { clamp, cx } from '../ui/util'
@@ -344,7 +345,7 @@ export function CampaignsPage() {
                         <Badge tone={stateTone(selected.state)}>{selected.state}</Badge>
                       </div>
                       <h3 className="draft-preview__subject">{selected.subject || '(no subject)'}</h3>
-                      <div className="draft-preview__body">{selected.body}</div>
+                      <div className="draft-preview__body"><OutgoingEmailBody body={selected.body} /></div>
                       {selected.error ? <InlineNote tone="danger">{selected.error}</InlineNote> : null}
                       <div className="draft-preview__attach">
                         <SectionLabel>Attachments</SectionLabel>
@@ -416,7 +417,7 @@ export function CampaignsPage() {
             {queue.filter(item => ['draft', 'failed'].includes(item.state)).map(item => (
               <details key={item.id} className="confirm-batch-item">
                 <summary>{item.from} → {item.to} · {item.subject}</summary>
-                <pre className="confirm__body">{item.body}</pre>
+                <div className="confirm__body"><OutgoingEmailBody body={item.body} /></div>
                 <p>Attachments: {item.attachments.map(attachment => attachment.name).join(', ') || 'None'}</p>
               </details>
             ))}

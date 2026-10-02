@@ -1,4 +1,5 @@
 import DOMPurify from 'dompurify'
+import { escapeHtml } from '../lib/emailBody'
 
 // Tags/attributes that could script, track, or exfiltrate are dropped entirely.
 // Images are removed wholesale so remote tracking pixels can never load.
@@ -21,15 +22,6 @@ function ensureHooks() {
       el.setAttribute('rel', 'noopener noreferrer nofollow')
     }
   })
-}
-
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
 }
 
 const HTML_PATTERN = /<([a-z]+)(\s[^>]*)?>|<\/[a-z]+>|&[a-z]+;|&#\d+;/i

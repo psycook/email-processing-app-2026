@@ -6,6 +6,8 @@ import { makeDraft } from '../src/lib/emailDrafts.ts'
 import { generationMessage } from '../src/lib/emailGeneration.ts'
 import { evaluationEvidence } from '../src/lib/evaluationEvidence.ts'
 import { draftToEml } from '../src/ui/eml.ts'
+import { emailBodyHtml } from '../src/lib/emailBody.ts'
+import { outlookMessage } from '../src/lib/outlookMessage.ts'
 
 const mailbox = 'help@example.com'
 const customer: Customer = {
@@ -159,4 +161,71 @@ test('legacy tokens still correlate inbox, cases and notes for the correct custo
   assert.equal(observed.cases.length, 1)
   data.cases[0].customerId = 'other'
   assert.equal(evaluationEvidence(draft, data, mailbox).cases.length, 0)
+})
+
+test('HTML email uses actual paragraphs and sign-off line breaks, without white-space CSS', () => {
+  const html = emailBodyHtml('Hello,\n\nPlease help with my account.\n\nKind regards,\nAlex')
+  assert.equal(html, '<p style="margin:0 0 16px;">Hello,</p><p style="margin:0 0 16px;">Please help with my account.</p><p style="margin:0 0 16px;">Kind regards,<br>Alex</p>')
+  assert.doesNotMatch(html, /white-space|<style|<script/)
+})
+
+test('HTML handles Windows/newline variants and whitespace-only blank lines identically', () => {
+  const expected = emailBodyHtml('Hello,\n\nParagraph two.\nAnother line.\n\nThanks,\nAlex')
+  for (const newline of ['\r\n', '\r']) {
+    assert.equal(emailBodyHtml(` \t${'Hello,\n\nParagraph two.\nAnother line.\n\nThanks,\nAlex'.replace(/\n/g, newline)} \t`), expected)
+  }
+  assert.equal(emailBodyHtml('Hello,\n \t\n\nParagraph two.\nAnother line.\n\nThanks,\nAlex'), expected)
+  assert.equal(emailBodyHtml(' \r\n\t'), '')
+  assert.equal(emailBodyHtml('One sentence.'), '<p style="margin:0 0 16px;">One sentence.</p>')
+})
+
+test('HTML treats model or editor markup as literal text, never executable content', () => {
+  const text = '<img src="https://example.com/pixel" onerror="alert(1)"> & <script>x</script>\n\nIt\'s "quoted".'
+  const html = emailBodyHtml(text)
+  assert.doesNotMatch(html, /<img|<script/)
+  assert.ok(html.includes('&lt;img src=&quot;https://example.com/pixel&quot; onerror=&quot;alert(1)&quot;&gt;'))
+  assert.ok(html.includes('&amp; &lt;script&gt;x&lt;/script&gt;'))
+  assert.ok(html.includes('It&#39;s &quot;quoted&quot;.'))
+})
+
+test('single and campaign connector payloads use the exact customer alias, HTML body and validated attachments', () => {
+  const attachments = [{ Name: 'example.txt', ContentBytes: 'SGVsbG8=' }]
+  for (const source of ['template', 'ai'] as const) {
+    for (const runId of ['single-test', 'batch-test']) {
+      const draft = makeDraft(input, output, source, settings, runId)
+      const message = outlookMessage(draft, attachments)
+      assert.equal(message.From, customer.email)
+      assert.notEqual(message.From, settings.senderMailbox)
+      assert.equal(message.To, settings.helpMailbox)
+      assert.equal(message.Subject, output.subject)
+      assert.equal(message.Body, emailBodyHtml(output.body))
+      assert.equal(message.Attachments, attachments)
+      assert.equal(draft.body, output.body)
+    }
+  }
+})
+
+test('EML provides plain text and the same HTML alternative as the connector', () => {
+  const message = outlookMessage(sent, [])
+  const eml = draftToEml(sent)
+  const id = sent.id.replace(/[^a-z0-9]/gi, '')
+  assert.ok(eml.includes(`From: ${sent.from}\r\n`))
+  assert.ok(eml.includes(`Content-Type: multipart/alternative; boundary="=_gravity_alt_${id}"`))
+  assert.ok(eml.includes('Content-Type: text/plain; charset=utf-8\r\nContent-Transfer-Encoding: 8bit'))
+  assert.ok(eml.includes('Content-Type: text/html; charset=utf-8\r\nContent-Transfer-Encoding: 8bit'))
+  assert.ok(eml.includes(message.Body))
+  assert.ok(eml.includes(sent.body.replace(/\n/g, '\r\n')))
+  assert.ok(eml.endsWith(`--=_gravity_alt_${id}--\r\n`))
+})
+
+test('EML attachment exports preserve the nested HTML alternative and original attachment bytes', () => {
+  const draft = { ...sent, attachments: [{ id: 'attachment', name: 'context.pdf', mimeType: 'application/pdf',
+    size: 9, contentBytes: 'JVBERi0xLjcK', generated: true }] }
+  const id = sent.id.replace(/[^a-z0-9]/gi, '')
+  const eml = draftToEml(draft)
+  assert.ok(eml.includes(`Content-Type: multipart/mixed; boundary="=_gravity_${id}"`))
+  assert.ok(eml.includes(`--=_gravity_${id}\r\nContent-Type: multipart/alternative; boundary="=_gravity_alt_${id}"`))
+  assert.ok(eml.includes(emailBodyHtml(draft.body)))
+  assert.ok(eml.includes('Content-Disposition: attachment; filename="context.pdf"\r\n\r\nJVBERi0xLjcK'))
+  assert.ok(eml.endsWith(`--=_gravity_${id}--\r\n`))
 })

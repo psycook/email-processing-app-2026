@@ -27,6 +27,7 @@ import { InlineNote } from '../ui/Banners'
 import { Modal } from '../ui/Modal'
 import { AttachmentList } from '../ui/Attachments'
 import { EvaluationResults } from '../ui/EvaluationResults'
+import { OutgoingEmailBody } from '../ui/OutgoingEmailBody'
 import { holdingDisplayName } from '../lib/holdingLabels'
 import { sortedCustomers, sortedHoldings } from '../lib/customerOptions'
 import { holdingsForCustomer } from '../ui/selectors'
@@ -297,7 +298,7 @@ export function EvaluationPage() {
                 />
               </Field>
 
-              <Field label="Body (plain text)" htmlFor="draft-body">
+              <Field label="Body" htmlFor="draft-body" hint="Write in plain text. Blank lines become HTML paragraphs; line breaks are preserved in the sent email.">
                 <TextArea
                   id="draft-body"
                   disabled={sending || !['draft', 'failed'].includes(draft.state)}
@@ -306,6 +307,10 @@ export function EvaluationPage() {
                   onChange={(event) => patchDraft({ body: event.target.value }, true)}
                 />
               </Field>
+              <details className="outgoing-email-preview">
+                <summary>Preview formatted email</summary>
+                <OutgoingEmailBody body={draft.body} />
+              </details>
 
               <Field label="Expected outcome" htmlFor="draft-outcome" hint="What a correct automation response should achieve.">
                 <TextArea
@@ -401,7 +406,7 @@ export function EvaluationPage() {
               <div><dt>To</dt><dd>{draft.to}</dd></div>
               <div><dt>Subject</dt><dd>{draft.subject}</dd></div>
             </dl>
-            <div className="confirm__body">{draft.body}</div>
+            <div className="confirm__body"><OutgoingEmailBody body={draft.body} /></div>
             <div className="confirm__attach">
               <SectionLabel>Attachments ({draft.attachments.length})</SectionLabel>
               {draft.attachments.length === 0 ? (

@@ -24,9 +24,10 @@ Environment: `b17908ad-6b6b-eefb-98bc-79cc7e20ab08`.
 Dataverse: https://smc-diamond-service.crm.dynamics.com/
 
 Code Apps are enabled in this environment and the Studio is published.
-The hosted version is v0.1.4, published on 1 October 2026, including alphabetical
-customer/holding selectors, natural subjects, fuller AI email instructions and
-the redesigned Evaluation panels. Bundled branding, Help-only monitoring,
+The hosted version is v0.1.5, published on 2 October 2026, adding simple HTML
+paragraphs to sends, previews and exports. Alphabetical customer/holding
+selectors, natural subjects, fuller AI instructions, redesigned Evaluation
+panels, bundled branding, Help-only monitoring,
 readable connections and aligned pipeline cards/captions are preserved.
 App ID: `a9b487ae-7eee-4f6f-ba71-ed18e50c021c`.
 Launch: https://apps.powerapps.com/play/e/b17908ad-6b6b-eefb-98bc-79cc7e20ab08/app/a9b487ae-7eee-4f6f-ba71-ed18e50c021c?tenantId=fc547a7e-3617-4e9c-a506-83fa37eb5247
@@ -89,7 +90,8 @@ The hosted app reads live Contacts, Products, Financial Accounts, Cases, Tasks,
 Notes, Email Activities, Help workflow configuration and the Help Inbox.
 No request is made to the demo customer Inbox. Earlier versions incorrectly
 polled it and treated its failure as degraded monitoring; this was removed.
-No mailbox permission or tenant send-from-alias setting was changed.
+No mailbox permissions were changed. The demo tenant's send-from-alias setting
+was enabled separately with explicit approval on 2 October 2026.
 
 Automated development validation did not exercise real sends, live AI invocations
 or case writes. The user confirmed the deployed AI generation repair worked on
@@ -103,6 +105,34 @@ the production classifier or servicing agents. Empty advanced configuration
 uses that built-in definition; arbitrary definitions/tools/actions are rejected.
 Live generation still depends on connector access and model availability. A
 failed AI request is never replaced with templates labelled as AI.
+
+## HTML delivery update v0.1.5 (published)
+
+The plain-text editor and AI output now convert to escaped, simple HTML for
+Outlook: blank lines become `<p>` elements and single newlines become `<br>`
+elements. Sending no longer relies on `white-space: pre-wrap`. Formatted draft,
+single-send confirmation and campaign previews use the same HTML conversion.
+EML exports contain both the original plain text and the same HTML alternative,
+including when attachments are present. Typed/model-generated HTML remains
+literal text rather than executable markup.
+
+The sender remains the selected active Contact's exact email alias, validated
+again immediately before submission; the primary Demo Customer address is never
+substituted by the app. A read-only Exchange check on 2 October 2026 found
+`SendFromAliasEnabled` disabled in the demo tenant, with the customer alias
+present on the shared mailbox. Following explicit user approval, this
+tenant-wide prerequisite was enabled and read back as `true` on 2 October 2026.
+The change was restricted to the demo tenant; no test emails were sent.
+
+The Outlook display name alone does not prove which address was delivered.
+Inspect the actual received `From` header. Shared/delegated alias support has
+client limitations; enabling the setting is not a guarantee that this connector
+preserves aliases. No fallback to another API, Reply-To substitution or mailbox
+identity changes have been introduced.
+
+References:
+- [Exchange alias setting](https://learn.microsoft.com/en-us/powershell/module/exchangepowershell/set-organizationconfig#-sendfromaliasenabled)
+- [Shared-mailbox alias limitations](https://techcommunity.microsoft.com/blog/exchange/sending-from-email-aliases-%e2%80%93-public-preview/3070501)
 
 Queues, drafts, reviewer verdicts and preview reviews are memory-only. Keep the
 tab open for a campaign and export reports before reloading. This is not a
