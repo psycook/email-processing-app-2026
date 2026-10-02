@@ -6,7 +6,7 @@ export interface EvaluationEvidence {
   cases: CaseItem[]
 }
 
-export function evaluationEvidence(draft: EmailDraft, snapshot: StudioSnapshot, helpMailbox: string): EvaluationEvidence {
+export function evaluationEvidence(draft: EmailDraft, snapshot: StudioSnapshot, helpMailbox: string, demoSenderMailbox?: string): EvaluationEvidence {
   const empty: EvaluationEvidence = { method: 'manual', inbox: [], cases: [] }
   if (snapshot.mode === 'preview' || !['sent', 'unknown'].includes(draft.state)) return empty
   const token = draft.subject.match(/\[GB-STUDIO:[^\]]+\]/)?.[0]
@@ -26,9 +26,16 @@ export function evaluationEvidence(draft: EmailDraft, snapshot: StudioSnapshot, 
     const time = Date.parse(value)
     return time >= acceptedAt - 60_000 && time <= acceptedAt + 15 * 60_000
   }
+  // Reply-To is untrusted: this is only a candidate lead from the configured demo mailbox.
+  const fromDemoWithReplyTo = (item: MailItem) => Boolean(demoSenderMailbox)
+    && item.mailbox.toLowerCase() === helpMailbox.toLowerCase()
+    && item.from.trim().toLowerCase() === demoSenderMailbox?.toLowerCase()
+    && /^[^\s@<>,;]+@[^\s@<>,;]+$/.test(draft.replyTo)
+    && draft.replyTo === draft.from
+    && item.replyTo?.trim().toLowerCase() === draft.replyTo.toLowerCase()
   return {
     method: 'candidate',
-    inbox: snapshot.messages.filter(item => fromSender(item)
+    inbox: snapshot.messages.filter(item => (fromSender(item) || fromDemoWithReplyTo(item))
       && item.subject === draft.subject && nearSubmission(item.receivedAt)),
     cases: snapshot.cases.filter(item => item.customerId === draft.customerId
       && item.title === draft.subject && nearSubmission(item.createdAt)),

@@ -98,7 +98,7 @@ export function useStudio(): StudioContext {
     }
     if (settings.mode !== current.settings.mode) {
       epoch.current++; generationEpoch.current++
-      settings.aliasSendingConfirmed = false
+      settings.replyToWorkflowConfirmed = false
       refreshJob.current = undefined
       commit({ settings, snapshot: emptySnapshot(settings.mode), loading: true, refreshing: false, drafts: [],
         campaignStatus: 'idle', campaignRunId: undefined, campaignConfig: undefined, campaignProgress: 0, error: undefined })
@@ -140,8 +140,8 @@ export function useStudio(): StudioContext {
       notify('Sent, pending, cancelled and uncertain drafts are locked. Create a new test instead.', 'error')
       return
     }
-    if (draft.customerId !== existing.customerId || draft.from !== existing.from || draft.to !== existing.to || draft.runId !== existing.runId) {
-      notify('Sender, customer, recipient and run identity cannot be changed on an existing draft.', 'error')
+    if (draft.customerId !== existing.customerId || draft.from !== existing.from || draft.replyTo !== existing.replyTo || draft.to !== existing.to || draft.runId !== existing.runId) {
+      notify('From, Reply-To, customer, recipient and run identity cannot be changed on an existing draft.', 'error')
       return
     }
     putDraft({ ...draft, state: existing.state })
@@ -151,16 +151,16 @@ export function useStudio(): StudioContext {
     const current = stateRef.current
     const existing = current.drafts.find(item => item.id === draft.id)
     if (!existing || !['draft', 'failed'].includes(existing.state) || sending.current.has(draft.id)) throw new Error('This draft is locked, already submitted, or not in the current session.')
-    if (existing.runId !== draft.runId || existing.from !== draft.from || existing.to !== draft.to || existing.customerId !== draft.customerId) throw new Error('The reviewed draft identity changed.')
+    if (existing.runId !== draft.runId || existing.from !== draft.from || existing.replyTo !== draft.replyTo || existing.to !== draft.to || existing.customerId !== draft.customerId) throw new Error('The reviewed draft identity changed.')
     if (current.settings.mode !== 'live') throw new Error('Preview never sends a real email.')
-    if (!current.settings.aliasSendingConfirmed) throw new Error('Verify received alias From headers before enabling sending in Settings.')
+    if (!current.settings.replyToWorkflowConfirmed) throw new Error('Confirm the demo workflow uses the customer Reply-To address in Settings before sending.')
     validateDraft(draft)
     sending.current.add(draft.id)
     putDraft({ ...draft, state: 'sending', error: undefined })
     try {
       await (await gateway()).sendEmail(draft, current.settings)
       putDraft({ ...draft, state: 'sent', error: undefined, sentAt: new Date().toISOString() })
-      notify('Connector accepted the email. Confirm its arrival and From address in the Help mailbox.', 'success')
+      notify('Connector accepted the email. Confirm the received Reply-To matches the customer alias; the delivered From may be the shared mailbox.', 'success')
       void refresh()
     } catch (error) {
       putDraft({ ...draft, state: isUnknownSend(error) ? 'unknown' : 'failed', error: messageOf(error) })
@@ -216,7 +216,7 @@ export function useStudio(): StudioContext {
     const current = stateRef.current
     if (!['ready', 'paused'].includes(current.campaignStatus)) throw new Error('Generate and review a complete batch first.')
     if (runner.current) throw new Error('The current in-flight email is finishing. Wait before resuming.')
-    if (current.settings.mode !== 'live' || !current.settings.aliasSendingConfirmed) throw new Error('Live mode and received alias verification are required before launch.')
+    if (current.settings.mode !== 'live' || !current.settings.replyToWorkflowConfirmed) throw new Error('Live mode and confirmation that the demo workflow uses Reply-To are required before launch.')
     const queue = current.drafts.filter(item => item.runId === current.campaignRunId)
     if (queue.length !== current.campaignConfig?.emailCount || queue.some(item => item.state === 'unknown')) throw new Error('The queue is incomplete or contains uncertain sends. Reconcile those before resuming.')
     queue.filter(item => ['draft', 'failed'].includes(item.state)).forEach(validateDraft)
@@ -228,7 +228,7 @@ export function useStudio(): StudioContext {
         if (!alive.current || stateRef.current.campaignStatus !== 'running' || stateRef.current.campaignRunId !== runId) return
         const draft = stateRef.current.drafts.find(item => item.id === reviewed.id)
         if (!draft || !['draft', 'failed'].includes(draft.state)) continue
-        if (!stateRef.current.settings.aliasSendingConfirmed || stateRef.current.settings.mode !== 'live') {
+        if (!stateRef.current.settings.replyToWorkflowConfirmed || stateRef.current.settings.mode !== 'live') {
           commit({ campaignStatus: 'paused' }); notify('Sending permission was withdrawn; the queue is paused.', 'info'); return
         }
         sending.current.add(draft.id)

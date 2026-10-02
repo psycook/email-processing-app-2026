@@ -2515,7 +2515,7 @@ button.comm-row:hover {
 
 .eval-addresses > div {
   display: grid;
-  grid-template-columns: 40px minmax(0, 1fr);
+  grid-template-columns: 64px minmax(0, 1fr);
   gap: 12px;
   padding: 12px;
   align-items: baseline;

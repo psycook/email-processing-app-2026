@@ -29,7 +29,7 @@ export function CommunicationsPage() {
       if (readFilter === 'read' && !message.isRead) return false
       if (attachmentsOnly && !message.hasAttachments) return false
       if (term) {
-        const haystack = `${message.subject} ${message.from} ${message.to} ${message.body}`.toLowerCase()
+        const haystack = `${message.subject} ${message.from} ${message.replyTo ?? ''} ${message.to} ${message.body}`.toLowerCase()
         if (!haystack.includes(term)) return false
       }
       return true
@@ -82,7 +82,7 @@ export function CommunicationsPage() {
             <input
               type="search"
               aria-label="Search messages"
-              placeholder="Search subject, sender or body…"
+              placeholder="Search subject, sender, Reply-To or body…"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
             />
@@ -159,6 +159,7 @@ export function CommunicationsPage() {
                 <h2 className="reader__subject">{active.subject || '(no subject)'}</h2>
                 <div className="reader__meta">
                   <span><strong>From</strong> {active.from}</span>
+                  <span><strong>Reply-To</strong> {active.replyTo || 'Not supplied by connector'}</span>
                   <span><strong>To</strong> {active.to}</span>
                   <span><strong>Received</strong> {formatDate(active.receivedAt)}</span>
                   <Badge soft tone="lavender">Help Inbox</Badge>

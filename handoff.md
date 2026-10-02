@@ -10,10 +10,11 @@ relevant to the requested change before editing. Preserve existing behaviour
 unless the user explicitly asks to change it. Do not automatically implement
 the instrumentation proposal.
 
-The published app is **v0.1.5**, deployed on 2 October 2026 with HTML email
-delivery. This source revision contains the v0.1.5 implementation and handoff;
-GitHub's initial import `f0a1d05` was v0.1.4. Check Git status and the latest
-deployment result before assuming a later working tree is published.
+The published app is **v0.1.6**, deployed on 2 October 2026 with both From and
+Reply-To set to the selected Contact email. This source revision contains the
+v0.1.6 implementation and handoff; `c2ef997` was v0.1.5 and the initial import
+`f0a1d05` was v0.1.4. Workflow updates are owned by the user, not this deployment.
+Check Git status before assuming a later working tree is published.
 
 - Repository: https://github.com/psycook/email-processing-app-2026
 - Original local folder:
@@ -134,9 +135,11 @@ Dataverse sources:
    agents as a replacement for the generator.
 3. Sending is a separate, explicitly reviewed operation. It is restricted to the
    selected active Contact's actual demo alias and the Help mailbox.
-4. Alias sending requires session-only confirmation after an administrator has
-   inspected the received From header. Do not alter tenant send-from-alias
-   settings or substitute the primary mailbox.
+4. Sending requires session-only confirmation that the demo workflow is
+   configured for the customer Reply-To field. Both outgoing From and Reply-To
+   must match the selected active Contact's live email. Do not alter Exchange
+   settings or substitute the primary mailbox. Confirm actual Reply-To receipt
+   during the pilot; this checkbox does not authenticate the customer.
 5. `SendEmailV2` acknowledgement is acceptance, not delivery. It returns no
    message ID. Post-submission errors are uncertain outcomes; do not retry them
    automatically or imply non-delivery.
@@ -234,14 +237,52 @@ The screenshot's display name is not proof of the actual delivered From address.
 The browser could not open the Help mailbox (MailboxUnavailable/access denied);
 the existing message's raw headers were not inspected. Shared/delegated alias
 support is client-dependent, so no end-to-end alias correction is claimed.
-Do not switch to an undocumented Graph/connector send route or use Reply-To
-as a substitute for a real alias From address. Any live diagnostic send needs
-an exact message preview and approval.
+Do not switch to an undocumented Graph/connector send route. Reply-To does not
+repair the actual delivered From; the user later approved it as a separate
+demo-routing field (see v0.1.6 below). Any live diagnostic send needs an exact
+message preview and approval.
 
 The local 19-test regression set adds HTML newline/escaping cases, exact alias
 payload preservation for single and batch drafts, and MIME alternatives with
 and without attachments. Preview checks cover matching formatted HTML in
 draft/confirmation views, mobile wrapping and preserved preview send guards.
+
+### v0.1.6: explicit customer Reply-To (published 2 October 2026)
+
+The user approved setting BOTH From and Reply-To to the customer Contact email,
+and will update the workflow themselves. Do not modify the flow as part of this
+app change. No BCC, alternate transport or Exchange change was introduced.
+
+`EmailDraft.replyTo` is explicit and immutable. `makeDraft` populates it for
+templates and AI, single and batch drafts. `validateDraftAddresses` rejects
+missing, multi-address or mismatched values. The gateway still rereads the
+active Contact immediately before dispatch and verifies the requested From.
+The connector payload then sets both fields; safe HTML is unchanged.
+New drafts are required for old session objects missing Reply-To.
+
+Previews, approvals, EML and JSON include Reply-To. `MailItem.replyTo` comes
+from the connector; Communications shows it without overwriting actual From.
+Natural-subject evidence can use exact Reply-To only when received From is
+the configured demo mailbox; it remains a candidate, not trusted identity.
+
+`replyToWorkflowConfirmed` replaces `aliasSendingConfirmed` in session settings.
+It starts false, is not persisted, resets on mode change and gates single and
+batch sending. Its meaning is workflow readiness for this artificial demo path,
+not a claim that delivery or customer authentication has been verified.
+
+For the user's flow: restrict the override to demo mode and the authenticated
+approved sender, validate exactly one eligible customer Reply-To address, retain
+actual From and an explicit identity-source label, and route invalid/missing/
+ambiguous values to review. Normal external email must not inherit this override.
+Reply-To is not identity verification or permission for financial actions.
+Inspect the actual Help trigger/read payload to prove Reply-To survives delivery
+before relying on it. No pilot messages were sent by this app-development task.
+
+The 23 native regression tests cover identical From/Reply-To payloads and
+exports, rejection of invalid/mismatched reply addresses, and constrained
+candidate matching without rewriting the received sender. Preview checks cover
+single/batch approval addresses, HTML retention, JSON/EML exports, mobile
+wrapping, received Reply-To display and session-only readiness confirmation.
 
 ## Instrumentation: proposed, not implemented
 
@@ -295,7 +336,7 @@ No real sends, case writes or financial-account changes should be used as
 casual smoke tests.
 
 HTML delivery is published and the approved alias prerequisite is enabled.
-Actual alias preservation in delivered mail still needs confirmation. Inspect
+The Reply-To update is published; the user owns flow changes. Inspect
 the latest request and Git status before editing; preserve changes from other agents.
 Keep the README and this handoff current when actual behaviour or publication
 changes. Do not describe planned instrumentation or possible evidence as live

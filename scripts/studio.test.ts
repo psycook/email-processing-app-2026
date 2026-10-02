@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import type { Customer, EmailDraft, GeneratorInput, Holding, StudioSettings, StudioSnapshot } from '../src/types.ts'
 import { sortedCustomers, sortedHoldings } from '../src/lib/customerOptions.ts'
-import { makeDraft } from '../src/lib/emailDrafts.ts'
+import { makeDraft, validateDraftAddresses } from '../src/lib/emailDrafts.ts'
 import { generationMessage } from '../src/lib/emailGeneration.ts'
 import { evaluationEvidence } from '../src/lib/evaluationEvidence.ts'
 import { draftToEml } from '../src/ui/eml.ts'
@@ -23,7 +23,7 @@ const holding: Holding = {
 const input: GeneratorInput = { customer, holding, category: 'card-support', complexity: 'simple', index: 0 }
 const settings: StudioSettings = {
   mode: 'live', theme: 'system', pollSeconds: 10, polling: true, helpMailbox: mailbox,
-  senderMailbox: 'demo@example.com', aliasSendingConfirmed: false, generationDefinition: '',
+  senderMailbox: 'demo@example.com', replyToWorkflowConfirmed: false, generationDefinition: '',
   costs: { monthlyVolume: 5000, hourlyCost: 32, manualMinutes: 12, automationRate: 0.75,
     automatedMinutes: 1, reviewMinutes: 8, aiCostPerEmail: 0.045, connectorCostPerEmail: 0.005, fixedMonthlyCost: 150 },
 }
@@ -71,6 +71,7 @@ test('natural subjects are unchanged for both single and batch drafts; IDs stay 
     const draft = makeDraft(input, output, 'ai', settings, runId)
     assert.equal(draft.subject, output.subject)
     assert.equal(draft.body, output.body)
+    assert.equal(draft.replyTo, customer.email)
     assert.equal(draft.runId, runId)
     assert.match(draft.id, /^[0-9a-f-]{36}$/)
     assert.doesNotMatch(draftToEml(draft), /GB-STUDIO|single-abcd1234|batch-abcd1234/)
@@ -195,6 +196,9 @@ test('single and campaign connector payloads use the exact customer alias, HTML 
       const draft = makeDraft(input, output, source, settings, runId)
       const message = outlookMessage(draft, attachments)
       assert.equal(message.From, customer.email)
+      assert.equal(message.ReplyTo, customer.email)
+      assert.equal(draft.replyTo, customer.email)
+      assert.equal(message.Bcc, undefined)
       assert.notEqual(message.From, settings.senderMailbox)
       assert.equal(message.To, settings.helpMailbox)
       assert.equal(message.Subject, output.subject)
@@ -210,6 +214,7 @@ test('EML provides plain text and the same HTML alternative as the connector', (
   const eml = draftToEml(sent)
   const id = sent.id.replace(/[^a-z0-9]/gi, '')
   assert.ok(eml.includes(`From: ${sent.from}\r\n`))
+  assert.ok(eml.includes(`Reply-To: ${sent.replyTo}\r\n`))
   assert.ok(eml.includes(`Content-Type: multipart/alternative; boundary="=_gravity_alt_${id}"`))
   assert.ok(eml.includes('Content-Type: text/plain; charset=utf-8\r\nContent-Transfer-Encoding: 8bit'))
   assert.ok(eml.includes('Content-Type: text/html; charset=utf-8\r\nContent-Transfer-Encoding: 8bit'))
@@ -228,4 +233,54 @@ test('EML attachment exports preserve the nested HTML alternative and original a
   assert.ok(eml.includes(emailBodyHtml(draft.body)))
   assert.ok(eml.includes('Content-Disposition: attachment; filename="context.pdf"\r\n\r\nJVBERi0xLjcK'))
   assert.ok(eml.endsWith(`--=_gravity_${id}--\r\n`))
+})
+
+test('Reply-To rejects missing, mismatched, multi-address and injected values before sending or exporting', () => {
+  for (const replyTo of ['', 'other@example.com', 'alex@example.com;other@example.com',
+    'alex@example.com,other@example.com', 'alex@example.com\r\nBcc:other@example.com',
+    'Alex <alex@example.com>']) {
+    const draft = { ...sent, replyTo }
+    assert.throws(() => validateDraftAddresses(draft), /From and Reply-To/)
+    assert.throws(() => outlookMessage(draft, []), /From and Reply-To/)
+    assert.throws(() => draftToEml(draft), /From and Reply-To/)
+  }
+  assert.throws(() => validateDraftAddresses({ from: '', replyTo: '' }), /From and Reply-To/)
+  assert.doesNotThrow(() => validateDraftAddresses(sent))
+})
+
+test('new drafts use their own selected customer for From and Reply-To, including JSON exports', () => {
+  const nextCustomer = { ...customer, id: 'customer-2', email: 'zoe@example.com' }
+  const next = makeDraft({ ...input, customer: nextCustomer, holding: undefined }, output, 'ai', settings, 'single-next')
+  assert.equal(next.from, nextCustomer.email)
+  assert.equal(next.replyTo, nextCustomer.email)
+  assert.equal(JSON.parse(JSON.stringify(next)).replyTo, nextCustomer.email)
+  assert.equal(sent.replyTo, customer.email)
+})
+
+test('demo mailbox plus exact Reply-To can be a candidate while retaining the actual received From', () => {
+  const data = snapshot()
+  data.messages[0].from = settings.senderMailbox
+  data.messages[0].replyTo = sent.replyTo
+  const observed = evaluationEvidence(sent, data, mailbox, settings.senderMailbox)
+  assert.equal(observed.method, 'candidate')
+  assert.equal(observed.inbox.length, 1)
+  assert.equal(observed.inbox[0].from, settings.senderMailbox)
+  assert.equal(observed.inbox[0].replyTo, sent.replyTo)
+  assert.equal(evaluationEvidence(sent, data, mailbox).inbox.length, 0)
+})
+
+test('Reply-To candidate matching rejects other senders, missing/multiple addresses and out-of-scope mail', () => {
+  const data = snapshot()
+  const base = { ...data.messages[0], from: settings.senderMailbox, replyTo: sent.replyTo }
+  data.messages = [
+    { ...base, from: 'outsider@example.com' },
+    { ...base, replyTo: undefined },
+    { ...base, replyTo: 'other@example.com' },
+    { ...base, replyTo: `${sent.replyTo};other@example.com` },
+    { ...base, replyTo: `${sent.replyTo},other@example.com` },
+    { ...base, mailbox: settings.senderMailbox },
+    { ...base, subject: 'Other subject' },
+    { ...base, receivedAt: '2026-10-01T12:16:00Z' },
+  ]
+  assert.equal(evaluationEvidence(sent, data, mailbox, settings.senderMailbox).inbox.length, 0)
 })

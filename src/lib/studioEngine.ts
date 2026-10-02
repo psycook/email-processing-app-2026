@@ -1,6 +1,7 @@
 import type { Attachment, CostAssumptions, Customer, EmailDraft, GeneratorInput, GeneratorOutput, Holding } from '../types'
 import { REQUEST_CLASSES } from '../types'
 import { holdingDisplayName, holdingEmailReference } from './holdingLabels'
+import { validateDraftAddresses } from './emailDrafts'
 export { makeDraft } from './emailDrafts'
 
 const MAX_ENCODED_BYTES = 4 * 1024 * 1024
@@ -79,6 +80,7 @@ export function generateTemplate(input: GeneratorInput): GeneratorOutput {
 }
 
 export function validateDraft(draft: EmailDraft): void {
+  validateDraftAddresses(draft)
   if (!draft.body.trim() || !draft.subject.trim() || draft.subject.length > 255 || /[\r\n]/.test(draft.subject)) {
     throw new Error('Add a subject and message; the subject must be a single line under 256 characters.')
   }

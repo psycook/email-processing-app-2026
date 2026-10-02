@@ -274,6 +274,7 @@ function mail(row: GraphClientReceiveMessage, mailbox: string): MailItem {
   }
   return {
     id: row.id, subject: text(row.subject), from: text(row.from), to: text(row.toRecipients),
+    replyTo: text(row.replyTo) || undefined,
     receivedAt: row.receivedDateTime, body: text(row.body) || text(row.bodyPreview),
     hasAttachments: row.hasAttachments === true, isRead: row.isRead === true,
     mailbox, internetMessageId: row.internetMessageId,
@@ -444,8 +445,8 @@ function attachmentBytes(attachment: Attachment): string {
 
 export async function sendEmail(draft: EmailDraft, settings: StudioSettings): Promise<void> {
   requireLive(settings)
-  if (!settings.aliasSendingConfirmed) {
-    throw new Error('Alias-sending capability is unverified. Manually verify the received From header for this connector and the demo customer aliases before enabling sends; SendEmailV2 may canonicalize aliases.')
+  if (!settings.replyToWorkflowConfirmed) {
+    throw new Error('Confirm the demo workflow is configured to use the customer Reply-To address in Settings before sending. From may be rewritten by Exchange.')
   }
   if (draft.to !== ENVIRONMENT.helpMailbox || !safeAlias(draft.from)) {
     throw new Error('Sending is restricted to a lowercase Contact alias in the demo domain, addressed only to the Help mailbox.')

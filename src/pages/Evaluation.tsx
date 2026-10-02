@@ -62,7 +62,7 @@ export function EvaluationPage() {
 
   const blockReasons: string[] = []
   if (settings.mode === 'preview') blockReasons.push('Preview mode is on — no email is actually sent.')
-  if (!settings.aliasSendingConfirmed) blockReasons.push('Sending alias is not confirmed in Settings.')
+  if (!settings.replyToWorkflowConfirmed) blockReasons.push('Confirm the demo workflow uses Reply-To in Settings.')
   const alreadySent = draft?.state === 'sent'
   if (alreadySent) blockReasons.push('This draft has already been sent.')
   if (draft?.state === 'unknown') blockReasons.push('The submission outcome is uncertain. Inspect the mailbox; this draft is locked against duplicate sends.')
@@ -249,10 +249,15 @@ export function EvaluationPage() {
                   <dd><strong>{customer?.name || 'Select a customer'}</strong><span>{customer?.email || 'No sender selected'}</span></dd>
                 </div>
                 <div>
+                  <dt>Reply-To</dt>
+                  <dd>{customer?.email || 'No customer selected'}</dd>
+                </div>
+                <div>
                   <dt>To</dt>
                   <dd><strong>Gravity Bank support</strong><span>{settings.helpMailbox}</span></dd>
                 </div>
               </dl>
+              <p className="muted-note">Both sender fields use the customer alias. Exchange may rewrite From; the demo workflow should use Reply-To for customer lookup.</p>
 
               {createError ? <InlineNote tone="danger">{createError}</InlineNote> : null}
 
@@ -279,6 +284,7 @@ export function EvaluationPage() {
             <div className="draft-editor">
               <dl className="eval-addresses" aria-label="Draft addresses">
                 <div><dt>From</dt><dd>{draft.from}</dd></div>
+                <div><dt>Reply-To</dt><dd>{draft.replyTo}</dd></div>
                 <div><dt>To</dt><dd>{draft.to}</dd></div>
               </dl>
               <div className="draft-meta">
@@ -403,6 +409,7 @@ export function EvaluationPage() {
             </div>
             <dl className="confirm__fields">
               <div><dt>From</dt><dd>{draft.from}</dd></div>
+              <div><dt>Reply-To</dt><dd>{draft.replyTo}</dd></div>
               <div><dt>To</dt><dd>{draft.to}</dd></div>
               <div><dt>Subject</dt><dd>{draft.subject}</dd></div>
             </dl>

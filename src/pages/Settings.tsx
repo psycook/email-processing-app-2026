@@ -181,20 +181,21 @@ export function SettingsPage() {
           />
           <div className="alias-confirm">
             <Checkbox
-              id="alias-confirmed"
-              checked={settings.aliasSendingConfirmed}
-              onChange={(next) => actions.setSettings({ aliasSendingConfirmed: next })}
-              label="I have verified the received From address matches a customer alias"
+              id="reply-to-workflow-confirmed"
+              checked={settings.replyToWorkflowConfirmed}
+              onChange={(next) => actions.setSettings({ replyToWorkflowConfirmed: next })}
+              label="I have configured the demo workflow to use the customer Reply-To address"
             />
             <p className="muted-note">
-              This confirmation only affects whether this studio enables the send button. The tenant
-              <span className="mono"> SendFromAliasEnabled</span> setting is not changed by this app.
+              From and Reply-To both request the selected Contact&apos;s email alias. Exchange may rewrite
+              From to Demo Customer. This session-only confirmation enables reviewed sends; it does not
+              update or verify the workflow. Inspect the received Reply-To address when piloting.
             </p>
             <p className="muted-note">
-              An Exchange administrator must enable sending from aliases for the demo tenant. Even then,
-              shared-mailbox alias support varies by client and connector. Inspect the email address in
-              the received message&apos;s From header, not just the &quot;Demo Customer&quot; display name.
-              Do not confirm this checkbox if that address is the shared mailbox&apos;s primary address.
+              Reply-To is demo routing metadata, not authenticated identity. Apply any workflow override
+              only to the approved demo sender and a single eligible customer address; preserve the actual
+              From address. Missing or ambiguous Reply-To should go to review. The app does not change
+              Exchange settings, mailbox permissions or the workflow.
             </p>
           </div>
         </Card>
@@ -251,7 +252,7 @@ export function SettingsPage() {
         }
       >
         <InlineNote tone="warning">
-          In live mode the studio works against production data. Draft sending is still gated by the alias confirmation
+          In live mode the studio works against production data. Draft sending is still gated by the demo Reply-To workflow confirmation
           and a per-send review step — nothing is sent automatically.
         </InlineNote>
       </Modal>

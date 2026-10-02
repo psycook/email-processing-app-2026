@@ -1,5 +1,5 @@
 export type DataMode = 'live' | 'preview'
-export const APP_VERSION = '0.1.5'
+export const APP_VERSION = '0.1.6'
 export type ThemeMode = 'light' | 'dark' | 'system'
 export type Page = 'overview' | 'process' | 'mailbox' | 'evaluation' | 'campaigns' | 'customers' | 'review' | 'value' | 'settings'
 export type Complexity = 'simple' | 'multi-intent' | 'ambiguous'
@@ -30,7 +30,7 @@ export interface CaseItem {
 }
 export interface MailItem {
   id: string; subject: string; from: string; to: string; receivedAt: string; body: string
-  hasAttachments: boolean; isRead: boolean; mailbox: string; internetMessageId?: string
+  hasAttachments: boolean; isRead: boolean; mailbox: string; internetMessageId?: string; replyTo?: string
 }
 export interface TaskItem { id: string; subject: string; description: string; caseId: string; status: string; dueAt?: string }
 export interface NoteItem { id: string; subject: string; body: string; caseId: string; createdAt: string; filename?: string }
@@ -46,7 +46,7 @@ export interface Attachment {
   generated: boolean
 }
 export interface EmailDraft {
-  id: string; customerId: string; holdingId?: string; from: string; to: string; subject: string
+  id: string; customerId: string; holdingId?: string; from: string; replyTo: string; to: string; subject: string
   body: string; category: RequestClass; complexity: Complexity; attachments: Attachment[]
   source: 'manual' | 'template' | 'ai'; expectedOutcome: string; runId: string
   state: 'draft' | 'sending' | 'sent' | 'failed' | 'unknown' | 'cancelled'
@@ -69,7 +69,7 @@ export interface CostAssumptions {
 }
 export interface StudioSettings {
   mode: DataMode; theme: ThemeMode; pollSeconds: number; polling: boolean
-  helpMailbox: string; senderMailbox: string; aliasSendingConfirmed: boolean
+  helpMailbox: string; senderMailbox: string; replyToWorkflowConfirmed: boolean
   generationDefinition: string; costs: CostAssumptions
 }
 export const ENVIRONMENT = {
@@ -85,7 +85,7 @@ export const DEFAULT_SETTINGS: StudioSettings = {
   mode: new URLSearchParams(window.location.search).get('preview') === 'true' ? 'preview' : 'live',
   theme: 'system', pollSeconds: 10, polling: true,
   helpMailbox: ENVIRONMENT.helpMailbox, senderMailbox: ENVIRONMENT.senderMailbox,
-  aliasSendingConfirmed: false, generationDefinition: '',
+  replyToWorkflowConfirmed: false, generationDefinition: '',
   costs: { monthlyVolume: 5000, hourlyCost: 32, manualMinutes: 12, automationRate: 0.75,
     automatedMinutes: 1, reviewMinutes: 8, aiCostPerEmail: 0.045,
     connectorCostPerEmail: 0.005, fixedMonthlyCost: 150 },

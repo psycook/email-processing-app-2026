@@ -22,7 +22,7 @@ export function EvaluationResults({ currentDraftId }: { currentDraftId?: string 
   const drafts = state.drafts
   const selectedId = selection?.currentDraftId === currentDraftId ? selection?.id : currentDraftId
   const selected = drafts.find(item => item.id === (selectedId ?? currentDraftId)) ?? drafts.at(-1)
-  const observed = selected ? evaluationEvidence(selected, state.snapshot, ENVIRONMENT.helpMailbox) : undefined
+  const observed = selected ? evaluationEvidence(selected, state.snapshot, ENVIRONMENT.helpMailbox, ENVIRONMENT.senderMailbox) : undefined
   const edit = selected ? edits[selected.id] ?? { verdict: selected.evaluationVerdict ?? 'unscored', notes: selected.evaluationNotes ?? '' } : undefined
   const dirty = selected && edit && (edit.verdict !== (selected.evaluationVerdict ?? 'unscored') || edit.notes !== (selected.evaluationNotes ?? ''))
   const unsaved = drafts.some(item => edits[item.id] && (
@@ -37,10 +37,10 @@ export function EvaluationResults({ currentDraftId }: { currentDraftId?: string 
   const exact = observed?.method === 'legacy-token'
   const exportReport = () => downloadText('gravity-evaluation-report.json', JSON.stringify({
     mode: state.settings.mode, exportedAt: new Date().toISOString(),
-    scope: 'Saved session verdicts are manual. Natural-subject matches are candidates, not confirmed correlation or processing success. Only legacy subject tokens support exact-token matching.',
+    scope: 'Saved session verdicts are manual. Natural-subject matches use From or exact Reply-To from the configured demo sender and are candidates, not confirmed identity, correlation or processing success. Only legacy subject tokens support exact-token matching.',
     monitoredMailbox: ENVIRONMENT.helpMailbox,
     snapshot: { fetchedAt: state.snapshot.fetchedAt, health: state.snapshot.health, limitations: state.snapshot.truncated },
-    tests: drafts.map(draft => ({ ...draft, observed: evaluationEvidence(draft, state.snapshot, ENVIRONMENT.helpMailbox) })),
+    tests: drafts.map(draft => ({ ...draft, observed: evaluationEvidence(draft, state.snapshot, ENVIRONMENT.helpMailbox, ENVIRONMENT.senderMailbox) })),
   }, null, 2), 'application/json')
 
   return (
@@ -70,7 +70,7 @@ export function EvaluationResults({ currentDraftId }: { currentDraftId?: string 
             </Button>
           </div>
           <p className="muted-note evaluation-results__sender">
-            From {selected.from} · {state.snapshot.fetchedAt ? `Snapshot ${formatDate(state.snapshot.fetchedAt)}` : 'No snapshot yet'}
+            Requested From {selected.from} · Reply-To {selected.replyTo} · {state.snapshot.fetchedAt ? `Snapshot ${formatDate(state.snapshot.fetchedAt)}` : 'No snapshot yet'}
           </p>
 
           <div className="evaluation-results__evidence" aria-label="Observed evidence">
@@ -93,7 +93,7 @@ export function EvaluationResults({ currentDraftId }: { currentDraftId?: string 
                     : selected.state === 'draft' || selected.state === 'cancelled' ? 'Not sent' : 'No match observed'}
               </Badge>
               <p>{exact ? 'The sender and legacy subject token match loaded Help Inbox messages.'
-                : 'Same sender and subject near submission time. Open Communications to confirm the actual email.'}</p>
+                : 'Matching From, or customer Reply-To from the configured demo mailbox, plus subject and time. Inspect both addresses in Communications; this is not verified identity.'}</p>
             </section>
             <section className="evaluation-evidence">
               <h3>Dataverse cases</h3>
@@ -110,7 +110,7 @@ export function EvaluationResults({ currentDraftId }: { currentDraftId?: string 
             <div className="evaluation-results__matches">
               <h3>{exact ? 'Records containing the legacy token' : 'Possible matches to inspect'}</h3>
               <ul>
-                {observed.inbox.map(item => <li key={item.id}><span>Help inbox · {formatDate(item.receivedAt)}</span><strong>{item.subject}</strong></li>)}
+                {observed.inbox.map(item => <li key={item.id}><span>Help inbox · {formatDate(item.receivedAt)}</span><strong>{item.subject}</strong><span>Received From: {item.from} · Reply-To: {item.replyTo || 'Not supplied'}</span></li>)}
                 {observed.cases.map(item => (
                   <li key={item.id}>
                     <a href={`${ENVIRONMENT.url}/main.aspx?pagetype=entityrecord&etn=incident&id=${encodeURIComponent(item.id)}`} target="_blank" rel="noreferrer">
@@ -161,7 +161,7 @@ export function EvaluationResults({ currentDraftId }: { currentDraftId?: string 
           </div>
           <details className="evaluation-results__scope">
             <summary>How matching works and what is not measured</summary>
-            <p>New emails have natural subjects with no hidden or visible test marker. Possible inbox matches use the same sender and exact subject; possible cases use the same customer and exact title. Both use a window from one minute before to fifteen minutes after connector acknowledgement. Repeated subjects can match several tests. Renamed cases, delayed results and sends without an acknowledgement time need manual inspection. Legacy marked subjects still use token matching.</p>
+            <p>New emails have natural subjects with no hidden or visible test marker. Possible inbox matches use the same sender, or one exact customer Reply-To from the configured demo mailbox, and exact subject. Reply-To is caller-controlled metadata, not authentication. Actual From is preserved. Possible cases use the same customer and exact title. Both use a window from one minute before to fifteen minutes after connector acknowledgement. Repeated subjects can match several tests. Renamed cases, delayed results and sends without an acknowledgement time need manual inspection. Legacy marked subjects still use From and token matching.</p>
             <p>Only loaded Help Inbox messages and Dataverse records are inspected. Customer alias inboxes, agent classification, flow timings and actual business completion are not measured here. A successful submission or a case is not an automatic pass.</p>
           </details>
           <p className="evaluation-results__retention">

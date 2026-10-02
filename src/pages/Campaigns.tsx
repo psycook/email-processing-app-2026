@@ -94,7 +94,7 @@ export function CampaignsPage() {
 
   const blockReasons: string[] = []
   if (settings.mode === 'preview') blockReasons.push('Preview mode is on — launching will not send real email.')
-  if (!settings.aliasSendingConfirmed) blockReasons.push('Sending alias is not confirmed in Settings.')
+  if (!settings.replyToWorkflowConfirmed) blockReasons.push('Confirm the demo workflow uses Reply-To in Settings.')
   if (!['ready', 'paused'].includes(status)) blockReasons.push('Only a complete, reviewed queue can launch.')
   if (queue.some(item => item.state === 'unknown')) blockReasons.push('Reconcile uncertain sends before resuming.')
   const canLaunch = blockReasons.length === 0
@@ -339,6 +339,7 @@ export function CampaignsPage() {
                     <div className="draft-preview">
                       <div className="draft-meta">
                         <span><strong>From</strong> {selected.from}</span>
+                        <span><strong>Reply-To</strong> {selected.replyTo}</span>
                         <span><strong>To</strong> {selected.to}</span>
                         <Badge soft tone="neutral">{classLabel(selected.category)}</Badge>
                         <Badge soft tone="neutral">{selected.complexity}</Badge>
@@ -414,9 +415,11 @@ export function CampaignsPage() {
           <div className="confirm__attach">
             <SectionLabel>Exact reviewed messages</SectionLabel>
             <p className="muted-note">This batch contains synthetic customer details from private demo data. Confirm only after reviewing the content and attachments.</p>
+            <p className="muted-note">Each email requests the customer alias in From and Reply-To. The demo workflow must use Reply-To if Exchange rewrites From.</p>
             {queue.filter(item => ['draft', 'failed'].includes(item.state)).map(item => (
               <details key={item.id} className="confirm-batch-item">
                 <summary>{item.from} → {item.to} · {item.subject}</summary>
+                <p><strong>Reply-To:</strong> {item.replyTo}</p>
                 <div className="confirm__body"><OutgoingEmailBody body={item.body} /></div>
                 <p>Attachments: {item.attachments.map(attachment => attachment.name).join(', ') || 'None'}</p>
               </details>

@@ -1,5 +1,6 @@
 import type { EmailDraft } from '../types'
 import { emailBodyHtml } from '../lib/emailBody.ts'
+import { validateDraftAddresses } from '../lib/emailDrafts.ts'
 
 function wrapBase64(value: string): string {
   return value.replace(/.{76}/g, '$&\r\n')
@@ -8,9 +9,11 @@ function wrapBase64(value: string): string {
 // Builds a standards-ish RFC 822 / MIME message so an exported draft can be
 // opened in a mail client. No network is involved — this is pure text.
 export function draftToEml(draft: EmailDraft): string {
+  validateDraftAddresses(draft)
   const date = new Date(draft.sentAt ?? Date.now()).toUTCString()
   const headerLines = [
     `From: ${draft.from}`,
+    `Reply-To: ${draft.replyTo}`,
     `To: ${draft.to}`,
     `Subject: ${draft.subject}`,
     `Date: ${date}`,

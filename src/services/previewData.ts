@@ -46,7 +46,7 @@ export function previewSnapshot(): StudioSnapshot {
     owner: 'Preview service desk', statusCode: index === 1 ? 3 : 1,
   }))
   const messages: MailItem[] = titles.map((subject, index) => ({
-    id: `preview-mail-${index}`, subject, from: customers[index].email, to: ENVIRONMENT.helpMailbox,
+    id: `preview-mail-${index}`, subject, from: customers[index].email, replyTo: customers[index].email, to: ENVIRONMENT.helpMailbox,
     body: `Hello Gravity Bank,\n\n${subject}. Could you explain the next steps and any details you need from me?\n\nCustomer reference: ${customers[index].customerNumber}\n\nThank you,\n${customers[index].name}`,
     receivedAt: time(3 + index * 7), hasAttachments: index % 2 === 0, isRead: index > 1, mailbox: ENVIRONMENT.helpMailbox,
     internetMessageId: `<preview-${index}@gravity.invalid>`,

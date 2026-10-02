@@ -24,8 +24,9 @@ Environment: `b17908ad-6b6b-eefb-98bc-79cc7e20ab08`.
 Dataverse: https://smc-diamond-service.crm.dynamics.com/
 
 Code Apps are enabled in this environment and the Studio is published.
-The hosted version is v0.1.5, published on 2 October 2026, adding simple HTML
-paragraphs to sends, previews and exports. Alphabetical customer/holding
+The hosted version is v0.1.6, published on 2 October 2026, setting both From and
+Reply-To to the selected customer alias while preserving simple HTML paragraphs
+in sends, previews and exports. Alphabetical customer/holding
 selectors, natural subjects, fuller AI instructions, redesigned Evaluation
 panels, bundled branding, Help-only monitoring,
 readable connections and aligned pipeline cards/captions are preserved.
@@ -74,16 +75,17 @@ separate capabilities and remain gated.
 The default is live read-only until a user deliberately confirms a send.
 Preview is explicitly synthetic and makes no connector calls, AI invocations,
 sends or Dataverse writes. Switching modes clears working drafts and resets
-alias confirmation. References cache for 60 seconds; dynamic reads for
+the session-only sending confirmation. References cache for 60 seconds; dynamic reads for
 10 seconds. Polling is non-overlapping and pauses while the tab is hidden.
 Mailbox results are Help Inbox samples within a rolling 24-hour window, capped
 at 250 messages. A truncation notice is shown only when the cap is reached.
 Source errors and stale/capped results are disclosed, not rendered as success.
 
 Sending is restricted to the selected active Contact's actual demo alias and
-the Help mailbox. `SendEmailV2` can canonicalise aliases: an administrator must
-verify the received From header for this connector before enabling the
-session-only checkbox. This app does not change `SendFromAliasEnabled`.
+the Help mailbox. `SendEmailV2` can canonicalise aliases. In the published
+Reply-To update below, the session-only checkbox confirms that the demo workflow
+has been configured to use Reply-To, rather than asserting From preservation.
+This app does not change `SendFromAliasEnabled`.
 There is no fallback to the shared mailbox primary sender.
 
 The hosted app reads live Contacts, Products, Financial Accounts, Cases, Tasks,
@@ -127,8 +129,45 @@ The change was restricted to the demo tenant; no test emails were sent.
 The Outlook display name alone does not prove which address was delivered.
 Inspect the actual received `From` header. Shared/delegated alias support has
 client limitations; enabling the setting is not a guarantee that this connector
-preserves aliases. No fallback to another API, Reply-To substitution or mailbox
-identity changes have been introduced.
+preserves aliases. No alternate sending API or mailbox identity changes have
+been introduced. The later Reply-To update below adds explicit demo routing
+metadata without replacing the real From address.
+
+## Reply-To update v0.1.6 (published)
+
+Single and campaign drafts now set both `From` and `ReplyTo` to the selected
+Contact's `emailaddress1`. The Reply-To field is immutable on an existing draft;
+it must be one address, identical to From, and the gateway still rechecks From
+against the active Contact's current email immediately before sending. Missing,
+different or multiple Reply-To values stop sending/export. The AI does not
+choose any address. No BCC is added, so this creates no extra email copy.
+
+Both fields appear in Configure, the draft, single/batch approvals and exported
+EML/JSON. Received Reply-To is retained and searchable in Communications, alongside
+the actual received From. The app never overwrites received From with Reply-To.
+
+Settings now requires a session-only acknowledgement: "I have configured the
+demo workflow to use the customer Reply-To address". This replaces the old
+From-preservation checkbox, starts off, resets on mode change, and does not
+modify or verify the flow. Preview still cannot send; each live send or batch
+still requires review. Confirm receipt during the pilot; the connector's actual
+delivered Reply-To has not yet been verified.
+
+**Workflow changes are owned by the user and are not implemented here.** Read
+the received `replyTo` field (or get the email if it is absent on the trigger),
+validate exactly one eligible demo customer address, and pass it separately as
+the demo effective customer email. Restrict overrides to demo mode and the
+authenticated approved sender; preserve actual From for provenance. Missing,
+invalid or ambiguous metadata needs an exception/review path, not guessed
+customer matching. Reply-To is caller-controlled routing metadata, never proof
+of identity or authority to perform a financial action. Normal non-demo mail
+should continue using its normal identity rules.
+
+The Evaluation panel can show a candidate Inbox match where received From is
+the configured Demo Customer mailbox and one exact Reply-To equals the draft's
+customer alias, subject and time window. This is only an inspection lead, not
+authentication or proof the workflow resolved the right customer. Legacy-token
+matching is unchanged; other senders cannot match by Reply-To alone.
 
 References:
 - [Exchange alias setting](https://learn.microsoft.com/en-us/powershell/module/exchangepowershell/set-organizationconfig#-sendfromaliasenabled)
